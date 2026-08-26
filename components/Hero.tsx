@@ -1,0 +1,161 @@
+"use client";
+
+import React, { useState } from "react";
+
+export function Hero() {
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleQuickAudit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!websiteUrl) return;
+    setSubmitted(true);
+    setTimeout(() => {
+      const auditSection = document.getElementById("audit");
+      if (auditSection) {
+        auditSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 600);
+  };
+
+  return (
+    <section className="relative bg-white pt-10 pb-16 md:pt-16 md:pb-24 border-b border-zinc-100 overflow-hidden">
+      {/* Subtle background grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(#581c87 1px, transparent 1px), radial-gradient(#581c87 1px, #ffffff 1px)",
+          backgroundSize: "24px 24px",
+          backgroundPosition: "0 0, 12px 12px",
+        }}
+      />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Main Hero Content (7 Cols) */}
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
+            
+            {/* Pill Tag */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-medium text-[#581c87] mb-6">
+              <span className="w-2 h-2 rounded bg-[#581c87] inline-block animate-pulse" />
+              <span>Full-Funnel Growth Engineering & Paid Media</span>
+            </div>
+
+            {/* Main H1 Headline - strictly text-xl font-semibold */}
+            <h1 className="text-xl font-semibold text-zinc-900 tracking-tight leading-snug mb-4">
+              Scale Your Brand With High-Performance Marketing & Precision Revenue Systems
+            </h1>
+
+            {/* Subheading / Value Proposition */}
+            <p className="text-base font-normal text-zinc-600 leading-relaxed mb-8 max-w-xl">
+              LJK Marketing Agency empowers ambitious DTC brands, B2B leaders, and high-growth
+              enterprises to turn paid ad spend, technical search, and conversion architecture into
+              predictable, compounding revenue.
+            </p>
+
+            {/* Quick URL Audit Form */}
+            <form onSubmit={handleQuickAudit} className="w-full max-w-lg mb-8">
+              <div className="flex flex-col sm:flex-row gap-2.5 p-1.5 bg-zinc-50 border border-zinc-300 rounded shadow-xs">
+                <input
+                  type="url"
+                  required
+                  placeholder="Enter your website (e.g. yourbrand.com)"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  className="flex-1 px-3.5 py-2.5 bg-white border border-zinc-200 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-1.5 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-sm font-semibold transition-colors shadow-xs shrink-0"
+                >
+                  <span>{submitted ? "Analyzing..." : "Claim Free Audit"}</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-xs text-zinc-500 mt-2 flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-[#581c87]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                No credit card required. Receive your 14-point audit in 24 hours.
+              </p>
+            </form>
+
+            {/* Quick Badges */}
+            <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-zinc-600">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Google Premier Partner
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Meta Certified Agency
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Shopify Plus Partner
+              </span>
+            </div>
+          </div>
+
+          {/* Hero Interactive Metric Board (5 Cols) */}
+          <div className="lg:col-span-5">
+            <div className="bg-white border border-zinc-200 rounded p-6 shadow-xs relative">
+              <div className="flex items-center justify-between pb-4 border-b border-zinc-100 mb-6">
+                <div>
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    Live Performance Index
+                  </h2>
+                  <p className="text-xs text-zinc-500">Aggregated client portfolio stats</p>
+                </div>
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Active Verified
+                </span>
+              </div>
+
+              {/* 4 Stats Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Total Revenue Generated</div>
+                  <div className="text-xl font-semibold text-[#581c87]">$48.2M+</div>
+                  <div className="text-xs font-medium text-emerald-600 mt-1 flex items-center gap-1">
+                    <span>↑ +38%</span>
+                    <span className="text-zinc-400 font-normal">YoY Growth</span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Average Client ROAS</div>
+                  <div className="text-xl font-semibold text-[#581c87]">4.82x</div>
+                  <div className="text-xs font-medium text-emerald-600 mt-1 flex items-center gap-1">
+                    <span>↑ +1.4x</span>
+                    <span className="text-zinc-400 font-normal">vs Industry</span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Brands Scaled</div>
+                  <div className="text-xl font-semibold text-zinc-900">120+</div>
+                  <div className="text-xs font-medium text-zinc-500 mt-1">DTC & B2B SaaS</div>
+                </div>
+
+                <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Client Retention</div>
+                  <div className="text-xl font-semibold text-zinc-900">98.2%</div>
+                  <div className="text-xs font-medium text-zinc-500 mt-1">Average 24mo Retainer</div>
+                </div>
+              </div>
+
+              {/* Live Status Highlight */}
+              <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs">
+                <span className="text-zinc-500 font-normal">Q3 Optimization Sprint</span>
+                <span className="font-medium text-[#581c87]">Capacity: 2 New Partnerships Available</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}

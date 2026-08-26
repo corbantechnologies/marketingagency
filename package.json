@@ -1,5 +1,6 @@
 {
-  "name": "marketingagency",
+  "name": "ljkmarketingagency",
+  "title": "LJK Marketing Agency",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,9 +10,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.102.6",
+    "@tanstack/react-query-devtools": "^5.102.6",
     "next": "16.3.3",
+    "next-auth": "^4.24.15",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
