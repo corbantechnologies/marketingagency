@@ -117,8 +117,8 @@ export function AuditForm() {
             {/* Direct Contact Info */}
             <div className="p-4 bg-purple-50/70 border border-purple-200 rounded text-xs space-y-1.5">
               <div className="font-semibold text-purple-950">Messaging Support Desk:</div>
-              <div className="text-zinc-600">Email: <a href="mailto:growth@ljkmarketingagency.com" className="text-[#581c87] font-medium hover:underline">growth@ljkmarketingagency.com</a></div>
-              <div className="text-zinc-600">API Documentation: <span className="font-mono text-[#581c87]">https://api.ljkmarketingagency.com/docs</span></div>
+              <div className="text-zinc-600">Email: <a href="mailto:growth@ljkmarketingagency.co.ke" className="text-[#581c87] font-medium hover:underline">growth@ljkmarketingagency.co.ke</a></div>
+              <div className="text-zinc-600">API Documentation: <span className="font-mono text-[#581c87]">https://api.ljkmarketingagency.co.ke/docs</span></div>
             </div>
           </div>
 

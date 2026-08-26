@@ -96,7 +96,7 @@ export function FAQ() {
         <div className="mt-8 text-center text-xs text-zinc-500">
           Need a custom carrier interconnect or high-volume SMPP quote?{" "}
           <a
-            href="mailto:growth@ljkmarketingagency.com"
+            href="mailto:growth@ljkmarketingagency.co.ke"
             className="text-[#581c87] font-semibold hover:underline"
           >
             Contact our telecom engineering desk

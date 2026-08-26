@@ -108,19 +108,19 @@ export function Footer() {
               <div>
                 <span className="text-zinc-500 block">Technical Support:</span>
                 <a
-                  href="mailto:support@ljkmarketingagency.com"
+                  href="mailto:support@ljkmarketingagency.co.ke"
                   className="text-purple-300 hover:underline"
                 >
-                  support@ljkmarketingagency.com
+                  support@ljkmarketingagency.co.ke
                 </a>
               </div>
               <div>
                 <span className="text-zinc-500 block">Sales & Enterprise Routes:</span>
                 <a
-                  href="mailto:growth@ljkmarketingagency.com"
+                  href="mailto:growth@ljkmarketingagency.co.ke"
                   className="text-purple-300 hover:underline"
                 >
-                  growth@ljkmarketingagency.com
+                  growth@ljkmarketingagency.co.ke
                 </a>
               </div>
               <div>
