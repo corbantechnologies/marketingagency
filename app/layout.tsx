@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const googleSans = localFont({
   src: [
@@ -182,6 +183,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-white text-zinc-900 font-sans flex flex-col selection:bg-[#581c87] selection:text-white">
         {children}
+        <Analytics />
       </body>
     </html>
   );
