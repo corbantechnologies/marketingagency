@@ -8,27 +8,29 @@ export function AuditForm() {
     email: "",
     website: "",
     phone: "",
-    spend: "$15,000 - $50,000/mo",
-    goals: ["Paid Ads Scaling"],
+    volume: "10,000 - 50,000 SMS/mo",
+    goals: ["Bulk Promotional SMS"],
+    senderId: "",
     notes: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const budgetOptions = [
-    "Under $10,000/mo",
-    "$10,000 - $25,000/mo",
-    "$25,000 - $75,000/mo",
-    "$75,000 - $200,000/mo",
-    "$200,000+/mo",
+  const volumeOptions = [
+    "Under 10,000 SMS / Emails /mo",
+    "10,000 - 50,000 SMS / Emails /mo",
+    "50,000 - 200,000 SMS / Emails /mo",
+    "200,000 - 1,000,000+ SMS / Emails /mo",
+    "Enterprise 1M+ Monthly Volume",
   ];
 
   const goalOptions = [
-    "Paid Ads Scaling (Meta/Google)",
-    "Technical SEO & Content Hub",
-    "Landing Page & CRO Lift",
-    "Email/SMS Lifecycle Retention",
-    "Complete Full-Funnel Growth",
+    "Bulk Promotional SMS Broadcast",
+    "Transactional OTP & Alert Gateway",
+    "Email Deliverability & IP Warming",
+    "Klaviyo / Shopify Lifecycle Automation",
+    "REST API & SMPP 3.4 Integration",
+    "Subscriber List Growth & Paid Ads",
   ];
 
   const handleGoalToggle = (goal: string) => {
@@ -47,7 +49,6 @@ export function AuditForm() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate backend submission
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
@@ -63,15 +64,15 @@ export function AuditForm() {
           {/* Left Column: Context & What's Included (5 Cols) */}
           <div className="lg:col-span-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
-              Complimentary Growth Audit
+              Free Messaging & Deliverability Audit
             </div>
             <h2 className="text-xl font-semibold text-zinc-900 tracking-tight mb-4">
-              Get Your 14-Point Growth Audit & 90-Day Strategy Roadmap
+              Get Your SMS & Email Deliverability Audit + 50 Test Credits
             </h2>
             <p className="text-sm font-normal text-zinc-600 leading-relaxed mb-8">
-              We do not do generic sales calls. Our senior strategists review your actual store or
-              pipeline, inspect tracking pixels, and identify exact conversion bottlenecks before our
-              very first conversation.
+              Experience direct Tier-1 carrier routing. Our messaging engineers will audit your current
+              sending domain, analyze carrier spam filters, test route latency, and provision your
+              test account with 50 complimentary SMS credits.
             </p>
 
             {/* What's in the audit list */}
@@ -81,10 +82,10 @@ export function AuditForm() {
                   <span className="w-4 h-4 rounded bg-[#581c87] text-white flex items-center justify-center text-[10px]">
                     ✓
                   </span>
-                  Paid Ad Account Architecture & Wasted Spend Teardown
+                  Telecom Route & Carrier Delivery Speed Benchmark
                 </div>
                 <div className="text-xs font-normal text-zinc-500 pl-6">
-                  Detailed analysis of audience overlaps, algorithmic bidding leaks, and ad fatigue.
+                  Live latency test verifying sub-2.4s handset delivery across major network operators.
                 </div>
               </div>
 
@@ -93,10 +94,10 @@ export function AuditForm() {
                   <span className="w-4 h-4 rounded bg-[#581c87] text-white flex items-center justify-center text-[10px]">
                     ✓
                   </span>
-                  Landing Page UX & Conversion Rate (CRO) Friction Analysis
+                  Email Domain Authentication & Spam Shield Inspection
                 </div>
                 <div className="text-xs font-normal text-zinc-500 pl-6">
-                  Identification of mobile friction points, slow scripts, and cart drop-offs.
+                  Full SPF, DKIM, DMARC, and IP reputation check to guarantee primary inbox placement.
                 </div>
               </div>
 
@@ -105,19 +106,19 @@ export function AuditForm() {
                   <span className="w-4 h-4 rounded bg-[#581c87] text-white flex items-center justify-center text-[10px]">
                     ✓
                   </span>
-                  Competitor Intelligence & Ad Creative Gap Matrix
+                  Custom Alphanumeric Sender ID Pre-Verification
                 </div>
                 <div className="text-xs font-normal text-zinc-500 pl-6">
-                  A snapshot of your top 3 competitors’ best-performing creative hooks and angles.
+                  Fast-track compliance check for your official brand name sender ID on carrier registries.
                 </div>
               </div>
             </div>
 
             {/* Direct Contact Info */}
             <div className="p-4 bg-purple-50/70 border border-purple-200 rounded text-xs space-y-1.5">
-              <div className="font-semibold text-purple-950">Direct Agency Contact:</div>
+              <div className="font-semibold text-purple-950">Messaging Support Desk:</div>
               <div className="text-zinc-600">Email: <a href="mailto:growth@ljkmarketingagency.com" className="text-[#581c87] font-medium hover:underline">growth@ljkmarketingagency.com</a></div>
-              <div className="text-zinc-600">Offices: New York · Austin · London</div>
+              <div className="text-zinc-600">API Documentation: <span className="font-mono text-[#581c87]">https://api.ljkmarketingagency.com/docs</span></div>
             </div>
           </div>
 
@@ -133,10 +134,10 @@ export function AuditForm() {
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold text-zinc-900">
-                    Audit Request Received!
+                    Audit Request & Test Credits Initialized!
                   </h3>
                   <p className="text-sm font-normal text-zinc-600 max-w-md mx-auto">
-                    Thank you, <span className="font-semibold text-zinc-800">{formData.name}</span>. A senior growth strategist at LJK has been assigned to <span className="font-semibold text-zinc-800">{formData.website || "your brand"}</span>. You will receive your custom 14-point audit roadmap within 24 business hours.
+                    Thank you, <span className="font-semibold text-zinc-800">{formData.name}</span>. An LJK messaging engineer has received your request for <span className="font-semibold text-zinc-800">{formData.website || "your company"}</span>. Your route deliverability report and sandbox API test credentials will be emailed within 12 hours.
                   </p>
                   <button
                     type="button"
@@ -147,8 +148,9 @@ export function AuditForm() {
                         email: "",
                         website: "",
                         phone: "",
-                        spend: "$15,000 - $50,000/mo",
-                        goals: ["Paid Ads Scaling"],
+                        volume: "10,000 - 50,000 SMS/mo",
+                        goals: ["Bulk Promotional SMS"],
+                        senderId: "",
                         notes: "",
                       });
                     }}
@@ -161,10 +163,10 @@ export function AuditForm() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="border-b border-zinc-100 pb-4 mb-2">
                     <h3 className="text-base font-semibold text-zinc-900">
-                      Request Your Free Growth Audit
+                      Request Messaging Audit & Test Account
                     </h3>
                     <p className="text-xs font-normal text-zinc-500 mt-0.5">
-                      Confidential audit. No obligations. 100% actionable data.
+                      100% complimentary. Includes 50 live SMS test credits & route latency review.
                     </p>
                   </div>
 
@@ -177,7 +179,7 @@ export function AuditForm() {
                       <input
                         type="text"
                         required
-                        placeholder="Sarah Jenkins"
+                        placeholder="David Mwangi"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
@@ -192,7 +194,7 @@ export function AuditForm() {
                       <input
                         type="email"
                         required
-                        placeholder="sarah@yourbrand.com"
+                        placeholder="david@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
@@ -201,29 +203,30 @@ export function AuditForm() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Website */}
+                    {/* Website / Company */}
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
-                        Website / Domain *
+                        Company Name or Website *
                       </label>
                       <input
-                        type="url"
+                        type="text"
                         required
-                        placeholder="https://yourbrand.com"
+                        placeholder="e.g. Apex Commerce / https://apex.com"
                         value={formData.website}
                         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
                       />
                     </div>
 
-                    {/* Phone */}
+                    {/* Phone for SMS test */}
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
-                        Phone (Optional)
+                        Mobile Number (For Live SMS Test) *
                       </label>
                       <input
                         type="tel"
-                        placeholder="+1 (555) 019-2834"
+                        required
+                        placeholder="+254 712 345 678 or +1 (555) 019-2834"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
@@ -231,17 +234,17 @@ export function AuditForm() {
                     </div>
                   </div>
 
-                  {/* Monthly Ad Budget */}
+                  {/* Monthly Messaging Volume */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
-                      Current Monthly Marketing Budget
+                      Estimated Monthly SMS / Email Volume
                     </label>
                     <select
-                      value={formData.spend}
-                      onChange={(e) => setFormData({ ...formData, spend: e.target.value })}
+                      value={formData.volume}
+                      onChange={(e) => setFormData({ ...formData, volume: e.target.value })}
                       className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
                     >
-                      {budgetOptions.map((opt) => (
+                      {volumeOptions.map((opt) => (
                         <option key={opt} value={opt}>
                           {opt}
                         </option>
@@ -249,10 +252,10 @@ export function AuditForm() {
                     </select>
                   </div>
 
-                  {/* Primary Goals */}
+                  {/* Primary Objectives */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
-                      Primary Growth Objectives
+                      Messaging Services Needed
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {goalOptions.map((goal) => {
@@ -280,18 +283,33 @@ export function AuditForm() {
                     </div>
                   </div>
 
-                  {/* Notes */}
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
-                      Tell us about your target goals or current bottlenecks
-                    </label>
-                    <textarea
-                      rows={3}
-                      placeholder="e.g. Currently spending $30k/mo on Meta, want to expand into Google Search and improve our conversion rate..."
-                      value={formData.notes}
-                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
-                    />
+                  {/* Desired Sender ID & Notes */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
+                        Desired Branded Sender ID (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={11}
+                        placeholder="e.g. APEXBRAND (Max 11 chars)"
+                        value={formData.senderId}
+                        onChange={(e) => setFormData({ ...formData, senderId: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
+                        Specific Technical Requirements
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Need SMPP, WooCommerce plugin, etc."
+                        value={formData.notes}
+                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
+                      />
+                    </div>
                   </div>
 
                   {/* Submit Button */}
@@ -301,10 +319,10 @@ export function AuditForm() {
                     className="w-full inline-flex items-center justify-center gap-2 bg-[#581c87] hover:bg-[#4a1572] disabled:opacity-75 text-white py-3 px-6 rounded text-sm font-semibold transition-colors shadow-xs"
                   >
                     {isSubmitting ? (
-                      <span>Submitting Audit Request...</span>
+                      <span>Setting Up Audit & Test Credits...</span>
                     ) : (
                       <>
-                        <span>Claim Your 14-Point Growth Audit</span>
+                        <span>Claim Free Audit & 50 Test Credits</span>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                         </svg>
@@ -313,7 +331,7 @@ export function AuditForm() {
                   </button>
 
                   <p className="text-center text-[11px] text-zinc-400">
-                    Strict privacy guaranteed. We never sell your data or share proprietary brand metrics.
+                    Carrier-grade privacy. We never share subscriber records or campaign logs.
                   </p>
                 </form>
               )}

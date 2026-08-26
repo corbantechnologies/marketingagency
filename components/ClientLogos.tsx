@@ -2,19 +2,19 @@ import React from "react";
 
 export function ClientLogos() {
   const partners = [
-    { name: "Google Marketing Platform", label: "Premier Partner", type: "Ad Network" },
-    { name: "Meta Business Partner", label: "Elite Tier", type: "Paid Social" },
-    { name: "Shopify Plus", label: "Commerce Expert", type: "E-Commerce" },
-    { name: "Klaviyo", label: "Master Agency", type: "Lifecycle" },
-    { name: "TikTok For Business", label: "Certified Agency", type: "Paid Media" },
-    { name: "HubSpot", label: "Platinum Partner", type: "Inbound & CRM" },
+    { name: "Direct Telecom Routes", label: "Tier-1 Carrier Gateway", type: "SMS Infrastructure" },
+    { name: "SMPP 3.4 & REST API", label: "High Throughput", type: "Developer Gateway" },
+    { name: "Klaviyo & Mailchimp", label: "Certified Partner", type: "Lifecycle Email" },
+    { name: "AWS SES & SendGrid", label: "Enterprise Inboxing", type: "Email Infrastructure" },
+    { name: "Shopify & WooCommerce", label: "Automated Triggers", type: "E-Commerce Sync" },
+    { name: "Meta & Google Ads", label: "Opt-In Growth Engine", type: "Subscriber Acquisition" },
   ];
 
   return (
-    <section className="bg-white py-10 border-b border-zinc-100" aria-label="Trusted Partners & Accreditations">
+    <section className="bg-white py-10 border-b border-zinc-100" aria-label="Carrier & Infrastructure Integrations">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-center text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-6">
-          Certified Marketing Partnerships & Enterprise Integrations
+          Direct Telecom Routing & Enterprise Messaging Integrations
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">

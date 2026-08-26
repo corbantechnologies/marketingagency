@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 
 export function Hero() {
-  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleQuickAudit = (e: React.FormEvent) => {
+  const handleQuickTrial = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!websiteUrl) return;
+    if (!phoneOrEmail) return;
     setSubmitted(true);
     setTimeout(() => {
       const auditSection = document.getElementById("audit");
@@ -40,37 +40,37 @@ export function Hero() {
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-medium text-[#581c87] mb-6">
               <span className="w-2 h-2 rounded bg-[#581c87] inline-block animate-pulse" />
-              <span>Full-Funnel Growth Engineering & Paid Media</span>
+              <span>Enterprise Bulk SMS Gateway & High-Inbox Email Marketing</span>
             </div>
 
             {/* Main H1 Headline - strictly text-xl font-semibold */}
             <h1 className="text-xl font-semibold text-zinc-900 tracking-tight leading-snug mb-4">
-              Scale Your Brand With High-Performance Marketing & Precision Revenue Systems
+              High-Deliverability Bulk SMS, Precision Email Marketing & Revenue Automation at Scale
             </h1>
 
             {/* Subheading / Value Proposition */}
             <p className="text-base font-normal text-zinc-600 leading-relaxed mb-8 max-w-xl">
-              LJK Marketing Agency empowers ambitious DTC brands, B2B leaders, and high-growth
-              enterprises to turn paid ad spend, technical search, and conversion architecture into
-              predictable, compounding revenue.
+              LJK Marketing Agency delivers Tier-1 direct telecom SMS routes, high-inbox email
+              infrastructure, and automated customer communication systems that turn contacts into
+              repeat revenue with sub-second delivery speed.
             </p>
 
-            {/* Quick URL Audit Form */}
-            <form onSubmit={handleQuickAudit} className="w-full max-w-lg mb-8">
+            {/* Quick Audit / Test Form */}
+            <form onSubmit={handleQuickTrial} className="w-full max-w-lg mb-8">
               <div className="flex flex-col sm:flex-row gap-2.5 p-1.5 bg-zinc-50 border border-zinc-300 rounded shadow-xs">
                 <input
-                  type="url"
+                  type="text"
                   required
-                  placeholder="Enter your website (e.g. yourbrand.com)"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  placeholder="Enter business email or website"
+                  value={phoneOrEmail}
+                  onChange={(e) => setPhoneOrEmail(e.target.value)}
                   className="flex-1 px-3.5 py-2.5 bg-white border border-zinc-200 rounded text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] focus:border-[#581c87]"
                 />
                 <button
                   type="submit"
                   className="inline-flex items-center justify-center gap-1.5 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-sm font-semibold transition-colors shadow-xs shrink-0"
                 >
-                  <span>{submitted ? "Analyzing..." : "Claim Free Audit"}</span>
+                  <span>{submitted ? "Preparing..." : "Get Free Audit & Test Credits"}</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
@@ -80,76 +80,77 @@ export function Hero() {
                 <svg className="w-3.5 h-3.5 text-[#581c87]" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                No credit card required. Receive your 14-point audit in 24 hours.
+                Includes 50 complimentary test SMS credits & full deliverability audit.
               </p>
             </form>
 
             {/* Quick Badges */}
             <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-zinc-600">
               <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Google Premier Partner
+                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Tier-1 Direct Telecom Routes
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Meta Certified Agency
+                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Custom Branded Sender ID
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> Shopify Plus Partner
+                <span className="w-1.5 h-1.5 rounded bg-[#581c87]" /> REST API & Webhook Ready
               </span>
             </div>
           </div>
 
-          {/* Hero Interactive Metric Board (5 Cols) */}
+          {/* Hero Interactive Messaging Metric Board (5 Cols) */}
           <div className="lg:col-span-5">
             <div className="bg-white border border-zinc-200 rounded p-6 shadow-xs relative">
               <div className="flex items-center justify-between pb-4 border-b border-zinc-100 mb-6">
                 <div>
                   <h2 className="text-sm font-semibold text-zinc-900">
-                    Live Performance Index
+                    Live Messaging Gateway Status
                   </h2>
-                  <p className="text-xs text-zinc-500">Aggregated client portfolio stats</p>
+                  <p className="text-xs text-zinc-500">Real-time throughput & delivery health</p>
                 </div>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Active Verified
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded bg-emerald-500 animate-pulse" />
+                  100% Operational
                 </span>
               </div>
 
               {/* 4 Stats Grid */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
-                  <div className="text-xs font-medium text-zinc-500 mb-1">Total Revenue Generated</div>
-                  <div className="text-xl font-semibold text-[#581c87]">$48.2M+</div>
+                  <div className="text-xs font-medium text-zinc-500 mb-1">SMS Delivery Rate</div>
+                  <div className="text-xl font-semibold text-[#581c87]">99.4%</div>
                   <div className="text-xs font-medium text-emerald-600 mt-1 flex items-center gap-1">
-                    <span>↑ +38%</span>
-                    <span className="text-zinc-400 font-normal">YoY Growth</span>
+                    <span>Direct Routes</span>
+                    <span className="text-zinc-400 font-normal">· Instant DLR</span>
                   </div>
                 </div>
 
                 <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
-                  <div className="text-xs font-medium text-zinc-500 mb-1">Average Client ROAS</div>
-                  <div className="text-xl font-semibold text-[#581c87]">4.82x</div>
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Email Inbox Placement</div>
+                  <div className="text-xl font-semibold text-[#581c87]">98.9%</div>
                   <div className="text-xs font-medium text-emerald-600 mt-1 flex items-center gap-1">
-                    <span>↑ +1.4x</span>
-                    <span className="text-zinc-400 font-normal">vs Industry</span>
+                    <span>SPF / DKIM</span>
+                    <span className="text-zinc-400 font-normal">· Warm IPs</span>
                   </div>
                 </div>
 
                 <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
-                  <div className="text-xs font-medium text-zinc-500 mb-1">Brands Scaled</div>
-                  <div className="text-xl font-semibold text-zinc-900">120+</div>
-                  <div className="text-xs font-medium text-zinc-500 mt-1">DTC & B2B SaaS</div>
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Messages Dispatched</div>
+                  <div className="text-xl font-semibold text-zinc-900">14.8M+</div>
+                  <div className="text-xs font-medium text-zinc-500 mt-1">SMS & Email Campaigns</div>
                 </div>
 
                 <div className="p-3.5 bg-zinc-50 border border-zinc-100 rounded">
-                  <div className="text-xs font-medium text-zinc-500 mb-1">Client Retention</div>
-                  <div className="text-xl font-semibold text-zinc-900">98.2%</div>
-                  <div className="text-xs font-medium text-zinc-500 mt-1">Average 24mo Retainer</div>
+                  <div className="text-xs font-medium text-zinc-500 mb-1">Avg. Gateway Latency</div>
+                  <div className="text-xl font-semibold text-zinc-900">&lt;2.4s</div>
+                  <div className="text-xs font-medium text-zinc-500 mt-1">Ultra-Low Transit Time</div>
                 </div>
               </div>
 
               {/* Live Status Highlight */}
               <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs">
-                <span className="text-zinc-500 font-normal">Q3 Optimization Sprint</span>
-                <span className="font-medium text-[#581c87]">Capacity: 2 New Partnerships Available</span>
+                <span className="text-zinc-500 font-normal">Protocol: SMPP 3.4 / HTTPS REST</span>
+                <span className="font-medium text-[#581c87]">Capacity: 50,000 SMS / min</span>
               </div>
             </div>
           </div>

@@ -4,31 +4,31 @@ export function Framework() {
   const steps = [
     {
       number: "01",
-      title: "Deep Growth Audit & Market Intelligence",
+      title: "Deliverability & Gateway Architecture Audit",
       description:
-        "We dissect your existing unit economics, past campaign performance, competitor ad creative, tracking infrastructure, and conversion funnels to pinpoint immediate high-leverage revenue opportunities.",
-      highlights: ["Data & Pixel Audit", "Competitor Ad Teardown", "Unit Economics Assessment"],
+        "We inspect your historical database hygiene, carrier spam filters, domain authentication (SPF/DKIM/DMARC), IP health, and opt-in compliance to eliminate bounce rates and delivery drops.",
+      highlights: ["Database Scrubbing & Verification", "Sender ID / Domain Verification", "Opt-In Compliance Audit"],
     },
     {
       number: "02",
-      title: "Bespoke Strategy & Creative Architecture",
+      title: "Telecom Route & Dedicated IP Provisioning",
       description:
-        "Our strategists engineer a 90-day roadmap tailored to your margins. We build message-to-market fit, develop direct-response creative angles, and configure custom landing page experiences.",
-      highlights: ["90-Day Roadmap", "Offer Structuring", "Creative Angle Production"],
+        "We establish Tier-1 direct carrier routes, register custom alphanumeric sender IDs, provision dedicated email sending IPs, and execute gradual warming schedules for primary inbox delivery.",
+      highlights: ["Tier-1 Carrier Direct Interconnect", "Dedicated IP Warming Protocol", "Branded Sender ID Registry"],
     },
     {
       number: "03",
-      title: "Omni-Channel Execution & Rapid Testing",
+      title: "Automated Triggers & High-Converting Copy",
       description:
-        "We launch high-velocity testing across paid search, social, and programmatic channels. Our proprietary multivariate framework isolates winning hooks, audiences, and landing page variants in real time.",
-      highlights: ["Algorithmic Media Buying", "Creative Velocity Engine", "First-Party Attribution"],
+        "We configure real-time transactional hooks (OTPs, order tracking, payment alerts) alongside automated multi-channel marketing flows (cart abandonment, flash sales, customer VIP drips).",
+      highlights: ["High-Impact SMS Copy & Hooks", "Dynamic Email HTML Templates", "Webhook & Triggered API Flows"],
     },
     {
       number: "04",
-      title: "Data-Backed Scaling & Retention Compound",
+      title: "High-Throughput Dispatch & Real-Time Analytics",
       description:
-        "Once efficiency thresholds are unlocked, we scale ad budgets aggressively while deploying lifecycle automation and CRO experiments to continuously expand customer lifetime value.",
-      highlights: ["Budget Scaling Protocols", "LTV Expansion Systems", "Weekly Executive Briefings"],
+        "We broadcast campaigns with sub-second latency across hundreds of thousands of contacts while continuously tracking delivery receipts (DLR), open rates, click conversions, and opt-out rates.",
+      highlights: ["50k SMS/min Gateway Velocity", "Live DLR Status Callbacks", "Continuous A/B Message Testing"],
     },
   ];
 
@@ -39,14 +39,14 @@ export function Framework() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
-            The LJK Growth Architecture
+            The LJK Messaging Pipeline
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
-            Our 4-Stage Method for Predictable, Compounding Scale
+            Our 4-Stage Protocol for 99.4% Message Deliverability & High ROI
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
-            No guesswork. We rely on a battle-tested, data-engineered framework that systematically
-            eliminates revenue leaks and accelerates profitable acquisition.
+            Engineered to ensure your messages hit the primary inbox and handset SMS notifications
+            in seconds, without carrier blocks or spam filters.
           </p>
         </div>
 

@@ -7,34 +7,34 @@ export function FAQ() {
 
   const faqs = [
     {
-      question: "What makes LJK Marketing Agency different from standard agencies?",
+      question: "How do your Tier-1 direct SMS routes compare to standard aggregators?",
       answer:
-        "Unlike traditional agencies that separate media buying from creative and conversion optimization, LJK operates as a fully integrated growth engineering unit. We pair senior media buyers with dedicated creative strategists, full-stack landing page engineers, and data analysts. You work directly with senior growth practitioners, not junior account managers.",
+        "Unlike low-cost grey routes that route messages through multiple overseas hops (leading to high failure rates and 10–45 minute delays), LJK connects directly with Tier-1 mobile network operators. This guarantees 99.4%+ handset delivery, sub-2.4 second transit latency, and immediate real-time DLR callbacks.",
     },
     {
-      question: "What minimum ad spend or revenue level do you work with?",
+      question: "How long does custom Alphanumeric Sender ID registration take?",
       answer:
-        "We typically partner with brands spending at least $10,000/month on paid advertising or generating $500,000+ in annual gross revenue. This ensures there is sufficient historical conversion data and budget velocity to run statistically valid multivariate testing and unlock rapid scale.",
+        "Custom Sender ID registration (e.g. your exact brand name up to 11 characters) typically takes 24 to 48 business hours, depending on regional telecom regulator approvals. During registration, we provide instant access to high-priority shared alphanumeric routes so you can test campaigns immediately.",
     },
     {
-      question: "How long does onboarding take and when can we expect results?",
+      question: "Can we integrate your SMS & Email gateways into our own app via API?",
       answer:
-        "Our onboarding sprint takes 7 to 10 business days. During this period, we complete your technical pixel audit, rebuild tracking infrastructure, analyze competitor creative, and deliver your first round of performance ads and landing page tests. First campaign optimizations typically demonstrate measurable CAC improvements within the first 21 to 30 days.",
+        "Yes. We support standard HTTPS REST APIs with JSON payloads, as well as enterprise SMPP 3.4 protocols for high-throughput transactional OTPs and alerts. We provide SDKs and direct plugins for Shopify, WooCommerce, and CRM webhooks.",
     },
     {
-      question: "Do you require long-term lock-in contracts?",
+      question: "How do you guarantee primary inbox placement for Email Marketing?",
       answer:
-        "No. We operate on initial 90-day growth sprints (the optimal timeline to audit, test, and scale systematically), followed by month-to-month retainers. We believe client retention should be earned through consistent ROI, not restrictive contractual lock-ins. Our 98.2% retention rate reflects that commitment.",
+        "We execute a comprehensive 4-stage deliverability protocol: 1) Full DNS alignment (SPF, DKIM, DMARC, BIMI), 2) Automated list cleaning to eliminate spam traps and hard bounces, 3) Dedicated IP provisioning with progressive warming schedules, and 4) Engagement-based segmentation to keep sender reputation in the top 99th percentile.",
     },
     {
-      question: "How does reporting and communication work?",
+      question: "Do SMS credits expire, and what are the volume discount tiers?",
       answer:
-        "Transparency is core to our partnership. You receive 24/7 access to a live real-time BI dashboard combining first-party analytics (GA4, Shopify, CRM) with platform spend data. In addition, we conduct weekly strategic sync calls and maintain a dedicated Slack/Teams communication channel for rapid turnarounds.",
+        "Prepaid SMS credits never expire. As your monthly broadcast volume increases beyond 50,000, 200,000, and 1,000,000+ units, unit costs decrease significantly. Custom enterprise pricing and post-paid billing agreements are available for verified businesses.",
     },
     {
-      question: "Who owns the ad accounts, creative assets, and landing page code?",
+      question: "Are your messaging services compliant with TCPA, GDPR, and local carrier guidelines?",
       answer:
-        "You do. 100%. All advertising accounts, custom tracking scripts, video creatives, ad copy, and landing page code developed by LJK belong entirely to your company. Even if we ever part ways, everything built remains your permanent asset.",
+        "Yes. Our platform includes built-in automated opt-out (STOP) handling, suppression list management, time-zone sensitive dispatch windows (preventing late-night promotional SMS), and two-step opt-in verification tools to ensure full regulatory compliance.",
     },
   ];
 
@@ -45,13 +45,13 @@ export function FAQ() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
-            Common Questions
+            Messaging & Gateway FAQs
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
-            Frequently Asked Questions About Partnering With LJK
+            Frequently Asked Questions About Bulk SMS & Email Marketing
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
-            Clear, transparent answers on our process, commercials, deliverables, and tech stack.
+            Everything you need to know about carrier routes, sender IDs, deliverability, and developer APIs.
           </p>
         </div>
 
@@ -94,12 +94,12 @@ export function FAQ() {
 
         {/* Bottom support line */}
         <div className="mt-8 text-center text-xs text-zinc-500">
-          Have a unique question not covered here?{" "}
+          Need a custom carrier interconnect or high-volume SMPP quote?{" "}
           <a
             href="mailto:growth@ljkmarketingagency.com"
             className="text-[#581c87] font-semibold hover:underline"
           >
-            Email our partner desk directly
+            Contact our telecom engineering desk
           </a>
         </div>
 

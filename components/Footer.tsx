@@ -14,87 +14,86 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <LJKLogo size="md" variant="white" />
             <p className="text-xs font-normal text-zinc-400 max-w-sm leading-relaxed">
-              LJK Marketing Agency is a premier performance marketing and revenue growth unit. We
-              engineer full-funnel paid media, search visibility, conversion funnels, and retention
-              systems for high-growth brands worldwide.
+              LJK Marketing Agency provides high-throughput Bulk SMS gateways, dedicated email marketing
+              infrastructure, and omnichannel retention automations engineered for high-growth businesses.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-zinc-400">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-purple-300">
-                <span className="w-1.5 h-1.5 rounded bg-emerald-400" />
-                Accepting New Clients
+                <span className="w-1.5 h-1.5 rounded bg-emerald-400 animate-pulse" />
+                Gateway Status: 100% Operational
               </span>
-              <span>New York · Austin · London</span>
+              <span>Direct Tier-1 Interconnects</span>
             </div>
           </div>
 
           {/* Col 1: Solutions */}
           <div className="space-y-3">
             <div className="text-xs font-semibold uppercase tracking-wider text-white">
-              Capabilities
+              Messaging Services
             </div>
             <ul className="space-y-2 text-xs font-normal text-zinc-400">
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Performance Paid Ads
+                  Enterprise Bulk SMS
                 </a>
               </li>
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Technical SEO & Content
+                  Transactional OTP & Alerts
                 </a>
               </li>
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Conversion Rate Optimization
+                  High-Inbox Email Marketing
                 </a>
               </li>
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Lifecycle Email & SMS
+                  Dedicated IP Warming
                 </a>
               </li>
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Creative & UGC Production
+                  Lifecycle Klaviyo Automations
                 </a>
               </li>
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Next.js Growth Landing Pages
+                  REST API & SMPP 3.4
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 2: Framework & Case Studies */}
+          {/* Col 2: Infrastructure & Tools */}
           <div className="space-y-3">
             <div className="text-xs font-semibold uppercase tracking-wider text-white">
-              Growth Engine
+              Platform & Tools
             </div>
             <ul className="space-y-2 text-xs font-normal text-zinc-400">
               <li>
                 <a href="#framework" className="hover:text-purple-300 transition-colors">
-                  The 4-Stage Architecture
+                  Deliverability Protocol
                 </a>
               </li>
               <li>
                 <a href="#results" className="hover:text-purple-300 transition-colors">
-                  Case Studies & ROI Data
+                  Delivery Case Studies
                 </a>
               </li>
               <li>
                 <a href="#calculator" className="hover:text-purple-300 transition-colors">
-                  Interactive Revenue Modeler
+                  Messaging ROI Calculator
                 </a>
               </li>
               <li>
                 <a href="#faq" className="hover:text-purple-300 transition-colors">
-                  Agency FAQs & Terms
+                  Gateway FAQs & SLA
                 </a>
               </li>
               <li>
                 <a href="#audit" className="hover:text-purple-300 transition-colors">
-                  14-Point Growth Audit
+                  Claim 50 Test Credits
                 </a>
               </li>
             </ul>
@@ -103,20 +102,20 @@ export function Footer() {
           {/* Col 3: Direct Contact */}
           <div className="space-y-3">
             <div className="text-xs font-semibold uppercase tracking-wider text-white">
-              Get in Touch
+              Telecom Support
             </div>
             <div className="space-y-2 text-xs font-normal text-zinc-400">
               <div>
-                <span className="text-zinc-500 block">General Inquiries:</span>
+                <span className="text-zinc-500 block">Technical Support:</span>
                 <a
-                  href="mailto:contact@ljkmarketingagency.com"
+                  href="mailto:support@ljkmarketingagency.com"
                   className="text-purple-300 hover:underline"
                 >
-                  contact@ljkmarketingagency.com
+                  support@ljkmarketingagency.com
                 </a>
               </div>
               <div>
-                <span className="text-zinc-500 block">New Partnerships:</span>
+                <span className="text-zinc-500 block">Sales & Enterprise Routes:</span>
                 <a
                   href="mailto:growth@ljkmarketingagency.com"
                   className="text-purple-300 hover:underline"
@@ -125,7 +124,7 @@ export function Footer() {
                 </a>
               </div>
               <div>
-                <span className="text-zinc-500 block">Direct Line:</span>
+                <span className="text-zinc-500 block">Emergency Gateway NOC:</span>
                 <span className="text-zinc-300">+1 (800) 555-0199</span>
               </div>
             </div>
@@ -136,7 +135,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-normal text-zinc-500">
           <div>
-            © {currentYear} LJK Marketing Agency LLC. All rights reserved. Built for high-growth brands.
+            © {currentYear} LJK Marketing Agency LLC. All rights reserved. Direct Carrier Routing.
           </div>
           <div className="flex items-center gap-6">
             <a href="#audit" className="hover:text-zinc-300 transition-colors">
@@ -146,7 +145,7 @@ export function Footer() {
               Terms of Service
             </a>
             <a href="#audit" className="hover:text-zinc-300 transition-colors">
-              Client Portal
+              API Documentation
             </a>
           </div>
         </div>

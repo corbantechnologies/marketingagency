@@ -29,24 +29,24 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://ljkmarketingagency.com"),
   title: {
-    default: "LJK Marketing Agency | Strategic Growth & Performance Marketing",
+    default: "LJK Marketing Agency | Bulk SMS, Email Marketing & Growth Engineering",
     template: "%s | LJK Marketing Agency",
   },
   description:
-    "LJK Marketing Agency delivers high-impact growth engineering, performance paid media, precision SEO, conversion rate optimization, and lifecycle automation to scale ambitious brands.",
+    "LJK Marketing Agency provides high-deliverability Bulk SMS gateways, enterprise Email Marketing, lifecycle automation, and performance marketing systems to scale customer acquisition and retention.",
   keywords: [
-    "LJK Marketing Agency",
-    "growth marketing agency",
-    "performance marketing",
-    "digital marketing agency",
-    "paid advertising management",
-    "technical SEO services",
-    "conversion rate optimization",
-    "omnichannel marketing",
-    "e-commerce growth agency",
-    "B2B SaaS marketing",
+    "Bulk SMS marketing",
+    "Email marketing agency",
+    "SMS gateway API",
+    "transactional SMS",
+    "promotional bulk SMS",
+    "email deliverability services",
     "marketing automation",
-    "funnel optimization",
+    "LJK Marketing Agency",
+    "lifecycle email campaigns",
+    "custom sender ID SMS",
+    "omnichannel marketing",
+    "high volume messaging",
   ],
   authors: [{ name: "LJK Marketing Agency", url: "https://ljkmarketingagency.com" }],
   creator: "LJK Marketing Agency",
@@ -75,23 +75,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://ljkmarketingagency.com",
     siteName: "LJK Marketing Agency",
-    title: "LJK Marketing Agency | Strategic Growth & Performance Marketing",
+    title: "LJK Marketing Agency | Bulk SMS, Email Marketing & Growth Engineering",
     description:
-      "Scale your revenue with battle-tested performance media, technical SEO, and conversion optimization built for high-growth brands.",
+      "Enterprise Bulk SMS gateway, high-inbox email marketing, and automated customer communication engineered for maximum ROI.",
     images: [
       {
         url: "/ljk-logo.svg",
         width: 1200,
         height: 630,
-        alt: "LJK Marketing Agency - Growth Engineering & Performance Marketing",
+        alt: "LJK Marketing Agency - Bulk SMS & Email Marketing Infrastructure",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LJK Marketing Agency | Strategic Growth & Performance Marketing",
+    title: "LJK Marketing Agency | Bulk SMS & Email Marketing Infrastructure",
     description:
-      "Data-driven marketing systems that turn ad spend into predictable, high-margin revenue.",
+      "High-throughput Tier-1 SMS routes, inbox-guaranteed email marketing, and automated customer retention workflows.",
     images: ["/ljk-logo.svg"],
     creator: "@ljkmarketing",
   },
@@ -113,8 +113,8 @@ const jsonLd = {
   logo: "https://ljkmarketingagency.com/ljk-logo.svg",
   image: "https://ljkmarketingagency.com/ljk-logo.svg",
   description:
-    "LJK Marketing Agency is a premier performance marketing and growth engineering firm specializing in paid media, SEO, CRO, and revenue systems.",
-  priceRange: "$$$$",
+    "LJK Marketing Agency is an enterprise Bulk SMS gateway provider, email marketing powerhouse, and growth agency offering high-deliverability messaging and automated marketing systems.",
+  priceRange: "$$$",
   telephone: "+1-800-555-0199",
   email: "growth@ljkmarketingagency.com",
   address: {
@@ -126,34 +126,25 @@ const jsonLd = {
   sameAs: [
     "https://linkedin.com/company/ljk-marketing-agency",
     "https://twitter.com/ljkmarketing",
-    "https://instagram.com/ljkmarketing",
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Marketing Services",
+    name: "Messaging & Marketing Services",
     itemListElement: [
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "Paid Media & Performance Advertising",
-          description: "High-ROAS campaign management on Meta, Google, TikTok, and LinkedIn.",
+          name: "Enterprise Bulk SMS Gateway",
+          description: "High-throughput Tier-1 SMS routing with custom sender ID, 2-way messaging, and real-time DLR analytics.",
         },
       },
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "Search Engine Optimization (SEO)",
-          description: "Technical SEO, high-intent content strategy, and authority link acquisition.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Conversion Rate Optimization (CRO)",
-          description: "Data-driven A/B testing, funnel optimization, and user journey optimization.",
+          name: "High-Inbox Email Marketing",
+          description: "Dedicated IP warmup, automated email workflows, spam shield optimization, and subscriber lifecycle management.",
         },
       },
       {
@@ -161,7 +152,15 @@ const jsonLd = {
         itemOffered: {
           "@type": "Service",
           name: "Lifecycle & Retention Automation",
-          description: "Omni-channel email, SMS, and CRM workflows for compounding customer LTV.",
+          description: "Behavior-triggered multi-channel SMS/Email flows for high-converting customer retention.",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Subscriber Acquisition & Paid Ads",
+          description: "Full-funnel traffic generation to rapidly scale your SMS and email customer databases.",
         },
       },
     ],

@@ -3,48 +3,48 @@ import React from "react";
 export function CaseStudies() {
   const cases = [
     {
-      client: "Aura Luxe Skincare",
-      industry: "DTC E-Commerce & Beauty",
-      highlightMetric: "+340% YoY Revenue",
-      subMetric: "5.2x Blended ROAS on Meta & TikTok",
+      client: "Nova Retail & DTC",
+      industry: "E-Commerce Flash Sales",
+      highlightMetric: "$210,000 in 4 Hours",
+      subMetric: "99.4% SMS Handset Delivery on 185k Contacts",
       challenge:
-        "Struggling with rising customer acquisition costs (CAC) on Meta ads and poor second-purchase retention.",
+        "Previous SMS provider suffered from delayed delivery queues (up to 45 min delay), causing flash sales to miss high-urgency buying windows.",
       solution:
-        "Rebuilt ad creative engine with UGC hooks, deployed a high-speed custom checkout landing page, and engineered a 6-tier Klaviyo retention flow.",
+        "Migrated to LJK Tier-1 direct carrier routes with custom Sender ID. Broadcasted 185,000 personalized SMS in under 6 minutes.",
       results: [
-        { label: "Revenue Scale", val: "$1.4M → $6.2M" },
-        { label: "CAC Reduction", val: "-38.4%" },
-        { label: "Repeat Purchase Rate", val: "34.6%" },
+        { label: "Dispatch Speed", val: "5.8 Mins" },
+        { label: "SMS CTR", val: "18.4%" },
+        { label: "Direct Campaign ROI", val: "14.2x" },
       ],
     },
     {
-      client: "OmniFlow Cloud",
-      industry: "B2B SaaS Enterprise",
-      highlightMetric: "+215% Demo Pipeline",
-      subMetric: "-45% Cost Per Qualified Opportunity",
+      client: "PayCore Digital",
+      industry: "FinTech & Banking API",
+      highlightMetric: "<1.6s OTP Delivery",
+      subMetric: "99.98% Gateway SLA & Zero Failed Auth",
       challenge:
-        "High CPC on Google Search and low conversion rates on demo request pages with disjointed LinkedIn tracking.",
+        "High user drop-off during 2FA signup and withdrawal verification due to slow third-party SMS aggregator routing.",
       solution:
-        "Implemented high-intent competitor conquesting campaigns, streamlined the demo funnel to 2 steps, and launched personalized ABM ads.",
+        "Implemented LJK SMPP 3.4 low-latency transactional SMS gateway with multi-carrier failover routing and instant DLR webhooks.",
       results: [
-        { label: "Qualified Pipeline", val: "$8.4M ARR" },
-        { label: "Search CVR Lift", val: "+72%" },
-        { label: "Sales Cycle", val: "-22 Days" },
+        { label: "Avg Latency", val: "1.48s" },
+        { label: "Drop-off Reduction", val: "-42%" },
+        { label: "Monthly OTPs", val: "1.2M+" },
       ],
     },
     {
-      client: "Apex Wealth Partners",
-      industry: "Financial & Advisory Services",
-      highlightMetric: "$18.5M New AUM",
-      subMetric: "14.2x Client Lifetime ROI",
+      client: "Aura Skincare & Wellness",
+      industry: "Omnichannel Lifecycle Retention",
+      highlightMetric: "38.2% of Total Store Revenue",
+      subMetric: "+290% Increase in Repeat Buyer LTV",
       challenge:
-        "Over-reliance on local referrals and weak organic presence for high-net-worth wealth management queries.",
+        "Emails landing in Gmail Promotions tab with 12% open rates and no active SMS abandoned cart recovery.",
       solution:
-        "Engineered a nationwide programmatic SEO content hub, authoritative digital PR strategy, and local search dominance.",
+        "Dedicated IP warmup, DMARC domain alignment, and 8-stage omnichannel SMS + Email automation flows.",
       results: [
-        { label: "Organic Inbound", val: "+410%" },
-        { label: "Average Deal Value", val: "$450k AUM" },
-        { label: "Rank 1 Keywords", val: "148 Terms" },
+        { label: "Inbox Open Rate", val: "44.6%" },
+        { label: "Cart Recovery", val: "28.4%" },
+        { label: "Repeat LTV", val: "+290%" },
       ],
     },
   ];
@@ -56,14 +56,14 @@ export function CaseStudies() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
-            Proven Track Record
+            Proven Performance Data
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
-            Measurable Case Studies Across High-Growth Sectors
+            Verified Bulk SMS & Email Campaign Case Studies
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
-            Real data from real campaigns. Discover how we helped ambitious founders and enterprise
-            marketing directors unlock compounding growth.
+            Real delivery telemetry and revenue data from enterprise SMS broadcasts, FinTech transactional
+            gateways, and automated retention engines.
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export function CaseStudies() {
                   <span className="text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded">
                     {item.industry}
                   </span>
-                  <span className="text-xs font-normal text-zinc-400">Verified Client</span>
+                  <span className="text-xs font-normal text-zinc-400">Carrier Verified</span>
                 </div>
 
                 <h3 className="text-base font-semibold text-zinc-900 mb-1">
@@ -131,7 +131,7 @@ export function CaseStudies() {
             href="#audit"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[#581c87] hover:text-[#4a1572] underline underline-offset-4"
           >
-            <span>Want to see full un-redacted tear downs and performance logs? Request our portfolio</span>
+            <span>Need high-volume enterprise SMS pricing or SMPP interconnect details? Request a route teardown</span>
             <span>→</span>
           </a>
         </div>
