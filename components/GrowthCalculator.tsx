@@ -56,15 +56,15 @@ export function GrowthCalculator() {
                   Campaign Objective
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {[
+                  {([
                     { id: "omnichannel", label: "Omnichannel Flows" },
                     { id: "promotional", label: "Flash Sales & Promo" },
                     { id: "transactional", label: "Alerts & OTPs" },
-                  ].map((tab) => (
+                  ] as const).map((tab) => (
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => setCampaignType(tab.id as any)}
+                      onClick={() => setCampaignType(tab.id)}
                       className={`py-2 px-3 rounded text-xs font-medium transition-colors border text-center ${
                         campaignType === tab.id
                           ? "bg-[#581c87] text-white border-[#581c87]"
