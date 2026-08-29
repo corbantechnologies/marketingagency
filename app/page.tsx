@@ -1,15 +1,15 @@
 import React from "react";
-import { Navbar } from "@/components/Navbar";
-import { Hero } from "@/components/Hero";
-import { ClientLogos } from "@/components/ClientLogos";
-import { Services } from "@/components/Services";
-import { Framework } from "@/components/Framework";
-import { GrowthCalculator } from "@/components/GrowthCalculator";
-import { CaseStudies } from "@/components/CaseStudies";
-import { Testimonials } from "@/components/Testimonials";
-import { AuditForm } from "@/components/AuditForm";
-import { FAQ } from "@/components/FAQ";
-import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/landing/Navbar";
+import { Hero } from "@/components/landing/Hero";
+import { ClientLogos } from "@/components/landing/ClientLogos";
+import { Services } from "@/components/landing/Services";
+import { Framework } from "@/components/landing/Framework";
+import { GrowthCalculator } from "@/components/landing/GrowthCalculator";
+import { CaseStudies } from "@/components/landing/CaseStudies";
+import { Testimonials } from "@/components/landing/Testimonials";
+import { AuditForm } from "@/components/landing/AuditForm";
+import { FAQ } from "@/components/landing/FAQ";
+import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (

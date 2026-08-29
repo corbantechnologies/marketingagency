@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { LJKLogo } from "@/components/LJKLogo";
+import { LJKLogo } from "@/components/landing/LJKLogo";
 import { Toaster } from "react-hot-toast";
 
 export default function AuthLayout({
