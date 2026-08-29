@@ -1,29 +1,29 @@
 "use client";
 
-import { Session, User } from "next-auth";
 import { useSession } from "next-auth/react";
 
-interface CustomUser extends User {
-  token?: string;
+export interface AxiosAuthHeaders {
+  headers: {
+    Authorization: string;
+    [key: string]: string;
+  };
 }
 
-interface CustomSession extends Session {
-  user?: CustomUser;
-}
+/**
+ * Hook to provide Bearer Authorization headers for authenticated Axios requests.
+ */
+export function useAxiosAuth(customHeaders?: Record<string, string>): AxiosAuthHeaders {
+  const { data: session } = useSession();
 
-function useAxiosAuth() {
-  const { data: session } = useSession() as { data: CustomSession };
+  const token = session?.accessToken || session?.user?.accessToken || "";
 
-  const tokens = session?.user?.token;
-
-  const authenticationHeader = {
+  return {
     headers: {
-      Authorization: tokens ? "Token " + tokens : "",
-      "Content-Type": "multipart/form-data",
+      Authorization: token ? `Bearer ${token}` : "",
+      "Content-Type": "application/json",
+      ...customHeaders,
     },
   };
-
-  return authenticationHeader;
 }
 
 export default useAxiosAuth;

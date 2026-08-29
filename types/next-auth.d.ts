@@ -51,6 +51,8 @@ declare module "next-auth" {
       reference?: string;
       code?: string;
       member_code?: string;
+      accessToken?: string;
+      refreshToken?: string;
       redirectUrl?: string;
     } & DefaultSession["user"];
     accessToken?: string;

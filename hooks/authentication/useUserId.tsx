@@ -1,26 +1,16 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Session, User } from "next-auth";
 
-interface CustomUser extends User {
-  id: string;
-}
-
-interface CustomSession extends Session {
-  user: CustomUser;
-}
-
-function useUserId(): string | null {
+/**
+ * Hook to retrieve the current authenticated user's ID
+ */
+export function useUserId(): string | null {
   const { data: session, status } = useSession();
-  // Return null if session is not authenticated or data is null
-  if (status !== "authenticated" || !session) {
+  if (status !== "authenticated" || !session?.user?.id) {
     return null;
   }
-  // Cast session to CustomSession since we know it's authenticated
-  const customSession = session as CustomSession;
-  const userId = customSession.user.id;
-  return userId;
+  return String(session.user.id);
 }
 
 export default useUserId;

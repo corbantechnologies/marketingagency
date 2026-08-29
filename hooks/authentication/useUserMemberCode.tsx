@@ -1,26 +1,16 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Session, User } from "next-auth";
 
-interface CustomUser extends User {
-  member_code: string;
-}
-
-interface CustomSession extends Session {
-  user: CustomUser;
-}
-
-function useUserMemberCode(): string | null {
+/**
+ * Hook to retrieve the current authenticated user's agency member code or reference
+ */
+export function useUserMemberCode(): string | null {
   const { data: session, status } = useSession();
-  // Return null if session is not authenticated or data is null
-  if (status !== "authenticated" || !session) {
+  if (status !== "authenticated" || !session?.user) {
     return null;
   }
-  // Cast session to CustomSession since we know it's authenticated
-  const customSession = session as CustomSession;
-  const member_code = customSession.user.member_code;
-  return member_code;
+  return session.user.member_code || session.user.code || session.user.reference || null;
 }
 
 export default useUserMemberCode;
