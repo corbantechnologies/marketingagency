@@ -73,6 +73,16 @@ export function Footer() {
             </div>
             <ul className="space-y-2 text-xs font-normal text-zinc-400">
               <li>
+                <Link href="/features" className="hover:text-purple-300 transition-colors">
+                  Platform Features &amp; APIs
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" className="hover:text-purple-300 transition-colors">
+                  Pricing &amp; Plans
+                </Link>
+              </li>
+              <li>
                 <a href="#framework" className="hover:text-purple-300 transition-colors">
                   Deliverability Protocol
                 </a>
