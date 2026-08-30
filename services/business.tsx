@@ -8,6 +8,19 @@ import { AxiosResponse } from "axios";
 // TypeScript Interfaces (Directly matching Django backend serializers & models)
 // ============================================================================
 
+export type SenderIdStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface BusinessWallet {
+  id?: string;
+  business?: string;
+  sms_credit_balance: number;
+  email_credit_balance: number;
+  reference: string;
+  code: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Business {
   id: string;
   owner: string; // owner email
@@ -15,6 +28,15 @@ export interface Business {
   email: string;
   phone: string | null;
   address: string | null;
+  active_plan?: string | null;
+  sender_id?: string | null;
+  sender_id_status?: SenderIdStatus;
+  sender_id_rejection_reason?: string | null;
+  tax_pin?: string | null;
+  registration_number?: string | null;
+  registration_date?: string | null;
+  registration_document?: string | null;
+  wallet?: BusinessWallet | null;
   reference: string;
   code: string;
   is_active: boolean;
@@ -27,6 +49,11 @@ export interface CreateBusinessPayload {
   email: string;
   phone?: string | null;
   address?: string | null;
+  active_plan?: string | null;
+  sender_id?: string | null;
+  tax_pin?: string | null;
+  registration_number?: string | null;
+  registration_date?: string | null;
 }
 
 export interface UpdateBusinessPayload {
@@ -34,6 +61,13 @@ export interface UpdateBusinessPayload {
   email?: string;
   phone?: string | null;
   address?: string | null;
+  active_plan?: string | null;
+  sender_id?: string | null;
+  sender_id_status?: SenderIdStatus;
+  sender_id_rejection_reason?: string | null;
+  tax_pin?: string | null;
+  registration_number?: string | null;
+  registration_date?: string | null;
   is_active?: boolean;
 }
 
