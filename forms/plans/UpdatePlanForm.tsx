@@ -84,6 +84,7 @@ export function UpdatePlanForm({ plan, onSuccess, onCancel }: UpdatePlanFormProp
       included_email_credits: formData.included_email_credits === "" ? 0 : Number(formData.included_email_credits),
       max_contacts: formData.max_contacts === "" ? 0 : Number(formData.max_contacts),
       max_sender_ids: formData.max_sender_ids === "" ? 0 : Number(formData.max_sender_ids),
+      sort_order: formData.sort_order === "" ? 0 : Number(formData.sort_order),
     };
 
     updateMutation.mutate(
@@ -170,7 +171,7 @@ export function UpdatePlanForm({ plan, onSuccess, onCancel }: UpdatePlanFormProp
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
               Category Tag
@@ -216,6 +217,20 @@ export function UpdatePlanForm({ plan, onSuccess, onCancel }: UpdatePlanFormProp
               <option value="ANNUAL">Annual Recurring</option>
               <option value="ONCE">One-Time Purchase</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+              Display Rank / Order
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={formData.sort_order ?? ""}
+              onChange={(e) => setFormData({ ...formData, sort_order: e.target.value })}
+              placeholder="e.g. 1, 2, 3"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87]/20 focus:border-[#581c87] transition-all shadow-2xs"
+            />
           </div>
         </div>
       </div>

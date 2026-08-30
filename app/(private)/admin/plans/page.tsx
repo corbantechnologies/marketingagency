@@ -8,6 +8,7 @@ import {
   useDeactivatePlan,
   useReactivatePlan,
   useDeletePlan,
+  useSeedPlans,
 } from "@/hooks/plans/actions";
 import { Plan } from "@/services/plans";
 import toast from "react-hot-toast";
@@ -21,6 +22,18 @@ export default function AdminPlansPage() {
   const deactivateMutation = useDeactivatePlan();
   const reactivateMutation = useReactivatePlan();
   const deleteMutation = useDeletePlan();
+  const seedMutation = useSeedPlans();
+
+  const handleSeedPlans = () => {
+    seedMutation.mutate(undefined, {
+      onSuccess: (data: any) => {
+        toast.success(data?.message || "Standard production plans populated successfully!");
+      },
+      onError: (err: any) => {
+        toast.error(err?.response?.data?.message || "Failed to seed plans.");
+      },
+    });
+  };
 
   const plans: Plan[] = Array.isArray(plansData)
     ? plansData
@@ -87,15 +100,30 @@ export default function AdminPlansPage() {
           </p>
         </div>
 
-        <Link
-          href="/admin/plans/create"
-          className="shrink-0 whitespace-nowrap py-2.5 px-5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors inline-flex items-center justify-center gap-2 shadow-xs self-start sm:self-auto cursor-pointer"
-        >
-          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          <span>Create New Plan</span>
-        </Link>
+        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={handleSeedPlans}
+            disabled={seedMutation.isPending}
+            className="py-2.5 px-4 bg-white hover:bg-zinc-50 text-zinc-700 text-xs sm:text-sm font-semibold rounded-lg border border-zinc-300 transition-colors inline-flex items-center justify-center gap-2 shadow-2xs cursor-pointer disabled:opacity-50"
+            title="Populate standard Starter, Growth, Scale & Enterprise SLA plans"
+          >
+            <svg className="w-4 h-4 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span>{seedMutation.isPending ? "Seeding..." : "Seed Standard Plans"}</span>
+          </button>
+
+          <Link
+            href="/admin/plans/create"
+            className="whitespace-nowrap py-2.5 px-5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Create New Plan</span>
+          </Link>
+        </div>
       </div>
 
       {/* KPI Cards Summary */}
@@ -286,8 +314,36 @@ export default function AdminPlansPage() {
             </table>
           </div>
         ) : (
-          <div className="py-16 text-center text-xs text-zinc-500">
-            No plans found matching &ldquo;{searchTerm}&rdquo; in {selectedCategory}.
+          <div className="py-16 px-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-purple-50 text-[#581c87] flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-bold text-zinc-900">No Pricing Plans Found</h3>
+            <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+              {plans.length === 0
+                ? "Get started quickly by populating the standard Starter, Growth, Scale & Enterprise SLA plans, or create your own."
+                : `No plans matching "${searchTerm}" in ${selectedCategory}.`}
+            </p>
+            {plans.length === 0 && (
+              <div className="flex items-center justify-center gap-3 mt-5">
+                <button
+                  type="button"
+                  onClick={handleSeedPlans}
+                  disabled={seedMutation.isPending}
+                  className="py-2 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {seedMutation.isPending ? "Seeding Plans..." : "Seed Standard Plans (1-Click)"}
+                </button>
+                <Link
+                  href="/admin/plans/create"
+                  className="py-2 px-4 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-semibold rounded-lg border border-zinc-300 transition-colors shadow-2xs"
+                >
+                  Create Custom Plan
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

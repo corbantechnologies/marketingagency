@@ -10,6 +10,7 @@ import {
   getPlans,
   PlanFilterParams,
   reactivatePlan,
+  seedPlans,
   updatePlan,
   UpdatePlanPayload,
 } from "@/services/plans";
@@ -143,3 +144,21 @@ export function useDeletePlan() {
     },
   });
 }
+
+/**
+ * Mutation hook to seed default production plans (Admin only)
+ */
+export function useSeedPlans() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const authConfig = await getFreshAuthHeaders();
+      return seedPlans(authConfig);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["plans"] });
+    },
+  });
+}
+

@@ -254,3 +254,15 @@ export const deletePlan = async (
 ): Promise<void> => {
   await apiActions.delete(`/api/v1/plans/${reference}/`, config);
 };
+
+/**
+ * Seed/populate standard production plans (Admin only)
+ * Endpoint: POST /api/v1/plans/seed/
+ */
+export const seedPlans = async (
+  config?: AxiosConfig
+): Promise<{ message: string; created_count: number; updated_count: number; plans: Plan[] }> => {
+  const response = await apiActions.post("/api/v1/plans/seed/", {}, config);
+  return response.data;
+};
+
