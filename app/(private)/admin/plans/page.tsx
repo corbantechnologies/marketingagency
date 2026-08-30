@@ -10,15 +10,11 @@ import {
   useDeletePlan,
 } from "@/hooks/plans/actions";
 import { Plan } from "@/services/plans";
-import { CreatePlanForm } from "@/forms/plans/CreatePlanForm";
-import { UpdatePlanForm } from "@/forms/plans/UpdatePlanForm";
 import toast from "react-hot-toast";
 
 export default function AdminPlansPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [deletingPlan, setDeletingPlan] = useState<Plan | null>(null);
 
   const { data: plansData, isLoading } = useFetchPlans();
@@ -39,7 +35,9 @@ export default function AdminPlansPage() {
       (p.badge_text || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      selectedCategory === "ALL" || p.category === selectedCategory;
+      selectedCategory === "ALL" ||
+      p.category === selectedCategory ||
+      p.category === "HYBRID";
 
     return matchesSearch && matchesCategory;
   });
@@ -75,7 +73,7 @@ export default function AdminPlansPage() {
     <div className="space-y-6 w-full max-w-none">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
             <Link href="/admin/dashboard" className="hover:text-zinc-900">Admin Console</Link>
             <span>/</span>
@@ -89,16 +87,15 @@ export default function AdminPlansPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="py-2.5 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-xs self-start sm:self-auto cursor-pointer"
+        <Link
+          href="/admin/plans/create"
+          className="shrink-0 whitespace-nowrap py-2.5 px-5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors inline-flex items-center justify-center gap-2 shadow-xs self-start sm:self-auto cursor-pointer"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           <span>Create New Plan</span>
-        </button>
+        </Link>
       </div>
 
       {/* KPI Cards Summary */}
@@ -180,7 +177,7 @@ export default function AdminPlansPage() {
                 <tr className="text-zinc-400 font-bold uppercase tracking-wider border-b border-zinc-200 pb-2">
                   <th className="py-3 px-2">Plan Details</th>
                   <th className="py-3 px-2">Category</th>
-                  <th className="py-3 px-2">Price</th>
+                  <th className="py-3 px-2">Pricing</th>
                   <th className="py-3 px-2">SMS Rate</th>
                   <th className="py-3 px-2">Included Credits</th>
                   <th className="py-3 px-2">Status</th>
@@ -219,7 +216,10 @@ export default function AdminPlansPage() {
                     {/* Price */}
                     <td className="py-3.5 px-2">
                       <div className="font-bold text-zinc-900">KES {Number(plan.price_kes).toLocaleString()}</div>
-                      <div className="text-[10px] text-zinc-500 font-medium capitalize">{plan.billing_cycle.toLowerCase()}</div>
+                      <div className="text-[10px] text-zinc-500 font-medium capitalize">
+                        {plan.billing_cycle.toLowerCase()}
+                        {plan.annual_discount_percent ? ` (${plan.annual_discount_percent}% off annual)` : ""}
+                      </div>
                     </td>
 
                     {/* SMS Rate */}
@@ -249,13 +249,12 @@ export default function AdminPlansPage() {
                     {/* Action Buttons */}
                     <td className="py-3.5 px-2 text-right">
                       <div className="inline-flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setEditingPlan(plan)}
-                          className="py-1 px-2.5 rounded text-[11px] font-semibold text-zinc-700 hover:bg-zinc-100 border border-zinc-200 transition-colors cursor-pointer"
+                        <Link
+                          href={`/admin/plans/${plan.reference}/edit`}
+                          className="py-1 px-2.5 rounded text-[11px] font-semibold text-zinc-700 hover:bg-zinc-100 border border-zinc-200 transition-colors"
                         >
                           Edit
-                        </button>
+                        </Link>
 
                         <button
                           type="button"
@@ -292,59 +291,6 @@ export default function AdminPlansPage() {
           </div>
         )}
       </div>
-
-      {/* Modal: Create Plan */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-3xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto my-8">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
-              <div>
-                <h2 className="text-lg font-bold text-zinc-900">Create New Pricing Plan</h2>
-                <p className="text-xs text-zinc-500">Add a new tier to the agency catalogue</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsCreateModalOpen(false)}
-                className="text-zinc-400 hover:text-zinc-800 p-1 text-xl font-bold cursor-pointer"
-              >
-                &times;
-              </button>
-            </div>
-
-            <CreatePlanForm
-              onSuccess={() => setIsCreateModalOpen(false)}
-              onCancel={() => setIsCreateModalOpen(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Modal: Update Plan */}
-      {editingPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-3xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto my-8">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
-              <div>
-                <h2 className="text-lg font-bold text-zinc-900">Modify Plan: {editingPlan.name}</h2>
-                <p className="text-xs text-zinc-500">Update rates, limits, features and pricing</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setEditingPlan(null)}
-                className="text-zinc-400 hover:text-zinc-800 p-1 text-xl font-bold cursor-pointer"
-              >
-                &times;
-              </button>
-            </div>
-
-            <UpdatePlanForm
-              plan={editingPlan}
-              onSuccess={() => setEditingPlan(null)}
-              onCancel={() => setEditingPlan(null)}
-            />
-          </div>
-        </div>
-      )}
 
       {/* Confirmation Modal: Delete Plan */}
       {deletingPlan && (

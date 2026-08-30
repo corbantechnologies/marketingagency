@@ -14,7 +14,7 @@ export default function AdminLayout({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex flex-col selection:bg-[#581c87] selection:text-white">
+    <div className="h-screen flex flex-col bg-zinc-50 selection:bg-[#581c87] selection:text-white overflow-hidden">
       <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
 
       <AdminNavbar
@@ -23,7 +23,7 @@ export default function AdminLayout({
         isCollapsed={isCollapsed}
       />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex min-h-0 overflow-hidden relative">
         <AdminSidebar
           isMobileOpen={isMobileOpen}
           onCloseMobile={() => setIsMobileOpen(false)}
@@ -31,7 +31,7 @@ export default function AdminLayout({
           onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
         />
 
-        <main className="flex-1 p-3 sm:p-6 lg:p-8 w-full min-w-0 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full min-w-0 overflow-y-auto">
           {children}
         </main>
       </div>

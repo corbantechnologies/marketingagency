@@ -25,6 +25,7 @@ export interface Plan {
   sort_order: number;
   price_kes: string | number;
   price_usd: string | number | null;
+  annual_discount_percent?: number;
   billing_cycle: BillingCycle;
   sms_rate_kes: string | number;
   email_rate_kes: string | number;
@@ -57,6 +58,7 @@ export interface CreatePlanPayload {
   sort_order?: number;
   price_kes: string | number;
   price_usd?: string | number | null;
+  annual_discount_percent?: number;
   billing_cycle?: BillingCycle;
   sms_rate_kes: string | number;
   email_rate_kes: string | number;
@@ -83,6 +85,7 @@ export interface UpdatePlanPayload {
   sort_order?: number;
   price_kes?: string | number;
   price_usd?: string | number | null;
+  annual_discount_percent?: number;
   billing_cycle?: BillingCycle;
   sms_rate_kes?: string | number;
   email_rate_kes?: string | number;
@@ -140,8 +143,14 @@ export const getPlans = async (
   params?: PlanFilterParams,
   config?: AxiosConfig
 ): Promise<Plan[] | { count: number; next: string | null; previous: string | null; results: Plan[] }> => {
+  const headers = { ...(config?.headers || {}) };
+  if (!headers.Authorization || typeof headers.Authorization !== "string" || !headers.Authorization.trim()) {
+    delete headers.Authorization;
+  }
+
   const response = await apiActions.get("/api/v1/plans/", {
     ...config,
+    headers,
     params,
   });
   return response.data;
@@ -155,9 +164,17 @@ export const getPlanByReference = async (
   reference: string,
   config?: AxiosConfig
 ): Promise<Plan> => {
+  const headers = { ...(config?.headers || {}) };
+  if (!headers.Authorization || typeof headers.Authorization !== "string" || !headers.Authorization.trim()) {
+    delete headers.Authorization;
+  }
+
   const response: AxiosResponse<Plan> = await apiActions.get(
     `/api/v1/plans/${reference}/`,
-    config
+    {
+      ...config,
+      headers,
+    }
   );
   return response.data;
 };

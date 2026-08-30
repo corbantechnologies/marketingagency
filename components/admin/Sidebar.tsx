@@ -97,8 +97,8 @@ export function AdminSidebar({
     <>
       <aside
         className={`
-          fixed md:sticky top-16 z-20 h-[calc(100vh-4rem)] bg-white border-r border-zinc-200 flex flex-col justify-between transition-all duration-200 ease-in-out
-          ${isMobileOpen ? "translate-x-0 w-64 shadow-xl" : "-translate-x-full md:translate-x-0"}
+          fixed md:relative z-20 h-full bg-white border-r border-zinc-200 flex flex-col justify-between transition-all duration-200 ease-in-out shrink-0
+          ${isMobileOpen ? "translate-x-0 w-64 shadow-2xl inset-y-0 left-0" : "-translate-x-full md:translate-x-0"}
           ${isCollapsed ? "md:w-18" : "md:w-64"}
         `}
       >
@@ -123,12 +123,12 @@ export function AdminSidebar({
                   ${isCollapsed ? "justify-center px-2" : ""}
                   ${
                     isActive
-                      ? "bg-amber-50 text-amber-900 font-semibold"
+                      ? "bg-purple-50 text-[#581c87] font-semibold border-r-2 border-[#581c87]"
                       : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                   }
                 `}
               >
-                <span className={isActive ? "text-amber-700" : "text-zinc-500"}>
+                <span className={isActive ? "text-[#581c87]" : "text-zinc-500"}>
                   {link.icon}
                 </span>
                 {!isCollapsed && <span className="truncate">{link.label}</span>}
@@ -142,7 +142,7 @@ export function AdminSidebar({
           {!isCollapsed ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                <div className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                   {userInitials}
                 </div>
                 <div className="flex-1 min-w-0 leading-tight">
@@ -169,7 +169,7 @@ export function AdminSidebar({
           ) : (
             <div className="flex flex-col items-center gap-2">
               <div
-                className="w-9 h-9 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs"
+                className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs"
                 title={`${userName} (${userEmailOrCode})`}
               >
                 {userInitials}

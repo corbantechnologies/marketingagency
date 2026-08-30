@@ -13,7 +13,7 @@ import {
   updatePlan,
   UpdatePlanPayload,
 } from "@/services/plans";
-import useAxiosAuth from "../authentication/useAxiosAuth";
+import useAxiosAuth, { getFreshAuthHeaders } from "../authentication/useAxiosAuth";
 
 /**
  * Query hook to fetch all plans (Public sees active plans; Admins see all)
@@ -23,7 +23,10 @@ export function useFetchPlans(params?: PlanFilterParams) {
 
   return useQuery({
     queryKey: ["plans", params, Boolean(authConfig.headers.Authorization)],
-    queryFn: () => getPlans(params, authConfig),
+    queryFn: async () => {
+      const liveAuth = await getFreshAuthHeaders();
+      return getPlans(params, liveAuth);
+    },
   });
 }
 
@@ -34,8 +37,11 @@ export function useFetchPlan(reference?: string | null) {
   const authConfig = useAxiosAuth();
 
   return useQuery({
-    queryKey: ["plan", reference],
-    queryFn: () => getPlanByReference(reference!, authConfig),
+    queryKey: ["plan", reference, Boolean(authConfig.headers.Authorization)],
+    queryFn: async () => {
+      const liveAuth = await getFreshAuthHeaders();
+      return getPlanByReference(reference!, liveAuth);
+    },
     enabled: Boolean(reference),
   });
 }
@@ -45,10 +51,12 @@ export function useFetchPlan(reference?: string | null) {
  */
 export function useCreatePlan() {
   const queryClient = useQueryClient();
-  const authConfig = useAxiosAuth();
 
   return useMutation({
-    mutationFn: (data: CreatePlanPayload) => createPlan(data, authConfig),
+    mutationFn: async (data: CreatePlanPayload) => {
+      const authConfig = await getFreshAuthHeaders();
+      return createPlan(data, authConfig);
+    },
     onSuccess: (newPlan) => {
       queryClient.invalidateQueries({ queryKey: ["plans"] });
       if (newPlan.reference) {
@@ -63,16 +71,18 @@ export function useCreatePlan() {
  */
 export function useUpdatePlan() {
   const queryClient = useQueryClient();
-  const authConfig = useAxiosAuth();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       reference,
       data,
     }: {
       reference: string;
       data: UpdatePlanPayload;
-    }) => updatePlan(reference, data, authConfig),
+    }) => {
+      const authConfig = await getFreshAuthHeaders();
+      return updatePlan(reference, data, authConfig);
+    },
     onSuccess: (updatedPlan, variables) => {
       queryClient.setQueryData(["plan", variables.reference], updatedPlan);
       queryClient.invalidateQueries({ queryKey: ["plans"] });
@@ -85,10 +95,12 @@ export function useUpdatePlan() {
  */
 export function useDeactivatePlan() {
   const queryClient = useQueryClient();
-  const authConfig = useAxiosAuth();
 
   return useMutation({
-    mutationFn: (reference: string) => deactivatePlan(reference, authConfig),
+    mutationFn: async (reference: string) => {
+      const authConfig = await getFreshAuthHeaders();
+      return deactivatePlan(reference, authConfig);
+    },
     onSuccess: (deactivatedPlan, reference) => {
       queryClient.setQueryData(["plan", reference], deactivatedPlan);
       queryClient.invalidateQueries({ queryKey: ["plans"] });
@@ -101,10 +113,12 @@ export function useDeactivatePlan() {
  */
 export function useReactivatePlan() {
   const queryClient = useQueryClient();
-  const authConfig = useAxiosAuth();
 
   return useMutation({
-    mutationFn: (reference: string) => reactivatePlan(reference, authConfig),
+    mutationFn: async (reference: string) => {
+      const authConfig = await getFreshAuthHeaders();
+      return reactivatePlan(reference, authConfig);
+    },
     onSuccess: (reactivatedPlan, reference) => {
       queryClient.setQueryData(["plan", reference], reactivatedPlan);
       queryClient.invalidateQueries({ queryKey: ["plans"] });
@@ -117,10 +131,12 @@ export function useReactivatePlan() {
  */
 export function useDeletePlan() {
   const queryClient = useQueryClient();
-  const authConfig = useAxiosAuth();
 
   return useMutation({
-    mutationFn: (reference: string) => deletePlan(reference, authConfig),
+    mutationFn: async (reference: string) => {
+      const authConfig = await getFreshAuthHeaders();
+      return deletePlan(reference, authConfig);
+    },
     onSuccess: (_, reference) => {
       queryClient.removeQueries({ queryKey: ["plan", reference] });
       queryClient.invalidateQueries({ queryKey: ["plans"] });

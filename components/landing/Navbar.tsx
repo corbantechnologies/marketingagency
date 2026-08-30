@@ -34,68 +34,69 @@ export function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
+          
           {/* Brand Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] rounded"
+            className="flex items-center gap-2 shrink-0 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] rounded"
             aria-label="LJK Marketing Agency Home"
           >
             <LJKLogo size="md" />
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
+          {/* Desktop Navigation Links (Visible on Large Screens 1024px+ to prevent iPad overlap) */}
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7" aria-label="Main Navigation">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-zinc-600 hover:text-[#581c87] transition-colors py-1 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] rounded"
+                className="text-xs xl:text-sm font-medium text-zinc-600 hover:text-[#581c87] transition-colors py-1 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] rounded whitespace-nowrap"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Action CTAs: Desktop (lg+) */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
             <Link
               href="/pricing"
-              className="text-xs font-semibold text-zinc-700 hover:text-[#581c87] px-3 py-2 rounded transition-colors"
+              className="text-xs xl:text-sm font-semibold text-zinc-700 hover:text-[#581c87] px-3 py-2 rounded transition-colors whitespace-nowrap"
             >
               View Rates
             </Link>
             <Link
               href="/#audit"
-              className="inline-flex items-center justify-center bg-[#581c87] text-white hover:bg-[#4a1572] px-4 py-2 rounded text-sm font-medium transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#581c87] focus:ring-offset-2"
+              className="inline-flex items-center justify-center bg-[#581c87] text-white hover:bg-[#4a1572] px-4 py-2 rounded text-xs xl:text-sm font-medium transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#581c87] focus:ring-offset-2 whitespace-nowrap"
             >
               Get Free Audit
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Tablet & Mobile Right Side (Below 1024px / iPad and Mobile) */}
+          <div className="flex lg:hidden items-center gap-2 shrink-0">
             <Link
               href="/pricing"
-              className="inline-flex items-center justify-center border border-zinc-200 text-zinc-800 px-2.5 py-1.5 rounded text-xs font-medium"
+              className="hidden sm:inline-flex items-center justify-center border border-zinc-200 hover:bg-zinc-50 text-zinc-800 px-3 py-1.5 rounded text-xs font-semibold transition-colors"
             >
-              Pricing
+              Rates
             </Link>
             <Link
               href="/#audit"
-              className="inline-flex items-center justify-center bg-[#581c87] text-white px-3 py-1.5 rounded text-xs font-medium"
+              className="inline-flex items-center justify-center bg-[#581c87] text-white hover:bg-[#4a1572] px-3 py-1.5 rounded text-xs font-semibold transition-colors shadow-2xs"
             >
-              Audit
+              Free Audit
             </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded text-zinc-600 hover:text-[#581c87] hover:bg-zinc-100 focus:outline-hidden"
+              className="p-2 rounded-lg text-zinc-700 hover:text-[#581c87] hover:bg-zinc-100 focus:outline-hidden cursor-pointer"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
             >
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -113,27 +114,38 @@ export function Navbar() {
               </svg>
             </button>
           </div>
+
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile & iPad Menu Drawer (lg:hidden) */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-zinc-200 px-4 pt-2 pb-6 space-y-2">
-          {navLinks.map((link) => (
+        <div className="lg:hidden bg-white border-b border-zinc-200 px-4 sm:px-6 pt-3 pb-6 space-y-2 shadow-lg animate-in slide-in-from-top-2 duration-150">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 pb-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2.5 text-sm font-medium text-zinc-700 hover:text-[#581c87] hover:bg-purple-50 rounded-lg transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="pt-3 border-t border-zinc-100 flex flex-col sm:flex-row gap-2">
             <Link
-              key={link.label}
-              href={link.href}
+              href="/pricing"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-zinc-700 hover:text-[#581c87] hover:bg-purple-50 rounded"
+              className="w-full text-center py-2.5 rounded-lg text-xs font-semibold text-zinc-800 border border-zinc-200 hover:bg-zinc-50 transition-colors"
             >
-              {link.label}
+              Explore Pricing &amp; Rates
             </Link>
-          ))}
-          <div className="pt-3 border-t border-zinc-100 flex flex-col gap-2">
             <Link
               href="/#audit"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center bg-[#581c87] text-white py-2.5 rounded text-sm font-medium hover:bg-[#4a1572]"
+              className="w-full text-center bg-[#581c87] text-white py-2.5 rounded-lg text-xs font-semibold hover:bg-[#4a1572] transition-colors shadow-xs"
             >
               Request Free Growth Audit
             </Link>
@@ -143,3 +155,5 @@ export function Navbar() {
     </header>
   );
 }
+
+export default Navbar;

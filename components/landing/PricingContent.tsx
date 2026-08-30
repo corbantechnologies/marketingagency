@@ -145,40 +145,46 @@ export function PricingContent() {
 
   const plans: PlanItem[] =
     apiPlans.length > 0
-      ? apiPlans.map((p) => ({
-          id: p.reference || p.code || p.id,
-          name: p.name,
-          tagline: p.tagline,
-          priceKesMonthly: Number(p.price_kes),
-          priceKesAnnual: Math.round(Number(p.price_kes) * 0.85),
-          smsRateKes: Number(p.sms_rate_kes),
-          emailRateKes: Number(p.email_rate_kes),
-          includedSms: p.included_sms_credits,
-          includedEmail: p.included_email_credits,
-          maxContacts: p.max_contacts > 0 ? p.max_contacts.toLocaleString() : "Unlimited",
-          senderIds: p.max_sender_ids,
-          isPopular: p.is_featured,
-          badge: p.badge_text || (p.is_featured ? "Most Popular" : undefined),
-          features:
-            p.features_list && p.features_list.length > 0
-              ? p.features_list
-              : [
-                  `${p.sms_rate_kes} KES per SMS rate`,
-                  `${p.included_sms_credits.toLocaleString()} Included SMS credits`,
-                  p.has_api_access ? "REST API & Webhooks access" : "Standard dashboard access",
-                  `${p.support_tier} support tier`,
-                ],
-          ctaText:
-            p.category === "ENTERPRISE"
-              ? "Contact Enterprise Desk"
-              : Number(p.price_kes) === 0
-              ? "Start Free / Top Up"
-              : `Get ${p.name}`,
-          ctaHref:
-            p.category === "ENTERPRISE"
-              ? "/contact"
-              : `/auth/signup?plan=${p.slug || p.code || p.reference}`,
-        }))
+      ? apiPlans.map((p) => {
+          const discount = p.annual_discount_percent ?? 15;
+          const monthlyPrice = Number(p.price_kes);
+          const annualMonthlyPrice = Math.round(monthlyPrice * (1 - discount / 100));
+
+          return {
+            id: p.reference || p.code || p.id,
+            name: p.name,
+            tagline: p.tagline,
+            priceKesMonthly: monthlyPrice,
+            priceKesAnnual: annualMonthlyPrice,
+            smsRateKes: Number(p.sms_rate_kes),
+            emailRateKes: Number(p.email_rate_kes),
+            includedSms: p.included_sms_credits,
+            includedEmail: p.included_email_credits,
+            maxContacts: p.max_contacts > 0 ? p.max_contacts.toLocaleString() : "Unlimited",
+            senderIds: p.max_sender_ids,
+            isPopular: p.is_featured,
+            badge: p.badge_text || (p.is_featured ? "Most Popular" : undefined),
+            features:
+              p.features_list && p.features_list.length > 0
+                ? p.features_list
+                : [
+                    `${p.sms_rate_kes} KES per SMS rate`,
+                    `${p.included_sms_credits.toLocaleString()} Included SMS credits`,
+                    p.has_api_access ? "REST API & Webhooks access" : "Standard dashboard access",
+                    `${p.support_tier} support tier`,
+                  ],
+            ctaText:
+              p.category === "ENTERPRISE"
+                ? "Contact Enterprise Desk"
+                : monthlyPrice === 0
+                ? "Start Free / Top Up"
+                : `Get ${p.name}`,
+            ctaHref:
+              p.category === "ENTERPRISE"
+                ? "/contact"
+                : `/auth/signup?plan=${p.slug || p.code || p.reference}`,
+          };
+        })
       : fallbackPlans;
 
   const formatPrice = (kesAmount: number) => {
