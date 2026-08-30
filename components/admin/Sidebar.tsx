@@ -16,7 +16,6 @@ export function AdminSidebar({
   isMobileOpen,
   onCloseMobile,
   isCollapsed,
-  onToggleCollapse,
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -37,6 +36,15 @@ export function AdminSidebar({
       icon: (
         <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      ),
+    },
+    {
+      label: "Pricing & Plans",
+      href: "/admin/plans",
+      icon: (
+        <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
     },
@@ -89,8 +97,8 @@ export function AdminSidebar({
     <>
       <aside
         className={`
-          fixed md:sticky top-16 z-20 h-[calc(100vh-4rem)] bg-white border-r border-zinc-200 flex flex-col justify-between transition-all duration-200 ease-in-out
-          ${isMobileOpen ? "translate-x-0 w-64 shadow-xl" : "-translate-x-full md:translate-x-0"}
+          fixed md:relative z-20 h-full bg-white border-r border-zinc-200 flex flex-col justify-between transition-all duration-200 ease-in-out shrink-0
+          ${isMobileOpen ? "translate-x-0 w-64 shadow-2xl inset-y-0 left-0" : "-translate-x-full md:translate-x-0"}
           ${isCollapsed ? "md:w-18" : "md:w-64"}
         `}
       >
@@ -115,12 +123,12 @@ export function AdminSidebar({
                   ${isCollapsed ? "justify-center px-2" : ""}
                   ${
                     isActive
-                      ? "bg-amber-50 text-amber-900 font-semibold"
+                      ? "bg-purple-50 text-[#581c87] font-semibold border-r-2 border-[#581c87]"
                       : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                   }
                 `}
               >
-                <span className={isActive ? "text-amber-700" : "text-zinc-500"}>
+                <span className={isActive ? "text-[#581c87]" : "text-zinc-500"}>
                   {link.icon}
                 </span>
                 {!isCollapsed && <span className="truncate">{link.label}</span>}
@@ -134,7 +142,7 @@ export function AdminSidebar({
           {!isCollapsed ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                <div className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                   {userInitials}
                 </div>
                 <div className="flex-1 min-w-0 leading-tight">
@@ -161,7 +169,7 @@ export function AdminSidebar({
           ) : (
             <div className="flex flex-col items-center gap-2">
               <div
-                className="w-9 h-9 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs"
+                className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs"
                 title={`${userName} (${userEmailOrCode})`}
               >
                 {userInitials}

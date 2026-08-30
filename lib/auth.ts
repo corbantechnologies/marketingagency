@@ -27,8 +27,10 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     const refreshedTokens = await response.json();
 
     if (!response.ok) {
+      // Clear expired refresh token so we do not loop continuously on an invalid token
       return {
         ...token,
+        refreshToken: undefined,
         error: "RefreshAccessTokenError",
       };
     }
@@ -37,11 +39,13 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       ...token,
       accessToken: refreshedTokens.access || token.accessToken,
       refreshToken: refreshedTokens.refresh || token.refreshToken,
+      accessTokenExpires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
       error: undefined,
     };
   } catch {
     return {
       ...token,
+      refreshToken: undefined,
       error: "RefreshAccessTokenError",
     };
   }
@@ -181,10 +185,11 @@ export const authOptions: NextAuthOptions = {
         token.is_approved = user.is_approved;
         token.reference = user.reference;
         token.code = user.code;
-        token.member_code = user.member_code;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.redirectUrl = user.redirectUrl;
+        token.accessTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        return token;
       }
 
       // Handle client-side session update triggers (e.g. useSession().update())
@@ -196,7 +201,18 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      return token;
+      // Return previous token if the access token has not expired yet
+      if (token.accessTokenExpires && Date.now() < (token.accessTokenExpires as number)) {
+        return token;
+      }
+
+      // If there is no refresh token or already had a refresh error, do not retry continuously
+      if (!token.refreshToken || token.error === "RefreshAccessTokenError") {
+        return token;
+      }
+
+      // Access token has expired, silently refresh it
+      return refreshAccessToken(token);
     },
 
     async session({ session, token }) {

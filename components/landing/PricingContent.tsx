@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useFetchPlans } from "@/hooks/plans/actions";
+import { Plan } from "@/services/plans";
 
 interface PlanItem {
   id: string;
@@ -15,12 +18,140 @@ interface PlanItem {
   includedEmail: number;
   maxContacts: string;
   senderIds: number;
+  hasApi: boolean;
+  hasSmpp: boolean;
+  hasAutoresponders: boolean;
+  hasDedicatedIp: boolean;
+  supportTier: string;
   isPopular?: boolean;
   badge?: string;
   features: string[];
   ctaText: string;
   ctaHref: string;
 }
+
+const fallbackPlans: PlanItem[] = [
+  {
+    id: "starter",
+    name: "Starter / PAYG",
+    tagline: "Pay as you send with zero monthly commitment",
+    priceKesMonthly: 0,
+    priceKesAnnual: 0,
+    smsRateKes: 0.65,
+    emailRateKes: 0.06,
+    includedSms: 0,
+    includedEmail: 0,
+    maxContacts: "5,000",
+    senderIds: 0,
+    hasApi: false,
+    hasSmpp: false,
+    hasAutoresponders: false,
+    hasDedicatedIp: false,
+    supportTier: "Standard Email Support",
+    badge: "No Expiry",
+    features: [
+      "Pay-as-you-go SMS at KSh 0.65/SMS",
+      "Instant M-PESA top-ups (from KSh 100)",
+      "1-click Excel/CSV contact import",
+      "Shared Alphanumeric Sender ID",
+      "Standard delivery reports (DLR)",
+      "Email & Community support",
+    ],
+    ctaText: "Start Free / Top Up",
+    ctaHref: "/auth/signup",
+  },
+  {
+    id: "growth",
+    name: "Business Growth",
+    tagline: "Most popular for retail shops, salons & clinics",
+    priceKesMonthly: 4999,
+    priceKesAnnual: 4249, // 15% discount
+    smsRateKes: 0.45,
+    emailRateKes: 0.04,
+    includedSms: 10000,
+    includedEmail: 25000,
+    maxContacts: "25,000",
+    senderIds: 1,
+    hasApi: false,
+    hasSmpp: false,
+    hasAutoresponders: true,
+    hasDedicatedIp: false,
+    supportTier: "Priority WhatsApp & Phone",
+    isPopular: true,
+    badge: "Most Popular",
+    features: [
+      "10,000 Included SMS credits / month",
+      "Discounted rate: KSh 0.45 per extra SMS",
+      "1 Custom Alphanumeric Sender ID",
+      "Smart Contact Groups & Tagging",
+      "Dynamic SMS links & click tracking",
+      "Scheduled birthday & holiday campaigns",
+      "Priority WhatsApp & phone support",
+    ],
+    ctaText: "Get Business Growth",
+    ctaHref: "/auth/signup?plan=growth",
+  },
+  {
+    id: "scale",
+    name: "Scale & High-Volume",
+    tagline: "For e-commerce, schools & multi-branch brands",
+    priceKesMonthly: 18500,
+    priceKesAnnual: 15725, // 15% discount
+    smsRateKes: 0.38,
+    emailRateKes: 0.03,
+    includedSms: 45000,
+    includedEmail: 100000,
+    maxContacts: "100,000",
+    senderIds: 3,
+    hasApi: true,
+    hasSmpp: false,
+    hasAutoresponders: true,
+    hasDedicatedIp: false,
+    supportTier: "Priority WhatsApp & Phone",
+    badge: "High Velocity",
+    features: [
+      "45,000 Included SMS credits / month",
+      "Volume rate: KSh 0.38 per extra SMS",
+      "Up to 3 Custom Branded Sender IDs",
+      "REST API keys & Webhook callbacks",
+      "2-Way SMS keyword autoresponders",
+      "Shopify & WooCommerce 1-click sync",
+      "Dedicated account strategist",
+    ],
+    ctaText: "Scale Your Messaging",
+    ctaHref: "/auth/signup?plan=scale",
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise SLA",
+    tagline: "Custom carrier infrastructure for banks & FinTechs",
+    priceKesMonthly: 45000,
+    priceKesAnnual: 38250,
+    smsRateKes: 0.28,
+    emailRateKes: 0.02,
+    includedSms: 150000,
+    includedEmail: 500000,
+    maxContacts: "Unlimited",
+    senderIds: 10,
+    hasApi: true,
+    hasSmpp: true,
+    hasAutoresponders: true,
+    hasDedicatedIp: true,
+    supportTier: "Dedicated Account Strategist",
+    badge: "Carrier Grade",
+    features: [
+      "150,000+ Included SMS credits",
+      "Tier-1 wholesale rate: From KSh 0.28/SMS",
+      "Dedicated SMPP 3.4 server interconnect",
+      "Sub-1.8s transactional OTP latency SLA",
+      "Dedicated IP warming & DMARC alignment",
+      "Custom billing terms & post-paid invoicing",
+      "24/7 Priority Emergency NOC line",
+    ],
+    ctaText: "Contact Enterprise Desk",
+    ctaHref: "/contact",
+  },
+];
 
 export function PricingContent() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual" | "payg">("monthly");
@@ -29,108 +160,71 @@ export function PricingContent() {
 
   const KES_TO_USD = 130;
 
-  const plans: PlanItem[] = [
-    {
-      id: "starter",
-      name: "Starter / PAYG",
-      tagline: "Pay as you send with zero monthly commitment",
-      priceKesMonthly: 0,
-      priceKesAnnual: 0,
-      smsRateKes: 0.65,
-      emailRateKes: 0.06,
-      includedSms: 0,
-      includedEmail: 0,
-      maxContacts: "5,000",
-      senderIds: 0,
-      badge: "No Expiry",
-      features: [
-        "Pay-as-you-go SMS at KSh 0.65/SMS",
-        "Instant M-PESA top-ups (from KSh 100)",
-        "1-click Excel/CSV contact import",
-        "Shared Alphanumeric Sender ID",
-        "Standard delivery reports (DLR)",
-        "Email & Community support",
-      ],
-      ctaText: "Start Free / Top Up",
-      ctaHref: "/auth/signup",
-    },
-    {
-      id: "growth",
-      name: "Business Growth",
-      tagline: "Most popular for retail shops, salons & clinics",
-      priceKesMonthly: 4999,
-      priceKesAnnual: 4249, // 15% discount
-      smsRateKes: 0.45,
-      emailRateKes: 0.04,
-      includedSms: 10000,
-      includedEmail: 25000,
-      maxContacts: "25,000",
-      senderIds: 1,
-      isPopular: true,
-      badge: "Most Popular",
-      features: [
-        "10,000 Included SMS credits / month",
-        "Discounted rate: KSh 0.45 per extra SMS",
-        "1 Custom Alphanumeric Sender ID",
-        "Smart Contact Groups & Tagging",
-        "Dynamic SMS links & click tracking",
-        "Scheduled birthday & holiday campaigns",
-        "Priority WhatsApp & phone support",
-      ],
-      ctaText: "Get Business Growth",
-      ctaHref: "/auth/signup?plan=growth",
-    },
-    {
-      id: "scale",
-      name: "Scale & High-Volume",
-      tagline: "For e-commerce, schools & multi-branch brands",
-      priceKesMonthly: 18500,
-      priceKesAnnual: 15725, // 15% discount
-      smsRateKes: 0.38,
-      emailRateKes: 0.03,
-      includedSms: 45000,
-      includedEmail: 100000,
-      maxContacts: "100,000",
-      senderIds: 3,
-      badge: "High Velocity",
-      features: [
-        "45,000 Included SMS credits / month",
-        "Volume rate: KSh 0.38 per extra SMS",
-        "Up to 3 Custom Branded Sender IDs",
-        "REST API keys & Webhook callbacks",
-        "2-Way SMS keyword autoresponders",
-        "Shopify & WooCommerce 1-click sync",
-        "Dedicated account strategist",
-      ],
-      ctaText: "Scale Your Messaging",
-      ctaHref: "/auth/signup?plan=scale",
-    },
-    {
-      id: "enterprise",
-      name: "Enterprise SLA",
-      tagline: "Custom carrier infrastructure for banks & FinTechs",
-      priceKesMonthly: 45000,
-      priceKesAnnual: 38250,
-      smsRateKes: 0.28,
-      emailRateKes: 0.02,
-      includedSms: 150000,
-      includedEmail: 500000,
-      maxContacts: "Unlimited",
-      senderIds: 10,
-      badge: "Carrier Grade",
-      features: [
-        "150,000+ Included SMS credits",
-        "Tier-1 wholesale rate: From KSh 0.28/SMS",
-        "Dedicated SMPP 3.4 server interconnect",
-        "Sub-1.8s transactional OTP latency SLA",
-        "Dedicated IP warming & DMARC alignment",
-        "Custom billing terms & post-paid invoicing",
-        "24/7 Priority Emergency NOC line",
-      ],
-      ctaText: "Contact Enterprise Desk",
-      ctaHref: "/contact",
-    },
-  ];
+  const { data: dynamicPlansData } = useFetchPlans();
+
+  const apiPlans: Plan[] = Array.isArray(dynamicPlansData)
+    ? dynamicPlansData
+    : dynamicPlansData && typeof dynamicPlansData === "object" && "results" in dynamicPlansData
+    ? (dynamicPlansData as any).results
+    : [];
+
+  const plans: PlanItem[] =
+    apiPlans.length > 0
+      ? apiPlans.map((p) => {
+          const discount = p.annual_discount_percent ?? 15;
+          const monthlyPrice = Number(p.price_kes);
+          const annualMonthlyPrice = Math.round(monthlyPrice * (1 - discount / 100));
+
+          const supportTierLabel =
+            p.support_tier === "PRIORITY_WHATSAPP"
+              ? "Priority WhatsApp & Phone"
+              : p.support_tier === "DEDICATED_MANAGER"
+              ? "Dedicated Account Strategist"
+              : p.support_tier === "COMMUNITY"
+              ? "Community & FAQ"
+              : "Standard Email Support";
+
+          return {
+            id: p.reference || p.code || p.id,
+            name: p.name,
+            tagline: p.tagline,
+            priceKesMonthly: monthlyPrice,
+            priceKesAnnual: annualMonthlyPrice,
+            smsRateKes: Number(p.sms_rate_kes),
+            emailRateKes: Number(p.email_rate_kes),
+            includedSms: p.included_sms_credits,
+            includedEmail: p.included_email_credits,
+            maxContacts: p.max_contacts > 0 ? p.max_contacts.toLocaleString() : "Unlimited",
+            senderIds: p.max_sender_ids,
+            hasApi: Boolean(p.has_api_access),
+            hasSmpp: Boolean(p.has_smpp_access),
+            hasAutoresponders: Boolean(p.has_autoresponders),
+            hasDedicatedIp: Boolean(p.has_dedicated_ip),
+            supportTier: supportTierLabel,
+            isPopular: p.is_featured,
+            badge: p.badge_text || (p.is_featured ? "Most Popular" : undefined),
+            features:
+              p.features_list && p.features_list.length > 0
+                ? p.features_list
+                : [
+                    `${p.sms_rate_kes} KES per SMS rate`,
+                    `${p.included_sms_credits.toLocaleString()} Included SMS credits`,
+                    p.has_api_access ? "REST API & Webhooks access" : "Standard dashboard access",
+                    `${supportTierLabel} SLA`,
+                  ],
+            ctaText:
+              p.category === "ENTERPRISE"
+                ? "Contact Enterprise Desk"
+                : monthlyPrice === 0
+                ? "Start Free / Top Up"
+                : `Get ${p.name}`,
+            ctaHref:
+              p.category === "ENTERPRISE"
+                ? "/contact"
+                : `/auth/signup?plan=${p.slug || p.code || p.reference}`,
+          };
+        })
+      : fallbackPlans;
 
   const formatPrice = (kesAmount: number) => {
     if (kesAmount === 0) return "Free";
@@ -165,26 +259,23 @@ export function PricingContent() {
   ];
 
   return (
-    <div className="bg-white py-12 md:py-20">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header Title & Subtitle */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
-            Transparent Pricing & Wholesale Telecom Rates
-          </div>
-          <h1 className="text-xl font-semibold text-zinc-900 tracking-tight mb-3">
-            Simple, High-ROI Plans Built for Kenyan Businesses & Enterprises
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#581c87] bg-purple-50 px-3 py-1 rounded">
+            Simple, Transparent Bulk SMS &amp; Email Rates
+          </span>
+          <h1 className="text-2xl sm:text-4xl font-bold text-zinc-900 mt-4 mb-3 tracking-tight">
+            Predictable Wholesale Pricing for Growing Kenyan Businesses
           </h1>
-          <p className="text-base font-normal text-zinc-600">
-            From zero-fee pay-as-you-go top-ups for shops and clinics, to high-volume SMPP routes for
-            enterprises. Tier-1 direct delivery with no expiring credits.
+          <p className="text-sm sm:text-base font-normal text-zinc-600 leading-relaxed">
+            No surprise overages. No hidden line fees. Choose a flexible monthly subscription bundle or scale on-demand with pure Pay-As-You-Go M-PESA top-ups.
           </p>
 
-          {/* Toggles: Billing Cycle + Currency */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            
-            {/* Billing Cycle Selector */}
+          {/* Billing Cycle & Currency Switcher Controls */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            {/* Billing Toggle (Monthly / Annual / PAYG) */}
             <div className="inline-flex p-1 bg-zinc-100 border border-zinc-200 rounded">
               <button
                 type="button"
@@ -249,11 +340,10 @@ export function PricingContent() {
                 USD ($)
               </button>
             </div>
-
           </div>
         </div>
 
-        {/* 4 Pricing Cards Grid */}
+        {/* Pricing Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {plans.map((plan) => {
             const rawPrice =
@@ -297,51 +387,58 @@ export function PricingContent() {
                     </p>
                   </div>
 
-                  {/* Price Tag */}
-                  <div className="my-5 pb-5 border-b border-zinc-100">
+                  {/* Price Display */}
+                  <div className="mb-6 pb-6 border-b border-zinc-100">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-xl font-semibold text-zinc-900">
-                        {isPayg ? "KSh 0" : formatPrice(rawPrice)}
+                      <span className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+                        {isPayg ? "PAYG" : formatPrice(rawPrice)}
                       </span>
                       {!isPayg && (
                         <span className="text-xs font-normal text-zinc-500">
-                          {billingCycle === "annual" ? "/mo (billed yearly)" : "/month"}
+                          / month
                         </span>
                       )}
                     </div>
-                    {currency === "KES" && !isPayg && rawPrice > 0 && (
-                      <span className="text-[11px] text-zinc-400 block mt-0.5">
-                        (~ ${Math.round(rawPrice / KES_TO_USD)} USD)
-                      </span>
+                    {!isPayg && billingCycle === "annual" && (
+                      <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                        Billed annually (Save 15%)
+                      </p>
+                    )}
+                    {isPayg && (
+                      <p className="text-[11px] text-zinc-500 mt-1">
+                        Top up from KSh 100 via M-PESA
+                      </p>
                     )}
                   </div>
 
-                  {/* Unit Rate Highlights */}
-                  <div className="p-3 bg-purple-50/50 border border-purple-100 rounded mb-6 text-xs space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-zinc-600 font-medium">SMS Unit Rate:</span>
-                      <span className="font-semibold text-[#581c87]">
+                  {/* Telecom Unit Rates Matrix Snippet */}
+                  <div className="bg-zinc-50 rounded p-3 mb-6 space-y-2 text-xs border border-zinc-100">
+                    <div className="flex justify-between items-center text-zinc-600">
+                      <span>SMS Unit Rate</span>
+                      <span className="font-semibold text-zinc-900">
                         KSh {plan.smsRateKes.toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-zinc-600 font-medium">Included SMS:</span>
+                    <div className="flex justify-between items-center text-zinc-600">
+                      <span>Email Unit Rate</span>
                       <span className="font-semibold text-zinc-900">
-                        {plan.includedSms > 0 ? plan.includedSms.toLocaleString() : "Pay As You Go"}
+                        KSh {plan.emailRateKes.toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-zinc-600 font-medium">Sender ID:</span>
-                      <span className="font-semibold text-zinc-900">
-                        {plan.senderIds > 0 ? `${plan.senderIds} Custom Name` : "Shared Alphanumeric"}
+                    <div className="flex justify-between items-center text-zinc-600 pt-1 border-t border-zinc-200/60">
+                      <span>Monthly Included SMS</span>
+                      <span className="font-semibold text-[#581c87]">
+                        {plan.includedSms > 0
+                          ? `${plan.includedSms.toLocaleString()} SMS`
+                          : "0 (PAYG)"}
                       </span>
                     </div>
                   </div>
 
-                  {/* Feature Checklist */}
+                  {/* Features List */}
                   <div className="space-y-2.5 mb-6 text-xs text-zinc-600">
-                    <div className="font-semibold text-zinc-800 text-[11px] uppercase tracking-wider mb-2">
-                      Plan Inclusions:
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-2">
+                      Included Capabilities
                     </div>
                     {plan.features.map((feat, fIdx) => (
                       <div key={fIdx} className="flex items-start gap-2">
@@ -382,11 +479,11 @@ export function PricingContent() {
           })}
         </div>
 
-        {/* Feature Comparison Matrix Table */}
+        {/* Dynamic Feature Comparison Matrix Table */}
         <div className="bg-zinc-50 border border-zinc-200 rounded p-6 sm:p-8 mb-16 shadow-xs">
           <div className="mb-6">
             <h2 className="text-base font-semibold text-zinc-900">
-              Detailed Plan & Feature Comparison
+              Detailed Plan &amp; Feature Comparison
             </h2>
             <p className="text-xs font-normal text-zinc-500 mt-0.5">
               Compare technical limits, API capabilities, and carrier routing specifications across all tiers.
@@ -394,72 +491,114 @@ export function PricingContent() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[640px]">
               <thead>
                 <tr className="border-b border-zinc-200 text-zinc-500 uppercase tracking-wider text-[10px]">
-                  <th className="pb-3 font-semibold">Feature / Metric</th>
-                  <th className="pb-3 font-semibold">Starter / PAYG</th>
-                  <th className="pb-3 font-semibold text-[#581c87]">Business Growth</th>
-                  <th className="pb-3 font-semibold">Scale</th>
-                  <th className="pb-3 font-semibold">Enterprise SLA</th>
+                  <th className="pb-3 font-semibold w-1/4">Feature / Metric</th>
+                  {plans.map((p) => (
+                    <th
+                      key={p.id}
+                      className={`pb-3 font-semibold ${
+                        p.isPopular ? "text-[#581c87] font-bold" : "text-zinc-700"
+                      }`}
+                    >
+                      {p.name}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200/70 text-zinc-700">
                 <tr>
-                  <td className="py-3 font-medium text-zinc-900">Base Unit Rate (KES)</td>
-                  <td className="py-3">KSh 0.65 / SMS</td>
-                  <td className="py-3 font-semibold text-[#581c87]">KSh 0.45 / SMS</td>
-                  <td className="py-3 font-semibold">KSh 0.38 / SMS</td>
-                  <td className="py-3 font-semibold text-emerald-700">KSh 0.28 – 0.35 / SMS</td>
+                  <td className="py-3 font-medium text-zinc-900">Base SMS Rate (KES)</td>
+                  {plans.map((p) => (
+                    <td
+                      key={p.id}
+                      className={`py-3 ${p.isPopular ? "font-semibold text-[#581c87]" : ""}`}
+                    >
+                      {p.smsRateKes > 0 ? `KSh ${p.smsRateKes.toFixed(2)} / SMS` : "Free"}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">Monthly Included SMS</td>
-                  <td className="py-3">—</td>
-                  <td className="py-3 font-medium">10,000 SMS</td>
-                  <td className="py-3 font-medium">45,000 SMS</td>
-                  <td className="py-3 font-medium">150,000+ SMS</td>
+                  {plans.map((p) => (
+                    <td
+                      key={p.id}
+                      className={`py-3 ${p.isPopular ? "font-semibold text-[#581c87]" : ""}`}
+                    >
+                      {p.includedSms > 0 ? `${p.includedSms.toLocaleString()} SMS` : "—"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="py-3 font-medium text-zinc-900">Monthly Included Emails</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3">
+                      {p.includedEmail > 0 ? `${p.includedEmail.toLocaleString()} Emails` : "—"}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">Max Contacts Storage</td>
-                  <td className="py-3">5,000</td>
-                  <td className="py-3">25,000</td>
-                  <td className="py-3">100,000</td>
-                  <td className="py-3 font-semibold text-[#581c87]">Unlimited</td>
+                  {plans.map((p) => (
+                    <td
+                      key={p.id}
+                      className={`py-3 ${p.maxContacts === "Unlimited" ? "font-semibold text-[#581c87]" : ""}`}
+                    >
+                      {p.maxContacts}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">Custom Branded Sender ID</td>
-                  <td className="py-3">Shared</td>
-                  <td className="py-3">1 Included</td>
-                  <td className="py-3">3 Included</td>
-                  <td className="py-3">Custom / Dedicated</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3">
+                      {p.senderIds > 0 ? `${p.senderIds} Included` : "Shared"}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
-                  <td className="py-3 font-medium text-zinc-900">REST API & Webhooks</td>
-                  <td className="py-3">—</td>
-                  <td className="py-3">—</td>
-                  <td className="py-3 font-semibold text-[#581c87]">Full API Access</td>
-                  <td className="py-3 font-semibold text-[#581c87]">REST + SMPP 3.4</td>
+                  <td className="py-3 font-medium text-zinc-900">REST API &amp; Webhooks</td>
+                  {plans.map((p) => (
+                    <td
+                      key={p.id}
+                      className={`py-3 ${p.hasApi ? "font-semibold text-[#581c87]" : ""}`}
+                    >
+                      {p.hasApi ? (p.hasSmpp ? "REST + SMPP 3.4" : "Full API Access") : "—"}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">2-Way Autoresponders</td>
-                  <td className="py-3">—</td>
-                  <td className="py-3">Basic</td>
-                  <td className="py-3 font-medium">Advanced Rules</td>
-                  <td className="py-3 font-semibold text-[#581c87]">Custom AI Bots</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3">
+                      {p.hasAutoresponders ? "✓ Included" : "—"}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">Carrier Interconnects</td>
-                  <td className="py-3">Safaricom & Airtel</td>
-                  <td className="py-3">Safaricom & Airtel</td>
-                  <td className="py-3">Multi-Carrier Failover</td>
-                  <td className="py-3 font-semibold text-[#581c87]">Dedicated Direct Routes</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3">
+                      {p.hasDedicatedIp ? "Dedicated Direct IP" : "Safaricom & Airtel"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="py-3 font-medium text-zinc-900">Support Tier SLA</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3">
+                      {p.supportTier || "Standard Support"}
+                    </td>
+                  ))}
                 </tr>
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">M-PESA Instant Top-Up</td>
-                  <td className="py-3">✓ Instant</td>
-                  <td className="py-3">✓ Instant</td>
-                  <td className="py-3">✓ Instant</td>
-                  <td className="py-3">✓ Invoicing & Post-paid</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3">
+                      ✓ Instant
+                    </td>
+                  ))}
                 </tr>
               </tbody>
             </table>
@@ -470,7 +609,7 @@ export function PricingContent() {
         <div className="bg-purple-950 text-white rounded p-6 sm:p-8 mb-16 flex flex-col md:flex-row items-center justify-between gap-6" style={{ backgroundColor: "#3b0764" }}>
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-300 bg-white/10 px-2.5 py-0.5 rounded">
-              Kenyan M-PESA & Banking Integrations
+              Kenyan M-PESA &amp; Banking Integrations
             </span>
             <h2 className="text-lg font-semibold text-white mt-2 mb-1">
               Need custom high-volume pricing or post-paid enterprise billing?
@@ -500,7 +639,7 @@ export function PricingContent() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-base font-semibold text-zinc-900">
-              Frequently Asked Questions About Billing & Credits
+              Frequently Asked Questions About Billing &amp; Credits
             </h2>
             <p className="text-xs font-normal text-zinc-500 mt-0.5">
               Clear answers on rates, M-PESA top-ups, and sender ID registration.
@@ -543,8 +682,9 @@ export function PricingContent() {
             })}
           </div>
         </div>
-
       </div>
-    </div>
+    </section>
   );
 }
+
+export default PricingContent;
