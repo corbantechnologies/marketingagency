@@ -64,7 +64,7 @@ function LoginForm() {
       ) {
         router.push("/admin/dashboard");
       } else {
-        router.push("/dashboard");
+        router.push("/business/dashboard");
       }
       router.refresh();
     } catch {

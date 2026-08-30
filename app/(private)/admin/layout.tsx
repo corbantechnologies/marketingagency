@@ -10,24 +10,28 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col selection:bg-[#581c87] selection:text-white">
       <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
 
       <AdminNavbar
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        isSidebarOpen={isSidebarOpen}
+        onToggleMobileSidebar={() => setIsMobileOpen(!isMobileOpen)}
+        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+        isCollapsed={isCollapsed}
       />
 
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         <AdminSidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
+          isMobileOpen={isMobileOpen}
+          onCloseMobile={() => setIsMobileOpen(false)}
+          isCollapsed={isCollapsed}
+          onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full min-w-0 overflow-y-auto">
           {children}
         </main>
       </div>

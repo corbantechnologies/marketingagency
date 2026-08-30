@@ -139,7 +139,11 @@ export const authOptions: NextAuthOptions = {
             member_code: userData.member_code || userData.code || "",
             accessToken: data.access || data.accessToken || data.token,
             refreshToken: data.refresh || data.refreshToken,
-            redirectUrl: data.redirect_url || (userData.is_admin ? "/admin/dashboard" : "/dashboard"),
+            redirectUrl:
+              (data.redirect_url === "/dashboard"
+                ? "/business/dashboard"
+                : data.redirect_url) ||
+              (userData.is_admin ? "/admin/dashboard" : "/business/dashboard"),
             last_login: userData.last_login,
             created_at: userData.created_at,
             updated_at: userData.updated_at,

@@ -86,7 +86,10 @@ export default function BusinessSignupPage() {
               return;
             }
 
-            const redirectTarget = data.redirect_url || "/dashboard";
+            const redirectTarget =
+              data.redirect_url && data.redirect_url !== "/dashboard"
+                ? data.redirect_url
+                : "/business/dashboard";
             router.push(redirectTarget);
             router.refresh();
           } catch {
