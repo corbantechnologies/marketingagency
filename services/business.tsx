@@ -29,6 +29,18 @@ export interface Business {
   phone: string | null;
   address: string | null;
   active_plan?: string | null;
+  plan_detail?: {
+    id: string;
+    name: string;
+    slug: string;
+    category: string;
+    price_kes: string | number;
+    sms_rate_kes: string | number;
+    included_sms_credits: number;
+    support_tier: string;
+    reference: string;
+    code: string;
+  } | null;
   sender_id?: string | null;
   sender_id_status?: SenderIdStatus;
   sender_id_rejection_reason?: string | null;
@@ -37,6 +49,8 @@ export interface Business {
   registration_date?: string | null;
   registration_document?: string | null;
   wallet?: BusinessWallet | null;
+  total_contacts?: number;
+  total_contact_groups?: number;
   reference: string;
   code: string;
   is_active: boolean;
