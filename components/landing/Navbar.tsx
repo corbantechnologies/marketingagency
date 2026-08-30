@@ -17,11 +17,12 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Services", href: "#services" },
-    { label: "Growth Framework", href: "#framework" },
-    { label: "Case Studies", href: "#results" },
-    { label: "ROI Calculator", href: "#calculator" },
-    { label: "FAQ", href: "#faq" },
+    { label: "Services", href: "/#services" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Case Studies", href: "/#results" },
+    { label: "ROI Calculator", href: "/#calculator" },
+    { label: "Contact", href: "/contact" },
+    { label: "FAQ", href: "/#faq" },
   ];
 
   return (
@@ -46,20 +47,26 @@ export function Navbar() {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 className="text-sm font-medium text-zinc-600 hover:text-[#581c87] transition-colors py-1 focus:outline-hidden focus:ring-1 focus:ring-[#581c87] rounded"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
           {/* Action CTAs */}
           <div className="hidden sm:flex items-center gap-3">
+            <Link
+              href="/pricing"
+              className="text-xs font-semibold text-zinc-700 hover:text-[#581c87] px-3 py-2 rounded transition-colors"
+            >
+              View Rates
+            </Link>
             <a
-              href="#audit"
+              href="/#audit"
               className="inline-flex items-center justify-center bg-[#581c87] text-white hover:bg-[#4a1572] px-4 py-2 rounded text-sm font-medium transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#581c87] focus:ring-offset-2"
             >
               Get Free Audit
@@ -68,8 +75,14 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center border border-zinc-200 text-zinc-800 px-2.5 py-1.5 rounded text-xs font-medium"
+            >
+              Pricing
+            </Link>
             <a
-              href="#audit"
+              href="/#audit"
               className="inline-flex items-center justify-center bg-[#581c87] text-white px-3 py-1.5 rounded text-xs font-medium"
             >
               Audit
@@ -107,18 +120,18 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-zinc-200 px-4 pt-2 pb-6 space-y-2">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-base font-medium text-zinc-700 hover:text-[#581c87] hover:bg-purple-50 rounded"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <div className="pt-3 border-t border-zinc-100 flex flex-col gap-2">
             <a
-              href="#audit"
+              href="/#audit"
               onClick={() => setMobileMenuOpen(false)}
               className="w-full text-center bg-[#581c87] text-white py-2.5 rounded text-sm font-medium hover:bg-[#4a1572]"
             >

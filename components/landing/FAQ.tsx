@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -95,12 +96,12 @@ export function FAQ() {
         {/* Bottom support line */}
         <div className="mt-8 text-center text-xs text-zinc-500">
           Need a custom carrier interconnect or high-volume SMPP quote?{" "}
-          <a
-            href="mailto:growth@ljkmarketingagency.co.ke"
+          <Link
+            href="/contact"
             className="text-[#581c87] font-semibold hover:underline"
           >
             Contact our telecom engineering desk
-          </a>
+          </Link>
         </div>
 
       </div>

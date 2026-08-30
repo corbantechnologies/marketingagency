@@ -3,10 +3,14 @@
 import React, { useState } from "react";
 
 export function GrowthCalculator() {
+  const [currency, setCurrency] = useState<"KES" | "USD">("KES");
   const [smsVolume, setSmsVolume] = useState<number>(25000);
   const [emailSubscribers, setEmailSubscribers] = useState<number>(15000);
-  const [avgOrderValue, setAvgOrderValue] = useState<number>(85);
+  const [avgOrderValue, setAvgOrderValue] = useState<number>(3500); // KES default
   const [campaignType, setCampaignType] = useState<"promotional" | "transactional" | "omnichannel">("omnichannel");
+
+  // Approximate KES/USD exchange rate for clean dual representation
+  const KES_TO_USD_RATE = 130;
 
   // Realistic messaging performance benchmarks
   const rates = {
@@ -23,7 +27,26 @@ export function GrowthCalculator() {
   const emailClicks = Math.round(emailOpens * currentRate.emailCtr);
   const totalClicks = smsClicks + emailClicks;
   const estimatedOrders = Math.round(totalClicks * currentRate.cvr);
+  
+  // Calculate revenue based on active currency
   const projectedRevenue = estimatedOrders * avgOrderValue;
+  const secondaryRevenueUsd = currency === "KES" 
+    ? Math.round(projectedRevenue / KES_TO_USD_RATE) 
+    : projectedRevenue;
+  const secondaryRevenueKes = currency === "USD" 
+    ? Math.round(projectedRevenue * KES_TO_USD_RATE) 
+    : projectedRevenue;
+
+  // Handle currency switch
+  const handleCurrencyChange = (newCurr: "KES" | "USD") => {
+    if (newCurr === currency) return;
+    setCurrency(newCurr);
+    if (newCurr === "USD") {
+      setAvgOrderValue(Math.max(10, Math.round(avgOrderValue / KES_TO_USD_RATE)));
+    } else {
+      setAvgOrderValue(Math.max(500, Math.round(avgOrderValue * KES_TO_USD_RATE)));
+    }
+  };
 
   return (
     <section id="calculator" className="bg-zinc-50 py-16 md:py-24 border-b border-zinc-100">
@@ -38,7 +61,7 @@ export function GrowthCalculator() {
             Calculate Your Bulk SMS & Email Campaign Revenue
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
-            Estimate delivery volumes, click engagement, and projected sales output based on our Tier-1
+            Estimate delivery volumes, customer link engagement, and projected sales output based on our Tier-1
             messaging delivery benchmarks.
           </p>
         </div>
@@ -50,30 +73,63 @@ export function GrowthCalculator() {
             {/* Left Controls (7 Cols) */}
             <div className="lg:col-span-7 space-y-6">
               
-              {/* Campaign Type Selector */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
-                  Campaign Objective
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: "omnichannel", label: "Omnichannel Flows" },
-                    { id: "promotional", label: "Flash Sales & Promo" },
-                    { id: "transactional", label: "Alerts & OTPs" },
-                  ].map((tab) => (
+              {/* Campaign Type & Currency Selector */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
+                    Campaign Objective
+                  </label>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {([
+                      { id: "omnichannel", label: "Omnichannel" },
+                      { id: "promotional", label: "Flash Sales" },
+                      { id: "transactional", label: "Alerts & OTP" },
+                    ] as const).map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setCampaignType(tab.id)}
+                        className={`py-1.5 px-2 rounded text-xs font-medium transition-colors border text-center ${
+                          campaignType === tab.id
+                            ? "bg-[#581c87] text-white border-[#581c87]"
+                            : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Currency Switcher */}
+                <div className="shrink-0 self-start sm:self-auto">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2 text-right">
+                    Currency
+                  </label>
+                  <div className="inline-flex p-0.5 bg-zinc-100 border border-zinc-200 rounded">
                     <button
-                      key={tab.id}
                       type="button"
-                      onClick={() => setCampaignType(tab.id as any)}
-                      className={`py-2 px-3 rounded text-xs font-medium transition-colors border text-center ${
-                        campaignType === tab.id
-                          ? "bg-[#581c87] text-white border-[#581c87]"
-                          : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
+                      onClick={() => handleCurrencyChange("KES")}
+                      className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                        currency === "KES"
+                          ? "bg-white text-[#581c87] shadow-xs"
+                          : "text-zinc-500 hover:text-zinc-800"
                       }`}
                     >
-                      {tab.label}
+                      KES (KSh)
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => handleCurrencyChange("USD")}
+                      className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                        currency === "USD"
+                          ? "bg-white text-[#581c87] shadow-xs"
+                          : "text-zinc-500 hover:text-zinc-800"
+                      }`}
+                    >
+                      USD ($)
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -90,7 +146,7 @@ export function GrowthCalculator() {
                 <input
                   type="range"
                   min="5000"
-                  max="200000"
+                  max="250000"
                   step="5000"
                   value={smsVolume}
                   onChange={(e) => setSmsVolume(Number(e.target.value))}
@@ -99,7 +155,7 @@ export function GrowthCalculator() {
                 <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
                   <span>5,000</span>
                   <span>100,000</span>
-                  <span>200,000+ SMS</span>
+                  <span>250,000+ SMS</span>
                 </div>
               </div>
 
@@ -133,31 +189,38 @@ export function GrowthCalculator() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Average Order Value (AOV) / Customer Value
+                    Average Order Value (AOV) / Sale Value
                   </label>
-                  <span className="text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
-                    ${avgOrderValue.toLocaleString()}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
+                      {currency === "KES" ? `KES ${avgOrderValue.toLocaleString()}` : `$${avgOrderValue.toLocaleString()}`}
+                    </span>
+                    {currency === "KES" && (
+                      <span className="text-[11px] text-zinc-400 block mt-0.5">
+                        (~${Math.round(avgOrderValue / KES_TO_USD_RATE)})
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <input
                   type="range"
-                  min="20"
-                  max="500"
-                  step="5"
+                  min={currency === "KES" ? 500 : 10}
+                  max={currency === "KES" ? 30000 : 250}
+                  step={currency === "KES" ? 250 : 5}
                   value={avgOrderValue}
                   onChange={(e) => setAvgOrderValue(Number(e.target.value))}
                   className="w-full h-2 bg-zinc-200 rounded appearance-none cursor-pointer accent-[#581c87]"
                 />
                 <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
-                  <span>$20</span>
-                  <span>$250</span>
-                  <span>$500+</span>
+                  <span>{currency === "KES" ? "KES 500" : "$10"}</span>
+                  <span>{currency === "KES" ? "KES 15,000" : "$125"}</span>
+                  <span>{currency === "KES" ? "KES 30,000+" : "$250+"}</span>
                 </div>
               </div>
 
               <div className="p-3 bg-purple-50/60 border border-purple-100 rounded text-xs text-zinc-600">
-                <span className="font-semibold text-[#581c87]">Carrier SLA:</span> Bulk SMS broadcast
-                maintains 99.4% handset delivery with Tier-1 direct interconnects and instant DLR feedback.
+                <span className="font-semibold text-[#581c87]">Direct Route SLA:</span> Bulk SMS broadcast
+                maintains 99.4% handset delivery with Safaricom & Airtel Tier-1 interconnects at ~KSh 0.35–0.55/SMS.
               </div>
             </div>
 
@@ -165,7 +228,7 @@ export function GrowthCalculator() {
             <div className="lg:col-span-5 bg-purple-950 text-white rounded p-6 flex flex-col justify-between" style={{ backgroundColor: "#3b0764" }}>
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wider text-purple-300 mb-1">
-                  Projected Revenue & Engagement
+                  Projected Campaign Output
                 </div>
                 <div className="text-xs text-purple-200/80 mb-6">
                   Based on direct carrier delivery routes
@@ -174,9 +237,14 @@ export function GrowthCalculator() {
                 <div className="space-y-4">
                   <div className="p-3 bg-white/5 border border-white/10 rounded">
                     <div className="text-xs font-normal text-purple-200">Estimated Monthly Revenue</div>
-                    <div className="text-xl font-semibold text-white mt-0.5">
-                      ${projectedRevenue.toLocaleString()}
+                    <div className="flex items-baseline gap-2 mt-0.5">
+                      <span className="text-xl font-semibold text-white">
+                        {currency === "KES" ? `KES ${projectedRevenue.toLocaleString()}` : `$${projectedRevenue.toLocaleString()}`}
+                      </span>
                     </div>
+                    <span className="text-[11px] font-normal text-purple-300/80 block mt-0.5">
+                      {currency === "KES" ? `(~ $${secondaryRevenueUsd.toLocaleString()} USD)` : `(~ KES ${secondaryRevenueKes.toLocaleString()})`}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-white/5 border border-white/10 rounded">

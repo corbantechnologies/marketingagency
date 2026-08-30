@@ -5,12 +5,12 @@ export function CaseStudies() {
     {
       client: "Nova Retail & DTC",
       industry: "E-Commerce Flash Sales",
-      highlightMetric: "$210,000 in 4 Hours",
-      subMetric: "99.4% SMS Handset Delivery on 185k Contacts",
+      highlightMetric: "KES 2.85M in 4 Hours",
+      subMetric: "(~$22,000 USD) · 99.4% SMS Handset Delivery on 185k Contacts",
       challenge:
         "Previous SMS provider suffered from delayed delivery queues (up to 45 min delay), causing flash sales to miss high-urgency buying windows.",
       solution:
-        "Migrated to LJK Tier-1 direct carrier routes with custom Sender ID. Broadcasted 185,000 personalized SMS in under 6 minutes.",
+        "Migrated to LJK Tier-1 direct Safaricom & Airtel carrier routes with custom Sender ID. Broadcasted 185,000 personalized SMS in under 6 minutes.",
       results: [
         { label: "Dispatch Speed", val: "5.8 Mins" },
         { label: "SMS CTR", val: "18.4%" },

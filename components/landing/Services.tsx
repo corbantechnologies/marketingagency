@@ -93,7 +93,7 @@ export function Services() {
       tagline: "Scaling Your Owned Customer Database",
       description:
         "Your messaging is only as profitable as your subscriber list. We run high-intent Meta and Google ad funnels engineered specifically to capture verified phone numbers and opt-in emails at the lowest cost per lead.",
-      metrics: "Average $0.85 Cost Per Opt-In Contact",
+      metrics: "Average KSh 45 (~$0.35) Cost Per Opt-In Contact",
       deliverables: [
         "Meta & Google lead generation campaign management",
         "High-converting direct response ad creative",
