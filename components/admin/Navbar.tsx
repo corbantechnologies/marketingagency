@@ -65,7 +65,7 @@ export function AdminNavbar({
       <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-50 border border-zinc-200 text-xs text-zinc-600">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="hidden sm:inline">Carrier SMPP: <strong>1,200 msg/s</strong></span>
+          <span className="hidden sm:inline">Telecom Gateway: <strong>1,200 msg/s</strong></span>
           <span className="sm:hidden font-semibold text-emerald-600">Active</span>
         </div>
       </div>
