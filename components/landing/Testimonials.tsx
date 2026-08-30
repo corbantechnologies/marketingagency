@@ -4,15 +4,15 @@ export function Testimonials() {
   const testimonials = [
     {
       quote:
-        "LJK completely revamped our paid acquisition funnel. In 90 days, they lowered our blended CAC by 34% while scaling our monthly spend from $15k to $80k profitably. Their reporting transparency is unlike any agency we've worked with.",
+        "LJK completely revamped our paid acquisition and SMS retention funnel. In 90 days, they lowered our blended CAC by 34% while scaling our monthly marketing spend from KES 180,000 to KES 950,000 profitably. Their direct route transparency is unlike any provider we've worked with.",
       name: "Marcus Vance",
       role: "VP of Growth",
       company: "Velox Athletics",
-      stats: "Scaled from $1.2M to $4.8M ARR",
+      stats: "Scaled from KES 15M to KES 62M ARR (~$480k)",
     },
     {
       quote:
-        "Before LJK, we struggled to rank organically for high-intent search terms in the cybersecurity space. Their technical SEO framework and content architecture drove a 310% increase in inbound enterprise demos.",
+        "Before LJK, we struggled to rank organically for high-intent search terms and our transactional OTP SMS was suffering from carrier delays. Their technical routing and dedicated IP warming drove a 310% increase in inbound enterprise pipeline.",
       name: "Elena Rostova",
       role: "Chief Marketing Officer",
       company: "CipherShield SaaS",
@@ -20,11 +20,11 @@ export function Testimonials() {
     },
     {
       quote:
-        "The creative velocity LJK delivers is unbelievable. They test 40+ fresh video hooks and angles every single month, keeping our Meta and TikTok ads performing consistently without creative fatigue.",
+        "The creative velocity and SMS broadcast speed LJK delivers is unbelievable. They test 40+ fresh messaging angles and video hooks every single month, delivering a consistent 5.4x blended return on marketing spend.",
       name: "David Chen",
       role: "Founder & CEO",
       company: "Solstice Botanicals",
-      stats: "5.4x Blended ROAS on Meta",
+      stats: "5.4x Blended ROAS on Campaigns",
     },
   ];
 
