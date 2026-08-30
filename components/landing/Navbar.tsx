@@ -65,12 +65,12 @@ export function Navbar() {
             >
               View Rates
             </Link>
-            <a
+            <Link
               href="/#audit"
               className="inline-flex items-center justify-center bg-[#581c87] text-white hover:bg-[#4a1572] px-4 py-2 rounded text-sm font-medium transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#581c87] focus:ring-offset-2"
             >
               Get Free Audit
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,12 +81,12 @@ export function Navbar() {
             >
               Pricing
             </Link>
-            <a
+            <Link
               href="/#audit"
               className="inline-flex items-center justify-center bg-[#581c87] text-white px-3 py-1.5 rounded text-xs font-medium"
             >
               Audit
-            </a>
+            </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -130,13 +130,13 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-3 border-t border-zinc-100 flex flex-col gap-2">
-            <a
+            <Link
               href="/#audit"
               onClick={() => setMobileMenuOpen(false)}
               className="w-full text-center bg-[#581c87] text-white py-2.5 rounded text-sm font-medium hover:bg-[#4a1572]"
             >
               Request Free Growth Audit
-            </a>
+            </Link>
           </div>
         </div>
       )}

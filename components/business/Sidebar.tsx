@@ -16,7 +16,6 @@ export function BusinessSidebar({
   isMobileOpen,
   onCloseMobile,
   isCollapsed,
-  onToggleCollapse,
 }: BusinessSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();

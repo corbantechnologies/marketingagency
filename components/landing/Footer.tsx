@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { LJKLogo } from "./LJKLogo";
 
 export function Footer() {
@@ -147,18 +148,18 @@ export function Footer() {
             © {currentYear} LJK Marketing Agency LLC. All rights reserved. Direct Carrier Routing.
           </div>
           <div className="flex items-center gap-6">
-            <a href="/contact" className="hover:text-zinc-300 transition-colors">
+            <Link href="/contact" className="hover:text-zinc-300 transition-colors">
               Contact Desk
-            </a>
-            <a href="/pricing" className="hover:text-zinc-300 transition-colors">
+            </Link>
+            <Link href="/pricing" className="hover:text-zinc-300 transition-colors">
               Pricing Plans
-            </a>
-            <a href="/#audit" className="hover:text-zinc-300 transition-colors">
+            </Link>
+            <Link href="/#audit" className="hover:text-zinc-300 transition-colors">
               Privacy Policy
-            </a>
-            <a href="/#audit" className="hover:text-zinc-300 transition-colors">
+            </Link>
+            <Link href="/#audit" className="hover:text-zinc-300 transition-colors">
               Terms of Service
-            </a>
+            </Link>
           </div>
         </div>
 

@@ -16,7 +16,6 @@ export function AdminSidebar({
   isMobileOpen,
   onCloseMobile,
   isCollapsed,
-  onToggleCollapse,
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
