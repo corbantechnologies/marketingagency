@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useFetchPlans } from "@/hooks/plans/actions";
+import { Plan } from "@/services/plans";
 
 interface PlanItem {
   id: string;
@@ -22,14 +25,7 @@ interface PlanItem {
   ctaHref: string;
 }
 
-export function PricingContent() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual" | "payg">("monthly");
-  const [currency, setCurrency] = useState<"KES" | "USD">("KES");
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  const KES_TO_USD = 130;
-
-  const plans: PlanItem[] = [
+const fallbackPlans: PlanItem[] = [
     {
       id: "starter",
       name: "Starter / PAYG",
@@ -130,7 +126,60 @@ export function PricingContent() {
       ctaText: "Contact Enterprise Desk",
       ctaHref: "/contact",
     },
-  ];
+];
+
+export function PricingContent() {
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual" | "payg">("monthly");
+  const [currency, setCurrency] = useState<"KES" | "USD">("KES");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  const KES_TO_USD = 130;
+
+  const { data: dynamicPlansData } = useFetchPlans();
+
+  const apiPlans: Plan[] = Array.isArray(dynamicPlansData)
+    ? dynamicPlansData
+    : dynamicPlansData && typeof dynamicPlansData === "object" && "results" in dynamicPlansData
+    ? (dynamicPlansData as any).results
+    : [];
+
+  const plans: PlanItem[] =
+    apiPlans.length > 0
+      ? apiPlans.map((p) => ({
+          id: p.reference || p.code || p.id,
+          name: p.name,
+          tagline: p.tagline,
+          priceKesMonthly: Number(p.price_kes),
+          priceKesAnnual: Math.round(Number(p.price_kes) * 0.85),
+          smsRateKes: Number(p.sms_rate_kes),
+          emailRateKes: Number(p.email_rate_kes),
+          includedSms: p.included_sms_credits,
+          includedEmail: p.included_email_credits,
+          maxContacts: p.max_contacts > 0 ? p.max_contacts.toLocaleString() : "Unlimited",
+          senderIds: p.max_sender_ids,
+          isPopular: p.is_featured,
+          badge: p.badge_text || (p.is_featured ? "Most Popular" : undefined),
+          features:
+            p.features_list && p.features_list.length > 0
+              ? p.features_list
+              : [
+                  `${p.sms_rate_kes} KES per SMS rate`,
+                  `${p.included_sms_credits.toLocaleString()} Included SMS credits`,
+                  p.has_api_access ? "REST API & Webhooks access" : "Standard dashboard access",
+                  `${p.support_tier} support tier`,
+                ],
+          ctaText:
+            p.category === "ENTERPRISE"
+              ? "Contact Enterprise Desk"
+              : Number(p.price_kes) === 0
+              ? "Start Free / Top Up"
+              : `Get ${p.name}`,
+          ctaHref:
+            p.category === "ENTERPRISE"
+              ? "/contact"
+              : `/auth/signup?plan=${p.slug || p.code || p.reference}`,
+        }))
+      : fallbackPlans;
 
   const formatPrice = (kesAmount: number) => {
     if (kesAmount === 0) return "Free";
