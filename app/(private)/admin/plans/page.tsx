@@ -101,18 +101,20 @@ export default function AdminPlansPage() {
         </div>
 
         <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={handleSeedPlans}
-            disabled={seedMutation.isPending}
-            className="py-2.5 px-4 bg-white hover:bg-zinc-50 text-zinc-700 text-xs sm:text-sm font-semibold rounded-lg border border-zinc-300 transition-colors inline-flex items-center justify-center gap-2 shadow-2xs cursor-pointer disabled:opacity-50"
-            title="Populate standard Starter, Growth, Scale & Enterprise SLA plans"
-          >
-            <svg className="w-4 h-4 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
-            <span>{seedMutation.isPending ? "Seeding..." : "Seed Standard Plans"}</span>
-          </button>
+          {plans.length === 0 && (
+            <button
+              type="button"
+              onClick={handleSeedPlans}
+              disabled={seedMutation.isPending}
+              className="py-2.5 px-4 bg-white hover:bg-zinc-50 text-zinc-700 text-xs sm:text-sm font-semibold rounded-lg border border-zinc-300 transition-colors inline-flex items-center justify-center gap-2 shadow-2xs cursor-pointer disabled:opacity-50"
+              title="Populate standard Starter, Growth, Scale & Enterprise SLA plans"
+            >
+              <svg className="w-4 h-4 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>{seedMutation.isPending ? "Seeding..." : "Seed Standard Plans"}</span>
+            </button>
+          )}
 
           <Link
             href="/admin/plans/create"
