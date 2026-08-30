@@ -125,7 +125,16 @@ export function Footer() {
               </div>
               <div>
                 <span className="text-zinc-500 block">Emergency Gateway NOC:</span>
-                <span className="text-zinc-300">+1 (800) 555-0199</span>
+                <span className="text-zinc-300">+254 700 000 000</span>
+              </div>
+              <div className="pt-2">
+                <a
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 text-[#d8b4fe] hover:text-white font-medium transition-colors"
+                >
+                  <span>Open Support Desk Form</span>
+                  <span>→</span>
+                </a>
               </div>
             </div>
           </div>
@@ -138,14 +147,17 @@ export function Footer() {
             © {currentYear} LJK Marketing Agency LLC. All rights reserved. Direct Carrier Routing.
           </div>
           <div className="flex items-center gap-6">
-            <a href="#audit" className="hover:text-zinc-300 transition-colors">
+            <a href="/contact" className="hover:text-zinc-300 transition-colors">
+              Contact Desk
+            </a>
+            <a href="/pricing" className="hover:text-zinc-300 transition-colors">
+              Pricing Plans
+            </a>
+            <a href="/#audit" className="hover:text-zinc-300 transition-colors">
               Privacy Policy
             </a>
-            <a href="#audit" className="hover:text-zinc-300 transition-colors">
+            <a href="/#audit" className="hover:text-zinc-300 transition-colors">
               Terms of Service
-            </a>
-            <a href="#audit" className="hover:text-zinc-300 transition-colors">
-              API Documentation
             </a>
           </div>
         </div>

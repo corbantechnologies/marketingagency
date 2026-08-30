@@ -128,7 +128,7 @@ export function PricingContent() {
         "24/7 Priority Emergency NOC line",
       ],
       ctaText: "Contact Enterprise Desk",
-      ctaHref: "#contact-enterprise",
+      ctaHref: "/contact",
     },
   ];
 
@@ -487,12 +487,12 @@ export function PricingContent() {
             >
               Create Free Account
             </Link>
-            <a
-              href="mailto:growth@ljkmarketingagency.co.ke"
+            <Link
+              href="/contact"
               className="inline-flex items-center justify-center border border-white/30 text-white hover:bg-white/10 px-5 py-2.5 rounded text-xs font-medium transition-colors"
             >
               Contact Sales NOC
-            </a>
+            </Link>
           </div>
         </div>
 
