@@ -181,10 +181,11 @@ export const authOptions: NextAuthOptions = {
         token.is_approved = user.is_approved;
         token.reference = user.reference;
         token.code = user.code;
-        token.member_code = user.member_code;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.redirectUrl = user.redirectUrl;
+        token.accessTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        return token;
       }
 
       // Handle client-side session update triggers (e.g. useSession().update())
@@ -196,7 +197,13 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      return token;
+      // Return previous token if the access token has not expired yet
+      if (token.accessTokenExpires && Date.now() < (token.accessTokenExpires as number)) {
+        return token;
+      }
+
+      // Access token has expired, silently refresh it
+      return refreshAccessToken(token);
     },
 
     async session({ session, token }) {

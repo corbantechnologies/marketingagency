@@ -21,7 +21,7 @@ export const apiMultipartActions = axios?.create({
   withCredentials: true,
 });
 
-// Automatic token attachment interceptor for client-side API requests
+// Automatic token attachment and 401 interceptors for client-side API requests
 if (typeof window !== "undefined") {
   apiActions.interceptors.request.use(async (config) => {
     if (!config.headers.Authorization || config.headers.Authorization === "") {
@@ -62,4 +62,25 @@ if (typeof window !== "undefined") {
     }
     return config;
   });
+
+  apiActions.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      // If unauthorized on private dashboard pages, cleanly direct to login
+      if (
+        error.response?.status === 401 &&
+        typeof window !== "undefined" &&
+        !window.location.pathname.startsWith("/auth/") &&
+        !window.location.pathname.startsWith("/pricing") &&
+        window.location.pathname !== "/"
+      ) {
+        const returnUrl = encodeURIComponent(window.location.pathname);
+        if (!window.location.search.includes("callbackUrl")) {
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = `/auth/login?callbackUrl=${returnUrl}`;
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
 }
