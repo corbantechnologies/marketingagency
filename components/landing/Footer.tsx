@@ -8,9 +8,9 @@ export function Footer() {
   return (
     <footer className="bg-zinc-950 text-zinc-300 pt-16 pb-12 border-t border-zinc-900" aria-label="LJK Agency Footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-zinc-800">
-          
+
           {/* Brand Col (2 cols on LG) */}
           <div className="lg:col-span-2 space-y-4">
             <LJKLogo size="md" variant="white" />
@@ -75,6 +75,11 @@ export function Footer() {
               <li>
                 <Link href="/features" className="hover:text-purple-300 transition-colors">
                   Platform Features &amp; APIs
+                </Link>
+              </li>
+              <li>
+                <Link href="/auth/login" className="hover:text-purple-300 transition-colors">
+                  Platform Login
                 </Link>
               </li>
               <li>
