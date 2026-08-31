@@ -160,19 +160,19 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-normal text-zinc-500">
           <div>
-            © {currentYear} LJK Marketing Agency LLC. All rights reserved. Direct Carrier Routing.
+            © {currentYear} LJK Marketing Agency (Nairobi, Kenya). All rights reserved. Direct Carrier Routing.
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <Link href="/contact" className="hover:text-zinc-300 transition-colors">
               Contact Desk
             </Link>
             <Link href="/pricing" className="hover:text-zinc-300 transition-colors">
               Pricing Plans
             </Link>
-            <Link href="/#audit" className="hover:text-zinc-300 transition-colors">
+            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/#audit" className="hover:text-zinc-300 transition-colors">
+            <Link href="/terms-of-service" className="hover:text-zinc-300 transition-colors">
               Terms of Service
             </Link>
           </div>
