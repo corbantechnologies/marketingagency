@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export function AuditForm() {
   const [formData, setFormData] = useState({
@@ -350,7 +351,15 @@ export function AuditForm() {
                   </button>
 
                   <p className="text-center text-[11px] text-zinc-400">
-                    Carrier-grade privacy. We never share subscriber records or campaign logs.
+                    By submitting, you agree to our{" "}
+                    <Link href="/terms-of-service" className="text-zinc-300 hover:text-white underline">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/privacy-policy" className="text-zinc-300 hover:text-white underline">
+                      Privacy Policy
+                    </Link>
+                    . We never share subscriber records or campaign logs.
                   </p>
                 </form>
               )}

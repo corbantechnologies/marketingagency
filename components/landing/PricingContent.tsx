@@ -238,15 +238,19 @@ export function PricingContent() {
   const pricingFaqs = [
     {
       q: "Do purchased SMS credits ever expire?",
-      a: "No. Prepaid SMS and Email credits purchased on LJK never expire. You can top up anytime via M-PESA and use your balance whenever you need to send campaigns.",
+      a: "No. Prepaid SMS and Email credits purchased on LJK never expire as long as your account is active. You can top up anytime via M-PESA and use your balance whenever you need to send campaigns.",
     },
     {
       q: "How does the M-PESA top-up process work?",
       a: "You simply log into your business dashboard, enter the amount you want to top up (from KSh 100), and an M-PESA STK prompt appears on your phone. Once you enter your PIN, credits are instantly credited to your wallet in real time.",
     },
     {
-      q: "What is a custom Alphanumeric Sender ID and how do I get one?",
-      a: "A Sender ID displays your exact brand name (e.g. 'YOURBRAND', up to 11 characters) on your recipient's handset instead of a random number. We assist with carrier regulator approval within 24 to 48 hours.",
+      q: "What is a custom Alphanumeric Sender ID and how does vetting work?",
+      a: "A Sender ID displays your exact verified brand name (up to 11 characters) on recipient handsets. LJK acts as your technical facilitator submitting documentation to the Communications Authority of Kenya (CAK) and carrier operators (24–72 hours). Final approval decisions reside with regulators with zero agency liability for carrier rejections.",
+    },
+    {
+      q: "Who is responsible for opt-in consent and anti-spam compliance?",
+      a: "Clients act as sole Data Controllers under the Kenya Data Protection Act 2019 and are required to hold explicit opt-in consent. LJK operates as a technical software gateway and holds zero liability for blocked messages resulting from client anti-spam violations.",
     },
     {
       q: "Can I switch between plans or downgrade anytime?",

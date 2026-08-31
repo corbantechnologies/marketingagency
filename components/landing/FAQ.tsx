@@ -10,32 +10,37 @@ export function FAQ() {
     {
       question: "How do your Tier-1 direct SMS routes compare to standard aggregators?",
       answer:
-        "Unlike low-cost grey routes that route messages through multiple overseas hops (leading to high failure rates and 10–45 minute delays), LJK connects directly with Tier-1 mobile network operators. This guarantees 99.4%+ handset delivery, sub-2.4 second transit latency, and immediate real-time DLR callbacks.",
+        "Unlike low-cost grey routes that route messages through multiple overseas hops (leading to high failure rates and 10–45 minute delays), LJK provides direct technical interconnects with Tier-1 carrier networks. This enables 99.4%+ platform dispatch reliability, sub-2.4 second transit latency, and immediate real-time DLR callbacks.",
     },
     {
       question: "How long does custom Alphanumeric Sender ID registration take?",
       answer:
-        "Custom Sender ID registration (e.g. your exact brand name up to 11 characters) typically takes 24 to 48 business hours, depending on regional telecom regulator approvals. During registration, we provide instant access to high-priority shared alphanumeric routes so you can test campaigns immediately.",
+        "Custom Sender ID registration (e.g. your verified brand name up to 11 characters) typically takes 24 to 72 business hours, subject to regulatory vetting and approval by the Communications Authority of Kenya (CAK) and telecom operators (Safaricom & Airtel). LJK operates strictly as your technical processing agent; approval decisions reside exclusively with the regulators and operators with zero agency liability for carrier rejections or vetting delays. You can immediately test campaigns via shared approved routes while vetting is underway.",
+    },
+    {
+      question: "What is LJK's role regarding campaign content, spam, and carrier blocking?",
+      answer:
+        "LJK Marketing Agency is a technical software intermediary and Data Processor, not a communications carrier. Clients act as sole Data Controllers and are strictly responsible for maintaining verifiable opt-in consent from all recipients. If a client transmits unsolicited messages, spam, or misleading content resulting in carrier filtering, recipient complaints, or carrier blacklisting, LJK holds zero liability. In accordance with our Terms of Service, abusive accounts are subject to immediate suspension without refund.",
     },
     {
       question: "Can we integrate your SMS & Email gateways into our own app via API?",
       answer:
-        "Yes. We support standard HTTPS REST APIs with JSON payloads, as well as enterprise SMPP 3.4 protocols for high-throughput transactional OTPs and alerts. We provide SDKs and direct plugins for Shopify, WooCommerce, and CRM webhooks.",
+        "Yes. We support standard HTTPS REST APIs with JSON payloads, as well as enterprise SMPP 3.4 protocols for high-throughput transactional OTPs and alerts. We provide SDKs and direct connectors for Shopify, WooCommerce, and CRM webhooks.",
     },
     {
-      question: "How do you guarantee primary inbox placement for Email Marketing?",
+      question: "How do you ensure high deliverability for Email Marketing?",
       answer:
-        "We execute a comprehensive 4-stage deliverability protocol: 1) Full DNS alignment (SPF, DKIM, DMARC, BIMI), 2) Automated list cleaning to eliminate spam traps and hard bounces, 3) Dedicated IP provisioning with progressive warming schedules, and 4) Engagement-based segmentation to keep sender reputation in the top 99th percentile.",
+        "We execute a comprehensive 4-stage deliverability protocol: 1) Full DNS alignment (SPF, DKIM, DMARC), 2) Automated list hygiene to eliminate invalid addresses, 3) Dedicated IP provisioning with progressive warming schedules, and 4) Behavioral segmentation to keep sender domain health in top standing.",
     },
     {
       question: "Do SMS credits expire, and what are the volume discount tiers?",
       answer:
-        "Prepaid SMS credits never expire. As your monthly broadcast volume increases beyond 50,000, 200,000, and 1,000,000+ units, unit costs decrease significantly. Custom enterprise pricing and post-paid billing agreements are available for verified businesses.",
+        "Prepaid SMS credits loaded into your active account ledger do not expire. As your monthly broadcast volume increases beyond 50,000, 200,000, and 1,000,000+ units, wholesale unit rates decrease. Custom enterprise volume tiers and dedicated account support are available upon request.",
     },
     {
-      question: "Are your messaging services compliant with TCPA, GDPR, and local carrier guidelines?",
+      question: "Are your services compliant with the Kenya Data Protection Act 2019?",
       answer:
-        "Yes. Our platform includes built-in automated opt-out (STOP) handling, suppression list management, time-zone sensitive dispatch windows (preventing late-night promotional SMS), and two-step opt-in verification tools to ensure full regulatory compliance.",
+        "Yes. LJK operates in strict compliance with the Kenya Data Protection Act 2019. We implement TLS 1.3 in transit and AES-256 encryption at rest. We never sell, rent, trade, or share client contact lists with third parties under any circumstance. Our platform includes automated opt-out (STOP) handling and compliant daytime dispatch controls.",
     },
   ];
 
@@ -46,13 +51,13 @@ export function FAQ() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
-            Messaging & Gateway FAQs
+            Messaging &amp; Gateway FAQs
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
-            Frequently Asked Questions About Bulk SMS & Email Marketing
+            Frequently Asked Questions About Bulk SMS &amp; Email Marketing
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
-            Everything you need to know about carrier routes, sender IDs, deliverability, and developer APIs.
+            Clear details on carrier routes, sender ID vetting, anti-spam policies, and technical intermediary terms.
           </p>
         </div>
 
@@ -95,12 +100,12 @@ export function FAQ() {
 
         {/* Bottom support line */}
         <div className="mt-8 text-center text-xs text-zinc-500">
-          Need a custom carrier interconnect or high-volume SMPP quote?{" "}
+          Have compliance questions or need enterprise routing details?{" "}
           <Link
             href="/contact"
             className="text-[#581c87] font-semibold hover:underline"
           >
-            Contact our telecom engineering desk
+            Contact our compliance &amp; engineering desk
           </Link>
         </div>
 
@@ -108,3 +113,5 @@ export function FAQ() {
     </section>
   );
 }
+
+export default FAQ;

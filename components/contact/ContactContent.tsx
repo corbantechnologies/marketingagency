@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 
 export function ContactContent() {
@@ -377,7 +378,15 @@ export function ContactContent() {
                   </button>
 
                   <p className="text-center text-[11px] text-zinc-400">
-                    Confidential submission. Auto-confirmation sent directly to your email via Resend.
+                    By submitting, you agree to our{" "}
+                    <Link href="/terms-of-service" className="text-zinc-600 hover:text-zinc-900 underline">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/privacy-policy" className="text-zinc-600 hover:text-zinc-900 underline">
+                      Privacy Policy
+                    </Link>
+                    . Auto-confirmation dispatched to your inbox via Resend.
                   </p>
                 </form>
               )}
