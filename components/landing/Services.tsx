@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export function Services() {
   const [activeTab, setActiveTab] = useState<string>("all");
@@ -13,7 +14,7 @@ export function Services() {
       tagline: "Direct Tier-1 Telecom Routing & 99.4% Delivery",
       description:
         "High-throughput SMS broadcasting for promotional flash sales, product alerts, and mission-critical transactional OTPs with custom branded alphanumeric Sender IDs and real-time delivery receipts (DLR).",
-      metrics: "99.4% Delivery & <2.4s Speed",
+      metrics: "99.4% Delivery · <2.4s Latency",
       deliverables: [
         "Custom Alphanumeric Sender ID registration",
         "High-throughput dispatch (up to 50,000 SMS/min)",
@@ -33,7 +34,7 @@ export function Services() {
       tagline: "Dedicated IP Warming & Primary Tab Inboxing",
       description:
         "We build high-converting email newsletters, automated drip series, and dynamic behavioral campaigns. We handle complete domain authentication (SPF, DKIM, DMARC) and list cleaning to bypass spam filters.",
-      metrics: "98.9% Average Primary Inbox Rate",
+      metrics: "98.9% Primary Inbox Rate",
       deliverables: [
         "Dedicated IP setup, warmup & reputation monitoring",
         "High-converting visual template design & copywriting",
@@ -53,7 +54,7 @@ export function Services() {
       tagline: "Triggered Workflows That Compound LTV",
       description:
         "Turn one-time buyers into loyal repeat customers. We configure automated multi-channel sequences combining SMS urgency with detailed email storytelling for cart recovery, post-purchase, and win-backs.",
-      metrics: "+34% Incremental Revenue From Automations",
+      metrics: "+34% Automated Revenue",
       deliverables: [
         "Abandoned cart & browse recovery SMS/Email sequences",
         "Post-purchase onboarding & cross-sell triggers",
@@ -73,7 +74,7 @@ export function Services() {
       tagline: "Seamless Integration With Your Backend & CRM",
       description:
         "Connect our high-speed messaging infrastructure directly into your custom apps, e-commerce stores, ERPs, and databases using robust REST APIs, SMPP 3.4 protocols, and bidirectional webhook callbacks.",
-      metrics: "<50ms API Response Latency",
+      metrics: "<50ms API Latency",
       deliverables: [
         "REST API with comprehensive SDK documentation",
         "SMPP 3.4 server support for high-volume enterprise relays",
@@ -93,7 +94,7 @@ export function Services() {
       tagline: "Scaling Your Owned Customer Database",
       description:
         "Your messaging is only as profitable as your subscriber list. We run high-intent Meta and Google ad funnels engineered specifically to capture verified phone numbers and opt-in emails at the lowest cost per lead.",
-      metrics: "Average KSh 45 (~$0.35) Cost Per Opt-In Contact",
+      metrics: "Avg. KSh 45 / Opt-In Lead",
       deliverables: [
         "Meta & Google lead generation campaign management",
         "High-converting direct response ad creative",
@@ -154,7 +155,7 @@ export function Services() {
           </div>
 
           {/* Filter Tabs */}
-          <div className="mt-6 md:mt-0 flex items-center gap-1.5 p-1 bg-zinc-50 border border-zinc-200 rounded self-start md:self-auto">
+          <div className="mt-6 md:mt-0 flex flex-wrap items-center gap-1.5 p-1 bg-zinc-50 border border-zinc-200 rounded self-start md:self-auto">
             {[
               { id: "all", label: "All Solutions" },
               { id: "messaging", label: "SMS & Email" },
@@ -178,11 +179,11 @@ export function Services() {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {filteredServices.map((service) => (
             <div
               key={service.id}
-              className="group bg-white border border-zinc-200 hover:border-[#581c87] rounded p-6 transition-all duration-200 shadow-xs hover:shadow-sm flex flex-col justify-between"
+              className="group bg-white border border-zinc-200 hover:border-[#581c87] rounded p-6 transition-all duration-200 shadow-xs hover:shadow-sm flex flex-col justify-between h-full"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -194,7 +195,7 @@ export function Services() {
                   </span>
                 </div>
 
-                <h3 className="text-lg font-semibold text-zinc-900 group-hover:text-[#581c87] transition-colors mb-1">
+                <h3 className="text-base font-semibold text-zinc-900 group-hover:text-[#581c87] transition-colors mb-1">
                   {service.title}
                 </h3>
                 <p className="text-xs font-medium text-purple-900 mb-3">
@@ -218,18 +219,18 @@ export function Services() {
                 </div>
               </div>
 
-              {/* Metric Callout */}
-              <div className="pt-4 border-t border-zinc-100 flex items-center justify-between text-xs">
-                <span className="font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
+              {/* Metric Callout & Action Link (Responsive, No Collision) */}
+              <div className="pt-4 border-t border-zinc-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 text-xs">
+                <span className="font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded text-xs whitespace-nowrap">
                   {service.metrics}
                 </span>
-                <a
-                  href="#audit"
-                  className="font-medium text-[#581c87] hover:text-[#4a1572] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+                <Link
+                  href="/contact"
+                  className="font-semibold text-[#581c87] hover:text-[#4a1572] inline-flex items-center gap-1 shrink-0 whitespace-nowrap group-hover:translate-x-0.5 transition-transform ml-auto sm:ml-0"
                 >
                   <span>Request Setup</span>
                   <span>→</span>
-                </a>
+                </Link>
               </div>
             </div>
           ))}
@@ -245,15 +246,17 @@ export function Services() {
               Our telecom engineers set up your dedicated routes and domain warm-up in under 48 hours.
             </div>
           </div>
-          <a
-            href="#audit"
-            className="inline-flex items-center gap-2 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-sm font-semibold transition-colors shrink-0"
+          <Link
+            href="/contact"
+            className="inline-flex items-center justify-center gap-2 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-sm font-semibold transition-colors shrink-0 text-center w-full sm:w-auto"
           >
             Connect With Messaging Engineers
-          </a>
+          </Link>
         </div>
 
       </div>
     </section>
   );
 }
+
+export default Services;

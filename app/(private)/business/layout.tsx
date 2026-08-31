@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { BusinessNavbar } from "@/components/business/Navbar";
 import { BusinessSidebar } from "@/components/business/Sidebar";
-import { Toaster } from "react-hot-toast";
 
 export default function BusinessLayout({
   children,
@@ -15,8 +14,6 @@ export default function BusinessLayout({
 
   return (
     <div className="h-screen flex flex-col bg-zinc-50 selection:bg-[#581c87] selection:text-white overflow-hidden">
-      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-
       <BusinessNavbar
         onToggleMobileSidebar={() => setIsMobileOpen(!isMobileOpen)}
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}

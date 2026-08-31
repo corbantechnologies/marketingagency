@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export function ContactContent() {
   const [formData, setFormData] = useState({
@@ -65,9 +65,8 @@ export function ContactContent() {
 
   return (
     <div className="bg-white py-12 md:py-20">
-      <Toaster position="top-right" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header Title */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-200 text-xs font-semibold text-[#581c87] mb-3">
@@ -83,10 +82,10 @@ export function ContactContent() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Direct Channels & SLA Info (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
-            
+
             {/* Live Response SLA Badge */}
             <div className="bg-purple-50 border border-purple-200 rounded p-5">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#581c87] mb-1">
@@ -138,7 +137,7 @@ export function ContactContent() {
                 </div>
                 <div className="text-xs">
                   <div className="font-semibold text-zinc-900">Direct Telephone & WhatsApp</div>
-                  <div className="text-zinc-700 mt-0.5">+254 700 000 000</div>
+                  <div className="text-zinc-700 mt-0.5">+254 768 978 865</div>
                   <span className="text-zinc-400">Emergency NOC Available 24/7 for Enterprise SLA</span>
                 </div>
               </div>
@@ -161,7 +160,7 @@ export function ContactContent() {
               {/* Quick WhatsApp Action */}
               <div className="pt-2">
                 <a
-                  href="https://wa.me/254700000000?text=Hello%20LJK%20Marketing%20Agency,%20I%20have%20an%20inquiry%20regarding%20Bulk%20SMS%20and%20messaging."
+                  href="https://wa.me/254768978865?text=Hello%20LJK%20Marketing%20Agency,%20I%20have%20an%20inquiry%20regarding%20Bulk%20SMS%20and%20messaging."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded text-xs font-semibold transition-colors shadow-xs"
@@ -179,7 +178,7 @@ export function ContactContent() {
           {/* Right Column: Contact Form with Resend Integration (7 Cols) */}
           <div className="lg:col-span-7">
             <div className="bg-white border border-zinc-200 rounded p-6 sm:p-8 shadow-xs">
-              
+
               {isSubmitted ? (
                 <div className="text-center py-12 space-y-4">
                   <div className="w-12 h-12 rounded bg-purple-50 border border-purple-200 text-[#581c87] flex items-center justify-center mx-auto">
@@ -235,11 +234,10 @@ export function ContactContent() {
                           key={type}
                           type="button"
                           onClick={() => setFormData({ ...formData, inquiryType: type })}
-                          className={`p-2.5 text-left rounded text-xs font-medium border transition-colors ${
-                            formData.inquiryType === type
-                              ? "bg-purple-50 border-[#581c87] text-[#581c87]"
-                              : "bg-white border-zinc-200 text-zinc-700 hover:border-zinc-300"
-                          }`}
+                          className={`p-2.5 text-left rounded text-xs font-medium border transition-colors ${formData.inquiryType === type
+                            ? "bg-purple-50 border-[#581c87] text-[#581c87]"
+                            : "bg-white border-zinc-200 text-zinc-700 hover:border-zinc-300"
+                            }`}
                         >
                           {type}
                         </button>

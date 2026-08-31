@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export function CaseStudies() {
   const cases = [
@@ -14,7 +15,7 @@ export function CaseStudies() {
       results: [
         { label: "Dispatch Speed", val: "5.8 Mins" },
         { label: "SMS CTR", val: "18.4%" },
-        { label: "Direct Campaign ROI", val: "14.2x" },
+        { label: "Campaign ROI", val: "14.2x" },
       ],
     },
     {
@@ -28,14 +29,14 @@ export function CaseStudies() {
         "Implemented LJK SMPP 3.4 low-latency transactional SMS gateway with multi-carrier failover routing and instant DLR webhooks.",
       results: [
         { label: "Avg Latency", val: "1.48s" },
-        { label: "Drop-off Reduction", val: "-42%" },
+        { label: "Drop-off Cut", val: "-42%" },
         { label: "Monthly OTPs", val: "1.2M+" },
       ],
     },
     {
       client: "Aura Skincare & Wellness",
-      industry: "Omnichannel Lifecycle Retention",
-      highlightMetric: "38.2% of Total Store Revenue",
+      industry: "Omnichannel Lifecycle",
+      highlightMetric: "38.2% of Store Revenue",
       subMetric: "+290% Increase in Repeat Buyer LTV",
       challenge:
         "Emails landing in Gmail Promotions tab with 12% open rates and no active SMS abandoned cart recovery.",
@@ -68,19 +69,19 @@ export function CaseStudies() {
         </div>
 
         {/* Case Studies Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           {cases.map((item, idx) => (
             <div
               key={idx}
-              className="bg-white border border-zinc-200 hover:border-[#581c87] rounded p-6 sm:p-7 transition-all duration-200 shadow-xs flex flex-col justify-between"
+              className="bg-white border border-zinc-200 hover:border-[#581c87] rounded p-6 sm:p-7 transition-all duration-200 shadow-xs flex flex-col justify-between h-full"
             >
               <div>
                 {/* Header info */}
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded">
+                <div className="flex items-center justify-between mb-3 gap-2">
+                  <span className="text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded whitespace-nowrap">
                     {item.industry}
                   </span>
-                  <span className="text-xs font-normal text-zinc-400">Carrier Verified</span>
+                  <span className="text-xs font-normal text-zinc-400 shrink-0">Carrier Verified</span>
                 </div>
 
                 <h3 className="text-base font-semibold text-zinc-900 mb-1">
@@ -92,7 +93,7 @@ export function CaseStudies() {
                   <div className="text-xl font-semibold text-[#581c87]">
                     {item.highlightMetric}
                   </div>
-                  <div className="text-xs font-medium text-zinc-600 mt-0.5">
+                  <div className="text-xs font-medium text-zinc-600 mt-0.5 leading-relaxed">
                     {item.subMetric}
                   </div>
                 </div>
@@ -127,16 +128,18 @@ export function CaseStudies() {
 
         {/* CTA Banner */}
         <div className="mt-12 text-center">
-          <a
-            href="#audit"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#581c87] hover:text-[#4a1572] underline underline-offset-4"
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#581c87] hover:text-[#4a1572] underline underline-offset-4"
           >
             <span>Need high-volume enterprise SMS pricing or SMPP interconnect details? Request a route teardown</span>
             <span>→</span>
-          </a>
+          </Link>
         </div>
 
       </div>
     </section>
   );
 }
+
+export default CaseStudies;

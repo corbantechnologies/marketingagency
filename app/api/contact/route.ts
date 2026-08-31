@@ -154,7 +154,7 @@ export async function POST(request: Request) {
               <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin: 16px 0 0 0;">
                 Need urgent assistance or custom high-volume SMPP route setup? Reach out directly via our priority support channels below.
               </p>
-              <a href="https://wa.me/254700000000?text=Hello%20LJK%20Team,%20I%20just%20submitted%20an%20inquiry%20for%20${encodeURIComponent(name)}" class="btn">
+              <a href="https://wa.me/254768978865?text=Hello%20LJK%20Team,%20I%20just%20submitted%20an%20inquiry%20for%20${encodeURIComponent(name)}" class="btn">
                 Chat on WhatsApp Priority NOC
               </a>
             </div>

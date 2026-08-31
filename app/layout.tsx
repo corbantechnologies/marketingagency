@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import TanstackQueryProvider from "@/providers/TanstackQueryProvider";
 import NextAuthProvider from "@/providers/NextAuthProvider";
+import { Toaster } from "react-hot-toast";
 
 const googleSans = localFont({
   src: [
@@ -197,6 +198,33 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-white text-zinc-900 font-sans flex flex-col selection:bg-[#581c87] selection:text-white">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#18181b",
+              color: "#ffffff",
+              border: "1px solid #27272a",
+              fontSize: "13px",
+              borderRadius: "8px",
+              padding: "10px 16px",
+              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
+            },
+            success: {
+              iconTheme: {
+                primary: "#a855f7",
+                secondary: "#ffffff",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "#ef4444",
+                secondary: "#ffffff",
+              },
+            },
+          }}
+        />
         <NextAuthProvider>
           <TanstackQueryProvider>
             {children}

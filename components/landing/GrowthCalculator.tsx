@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export function GrowthCalculator() {
   const [currency, setCurrency] = useState<"KES" | "USD">("KES");
@@ -68,7 +69,7 @@ export function GrowthCalculator() {
 
         {/* Calculator Main Box */}
         <div className="max-w-4xl mx-auto bg-white border border-zinc-200 rounded p-6 sm:p-8 shadow-xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
             {/* Left Controls (7 Cols) */}
             <div className="lg:col-span-7 space-y-6">
@@ -103,7 +104,7 @@ export function GrowthCalculator() {
 
                 {/* Currency Switcher */}
                 <div className="shrink-0 self-start sm:self-auto">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2 text-right">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2 text-left sm:text-right">
                     Currency
                   </label>
                   <div className="inline-flex p-0.5 bg-zinc-100 border border-zinc-200 rounded">
@@ -135,11 +136,11 @@ export function GrowthCalculator() {
 
               {/* Monthly SMS Volume Slider */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <label className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
                     Monthly Bulk SMS Volume
                   </label>
-                  <span className="text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
+                  <span className="text-xs sm:text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
                     {smsVolume.toLocaleString()} SMS / mo
                   </span>
                 </div>
@@ -161,11 +162,11 @@ export function GrowthCalculator() {
 
               {/* Email List Size Slider */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <label className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
                     Active Email Subscribers
                   </label>
-                  <span className="text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
+                  <span className="text-xs sm:text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
                     {emailSubscribers.toLocaleString()} Contacts
                   </span>
                 </div>
@@ -187,12 +188,12 @@ export function GrowthCalculator() {
 
               {/* Average Order Value Slider */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <label className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
                     Average Order Value (AOV) / Sale Value
                   </label>
                   <div className="text-right">
-                    <span className="text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
+                    <span className="text-xs sm:text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
                       {currency === "KES" ? `KES ${avgOrderValue.toLocaleString()}` : `$${avgOrderValue.toLocaleString()}`}
                     </span>
                     {currency === "KES" && (
@@ -225,7 +226,7 @@ export function GrowthCalculator() {
             </div>
 
             {/* Right Projected Results Card (5 Cols) */}
-            <div className="lg:col-span-5 bg-purple-950 text-white rounded p-6 flex flex-col justify-between" style={{ backgroundColor: "#3b0764" }}>
+            <div className="lg:col-span-5 bg-purple-950 text-white rounded p-6 flex flex-col justify-between h-full" style={{ backgroundColor: "#3b0764" }}>
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wider text-purple-300 mb-1">
                   Projected Campaign Output
@@ -249,7 +250,7 @@ export function GrowthCalculator() {
 
                   <div className="p-3 bg-white/5 border border-white/10 rounded">
                     <div className="text-xs font-normal text-purple-200">Estimated Direct Orders</div>
-                    <div className="text-xl font-semibold text-purple-300 mt-0.5">
+                    <div className="text-base sm:text-lg font-semibold text-purple-300 mt-0.5">
                       {estimatedOrders.toLocaleString()} Conversions
                     </div>
                   </div>
@@ -257,13 +258,13 @@ export function GrowthCalculator() {
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 bg-white/5 border border-white/10 rounded">
                       <div className="text-purple-200">Delivered SMS</div>
-                      <div className="text-base font-semibold text-white mt-0.5">
+                      <div className="text-sm sm:text-base font-semibold text-white mt-0.5">
                         {deliveredSms.toLocaleString()}
                       </div>
                     </div>
                     <div className="p-2.5 bg-white/5 border border-white/10 rounded">
                       <div className="text-purple-200">High-Intent Clicks</div>
-                      <div className="text-base font-semibold text-emerald-400 mt-0.5">
+                      <div className="text-sm sm:text-base font-semibold text-emerald-400 mt-0.5">
                         {totalClicks.toLocaleString()}
                       </div>
                     </div>
@@ -272,12 +273,12 @@ export function GrowthCalculator() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-white/10">
-                <a
-                  href="#audit"
-                  className="w-full inline-flex items-center justify-center bg-white text-[#581c87] hover:bg-purple-50 py-2.5 px-4 rounded text-sm font-semibold transition-colors text-center"
+                <Link
+                  href="/#audit"
+                  className="w-full inline-flex items-center justify-center bg-white text-[#581c87] hover:bg-purple-50 py-2.5 px-4 rounded text-xs sm:text-sm font-semibold transition-colors text-center shadow-xs"
                 >
                   Claim 50 Free Test SMS Credits
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -288,3 +289,5 @@ export function GrowthCalculator() {
     </section>
   );
 }
+
+export default GrowthCalculator;

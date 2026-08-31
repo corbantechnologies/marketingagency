@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { AdminNavbar } from "@/components/admin/Navbar";
 import { AdminSidebar } from "@/components/admin/Sidebar";
-import { Toaster } from "react-hot-toast";
 
 export default function AdminLayout({
   children,
@@ -15,8 +14,6 @@ export default function AdminLayout({
 
   return (
     <div className="h-screen flex flex-col bg-zinc-50 selection:bg-[#581c87] selection:text-white overflow-hidden">
-      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-
       <AdminNavbar
         onToggleMobileSidebar={() => setIsMobileOpen(!isMobileOpen)}
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}

@@ -1,7 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import { LJKLogo } from "@/components/landing/LJKLogo";
-import { Toaster } from "react-hot-toast";
 
 export default function AuthLayout({
   children,
@@ -10,26 +9,6 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col justify-between selection:bg-[#581c87] selection:text-white">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#18181b",
-            color: "#ffffff",
-            fontSize: "13px",
-            borderRadius: "6px",
-            padding: "10px 16px",
-          },
-          success: {
-            iconTheme: {
-              primary: "#a855f7",
-              secondary: "#ffffff",
-            },
-          },
-        }}
-      />
-
       {/* Top Header */}
       <header className="w-full border-b border-zinc-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

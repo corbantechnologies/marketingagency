@@ -68,10 +68,10 @@ export function Hero() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-1.5 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-sm font-semibold transition-colors shadow-xs shrink-0"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-xs sm:text-sm font-semibold transition-colors shadow-xs shrink-0 cursor-pointer"
                 >
-                  <span>{submitted ? "Preparing..." : "Get Free Audit & Test Credits"}</span>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span>{submitted ? "Preparing Audit..." : "Get Free Audit & Test Credits"}</span>
+                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
                 </button>

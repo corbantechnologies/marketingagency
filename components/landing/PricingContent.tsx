@@ -266,7 +266,7 @@ export function PricingContent() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[#581c87] bg-purple-50 px-3 py-1 rounded">
             Simple, Transparent Bulk SMS &amp; Email Rates
           </span>
-          <h1 className="text-2xl sm:text-4xl font-bold text-zinc-900 mt-4 mb-3 tracking-tight">
+          <h1 className="text-xl font-semibold text-zinc-900 mt-4 mb-3 tracking-tight">
             Predictable Wholesale Pricing for Growing Kenyan Businesses
           </h1>
           <p className="text-sm sm:text-base font-normal text-zinc-600 leading-relaxed">
@@ -390,7 +390,7 @@ export function PricingContent() {
                   {/* Price Display */}
                   <div className="mb-6 pb-6 border-b border-zinc-100">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+                      <span className="text-xl font-semibold text-zinc-900 tracking-tight">
                         {isPayg ? "PAYG" : formatPrice(rawPrice)}
                       </span>
                       {!isPayg && (

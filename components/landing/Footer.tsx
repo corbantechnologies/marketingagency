@@ -141,7 +141,7 @@ export function Footer() {
               </div>
               <div>
                 <span className="text-zinc-500 block">Emergency Gateway NOC:</span>
-                <span className="text-zinc-300">+254 700 000 000</span>
+                <span className="text-zinc-300">+254 768 978 865</span>
               </div>
               <div className="pt-2">
                 <a
