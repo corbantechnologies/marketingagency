@@ -289,6 +289,27 @@ export default function BusinessSignupPage() {
           <span className="text-zinc-500 text-[11px]">8+ chars, digits &amp; symbols</span>
         </div>
 
+        {/* Legal Consent Notice */}
+        <p className="text-[11px] text-zinc-500 leading-relaxed pt-1">
+          By clicking &ldquo;Create Business Account&rdquo;, you acknowledge that LJK Marketing Agency operates as a technical messaging intermediary and agree to our{" "}
+          <Link
+            href="/terms-of-service"
+            target="_blank"
+            className="text-[#581c87] font-semibold underline underline-offset-2 hover:text-[#4a1572]"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy-policy"
+            target="_blank"
+            className="text-[#581c87] font-semibold underline underline-offset-2 hover:text-[#4a1572]"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
+
         <button
           type="submit"
           disabled={isSubmitting}

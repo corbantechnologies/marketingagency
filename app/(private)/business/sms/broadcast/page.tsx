@@ -63,7 +63,7 @@ export default function BulkSMSBroadcastPage() {
             Compose &amp; Launch Bulk SMS
           </h1>
           <p className="text-xs sm:text-sm text-zinc-600 mt-0.5">
-            Instant Tier-1 carrier dispatch across Safaricom, Airtel, and Telkom networks.
+            Instant Tier-1 carrier dispatch across Safaricom, Airtel, and partner gateway networks.
           </p>
         </div>
 

@@ -16,7 +16,7 @@ export function FeaturesContent() {
       title: "Telco-Grade Bulk SMS Engine",
       badge: "1,000+ SMS / sec",
       description:
-        "Direct Tier-1 carrier interconnects with Safaricom, Airtel Kenya, and Telkom. Guaranteed sub-3-second handset delivery latency with real-time Delivery Reports (DLR).",
+        "Direct Tier-1 carrier interconnects with Safaricom and Airtel Kenya. Guaranteed sub-3-second handset delivery latency with real-time Delivery Reports (DLR).",
       highlights: [
         "GSM 03.38 160-char & concatenated messaging",
         "Automated DND / opt-out suppression filtering",
@@ -201,15 +201,15 @@ export function FeaturesContent() {
           </div>
 
           <div>
-            <div className="text-3xl sm:text-4xl font-extrabold text-white">3 Networks</div>
+            <div className="text-xl font-semibold text-white">Direct Carriers</div>
             <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mt-1">Telco Coverage</div>
-            <div className="text-[11px] text-zinc-500 mt-0.5">Safaricom, Airtel, Telkom</div>
+            <div className="text-[11px] text-zinc-400 mt-0.5">Safaricom &amp; Airtel Networks</div>
           </div>
 
           <div>
-            <div className="text-3xl sm:text-4xl font-extrabold text-amber-400">CA Verified</div>
+            <div className="text-xl font-semibold text-amber-400">CA Verified</div>
             <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mt-1">Compliance</div>
-            <div className="text-[11px] text-zinc-500 mt-0.5">Regulatory approved</div>
+            <div className="text-[11px] text-zinc-400 mt-0.5">Regulatory approved</div>
           </div>
         </div>
       </section>

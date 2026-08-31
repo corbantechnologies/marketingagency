@@ -135,27 +135,30 @@ export default function PrivacyPolicyPage() {
             {/* Section 5 */}
             <section className="space-y-3">
               <h2 className="text-base font-semibold text-zinc-900">
-                5. Third-Party Telecom Sub-Processors
+                5. Third-Party Telecom &amp; Cloud Sub-Processors
               </h2>
               <p>
                 To deliver SMS and Email messages across Kenyan and global networks, we route payloads through licensed
-                infrastructure partners and mobile network operators:
+                infrastructure partners, authorized gateway aggregators, and mobile network operators:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-zinc-700">
                 <li>
-                  <strong>Licensed Mobile Network Operators:</strong> Safaricom PLC, Airtel Kenya, and Telkom Kenya
-                  for direct SMS termination and handset delivery.
+                  <strong>Licensed Mobile Network Operators &amp; Gateway Providers:</strong> Safaricom PLC, Airtel Kenya,
+                  and authorized Tier-1 telecom SMS gateway providers and routing aggregators for carrier SMS termination
+                  and real-time delivery receipt (DLR) tracking.
                 </li>
                 <li>
-                  <strong>Email Delivery Sub-Processors:</strong> AWS Simple Email Service (SES) and Resend for
-                  authenticated SMTP transmission.
+                  <strong>Cloud Email Delivery Infrastructure:</strong> Authenticated SMTP relays and cloud email delivery
+                  sub-processors (including AWS SES and Resend) for transactional and marketing email transmission.
                 </li>
                 <li>
-                  <strong>Payment Gateways:</strong> Safaricom Daraja M-PESA API for real-time mobile wallet top-ups.
+                  <strong>Payment Gateways:</strong> Safaricom Daraja M-PESA API and licensed payment service providers
+                  for real-time wallet top-ups.
                 </li>
               </ul>
               <p className="text-xs text-zinc-500">
-                All sub-processors are bound by strict data protection agreements and telecom secrecy laws.
+                All sub-processors and telecom routing partners are bound by strict data confidentiality agreements,
+                statutory telecom secrecy regulations, and the Kenya Data Protection Act 2019.
               </p>
             </section>
 

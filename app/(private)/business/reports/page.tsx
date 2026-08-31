@@ -45,7 +45,7 @@ export default function DeliveryReportsPage() {
         <div className="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs">
           <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Carrier Success Rate</div>
           <div className="text-2xl font-bold text-zinc-900 mt-1">99.4%</div>
-          <div className="text-[11px] text-zinc-400 mt-1">Safaricom &bull; Airtel &bull; Telkom</div>
+          <div className="text-[11px] text-zinc-400 mt-1">Safaricom &bull; Airtel Networks</div>
         </div>
         <div className="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs">
           <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Failed / Undelivered</div>

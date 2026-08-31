@@ -68,10 +68,10 @@ export default function TermsOfServicePage() {
               </p>
               <ul className="list-disc pl-5 space-y-2 text-zinc-700 text-xs sm:text-sm">
                 <li>
-                  <strong>Regulatory & Carrier Authority:</strong> Custom Alphanumeric Sender IDs (e.g. brand names up
+                  <strong>Regulatory &amp; Carrier Authority:</strong> Custom Alphanumeric Sender IDs (e.g. brand names up
                   to 11 characters) are subject to mandatory regulatory oversight, vetting, and approval by the{" "}
-                  <strong>Communications Authority of Kenya (CAK)</strong> and individual Mobile Network Operators
-                  (including <strong>Safaricom PLC, Airtel Kenya, and Telkom Kenya</strong>).
+                  <strong>Communications Authority of Kenya (CAK)</strong>, individual Mobile Network Operators
+                  (including <strong>Safaricom PLC and Airtel Kenya</strong>), and authorized telecom gateway aggregators.
                 </li>
                 <li>
                   <strong>Zero Liability for Delays, Rejections, or Revocations:</strong> LJK Marketing Agency acts

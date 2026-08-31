@@ -275,6 +275,27 @@ export default function AdminAlphaSignupPage() {
           <span className="text-zinc-500 text-[11px]">8+ chars, uppercase, digit, symbol</span>
         </div>
 
+        {/* Legal Consent Notice */}
+        <p className="text-[11px] text-zinc-500 leading-relaxed pt-1">
+          By provisioning an administrative profile, you agree to uphold our{" "}
+          <Link
+            href="/terms-of-service"
+            target="_blank"
+            className="text-[#581c87] font-semibold underline underline-offset-2 hover:text-[#4a1572]"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy-policy"
+            target="_blank"
+            className="text-[#581c87] font-semibold underline underline-offset-2 hover:text-[#4a1572]"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
+
         <button
           type="submit"
           disabled={isSubmitting}

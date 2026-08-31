@@ -297,7 +297,7 @@ export default function SenderIdsPage() {
                 <li>Maximum length: <strong>11 alphanumeric characters</strong> (A–Z, 0–9, underscores).</li>
                 <li>Generic names like &ldquo;INFO&rdquo;, &ldquo;OFFER&rdquo;, or &ldquo;BANK&rdquo; are prohibited by telco regulators.</li>
                 <li>Sender ID must be associated with your registered business name or valid trademark.</li>
-                <li>Whitelisting is submitted to Safaricom, Airtel Kenya, and Telkom simultaneously.</li>
+                <li>Whitelisting is submitted to Safaricom and Airtel Kenya carrier networks.</li>
               </ul>
             </div>
           </div>
