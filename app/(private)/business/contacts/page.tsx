@@ -18,6 +18,7 @@ import {
   useUpdateContactGroup,
   useDeleteContactGroup,
 } from "@/hooks/contactgroups/actions";
+import { useFetchBusinesses } from "@/hooks/business/actions";
 import { Contact, CreateContactPayload } from "@/services/contacts";
 import { ContactGroup } from "@/services/contactgroups";
 
@@ -37,8 +38,15 @@ export default function BusinessContactsPage() {
   const [deletingGroup, setDeletingGroup] = useState<ContactGroup | null>(null);
 
   // Queries
+  const { data: businessesData } = useFetchBusinesses();
   const { data: contactsData, isLoading: isLoadingContacts } = useFetchContacts();
   const { data: groupsData, isLoading: isLoadingGroups } = useFetchContactGroups();
+
+  const businesses = useMemo(() => {
+    if (!businessesData) return [];
+    return Array.isArray(businessesData) ? businessesData : (businessesData as any).results || [];
+  }, [businessesData]);
+  const activeBusiness = businesses[0];
 
   // Mutations
   const createContactMutation = useCreateContact();
@@ -260,13 +268,26 @@ export default function BusinessContactsPage() {
         }
       );
     } else {
-      createGroupMutation.mutate(groupForm, {
-        onSuccess: () => {
-          toast.success(`Group "${groupForm.name}" created`);
-          setIsGroupModalOpen(false);
+      createGroupMutation.mutate(
+        {
+          name: groupForm.name.trim(),
+          description: groupForm.description.trim() || undefined,
+          business: activeBusiness?.name,
         },
-        onError: (err: any) => toast.error(err?.response?.data?.name?.[0] || "Failed to create group"),
-      });
+        {
+          onSuccess: () => {
+            toast.success(`Group "${groupForm.name}" created`);
+            setIsGroupModalOpen(false);
+          },
+          onError: (err: any) =>
+            toast.error(
+              err?.response?.data?.name?.[0] ||
+              err?.response?.data?.business?.[0] ||
+              err?.response?.data?.detail ||
+              "Failed to create group"
+            ),
+        }
+      );
     }
   };
 
