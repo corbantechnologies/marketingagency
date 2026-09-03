@@ -18,25 +18,24 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Features", href: "/features" },
-    { label: "Services", href: "/#services" },
     { label: "Pricing", href: "/pricing" },
+    { label: "User Guide", href: "/guide" },
+    { label: "Services", href: "/#services" },
     { label: "Case Studies", href: "/#results" },
     { label: "ROI Calculator", href: "/#calculator" },
     { label: "Contact", href: "/contact" },
-    { label: "FAQ", href: "/#faq" },
   ];
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-200 ${
-        isScrolled
+      className={`sticky top-0 z-50 w-full transition-all duration-200 ${isScrolled
           ? "bg-white/95 backdrop-blur-sm border-b border-zinc-200 shadow-xs"
           : "bg-white border-b border-zinc-100"
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
-          
+
           {/* Brand Logo */}
           <Link
             href="/"
@@ -68,10 +67,10 @@ export function Navbar() {
               View Rates
             </Link>
             <Link
-              href="/#audit"
+              href="/auth/login"
               className="inline-flex items-center justify-center bg-[#581c87] text-white hover:bg-[#4a1572] px-4 py-2 rounded text-xs xl:text-sm font-medium transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#581c87] focus:ring-offset-2 whitespace-nowrap"
             >
-              Get Free Audit
+              Get Started
             </Link>
           </div>
 

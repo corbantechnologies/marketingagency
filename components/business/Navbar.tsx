@@ -1,8 +1,7 @@
-"use client";
-
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { LJKLogo } from "@/components/landing/LJKLogo";
+import { useFetchBusinessWallets } from "@/hooks/businesswallets/actions";
 
 interface BusinessNavbarProps {
   onToggleMobileSidebar?: () => void;
@@ -15,6 +14,15 @@ export function BusinessNavbar({
   onToggleCollapse,
   isCollapsed = false,
 }: BusinessNavbarProps) {
+  const { data: walletsData } = useFetchBusinessWallets();
+
+  const smsBalance = useMemo(() => {
+    if (!walletsData) return 0;
+    const list = Array.isArray(walletsData)
+      ? walletsData
+      : (walletsData as { results?: { sms_credit_balance?: number }[] })?.results || [];
+    return list[0]?.sms_credit_balance ?? 0;
+  }, [walletsData]);
   return (
     <header className="h-16 bg-white border-b border-zinc-200 sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6">
       {/* Left side: Navigation toggles & Branding */}
@@ -73,7 +81,7 @@ export function BusinessNavbar({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
           <span className="hidden xs:inline">Balance:</span>
-          <span className="font-bold">50 SMS</span>
+          <span className="font-bold">{smsBalance.toLocaleString()} SMS</span>
         </Link>
 
         <Link
