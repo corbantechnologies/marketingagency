@@ -18,12 +18,12 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Features", href: "/features" },
-    { label: "Services", href: "/#services" },
     { label: "Pricing", href: "/pricing" },
+    { label: "User Guide", href: "/guide" },
+    { label: "Services", href: "/#services" },
     { label: "Case Studies", href: "/#results" },
     { label: "ROI Calculator", href: "/#calculator" },
     { label: "Contact", href: "/contact" },
-    { label: "FAQ", href: "/#faq" },
   ];
 
   return (
