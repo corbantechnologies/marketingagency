@@ -207,3 +207,85 @@ export const reactivateBusiness = async (
   );
   return response.data;
 };
+
+// ============================================================================
+// Admin Observability Interfaces & API
+// ============================================================================
+
+export interface AdminVitals {
+  active_businesses: number;
+  total_businesses: number;
+  total_users: number;
+  active_users: number;
+  floating_sms_credits: number;
+  floating_email_credits: number;
+  total_messages_dispatched: number;
+  messages_last_24h: number;
+  global_delivery_rate: number;
+}
+
+export interface AdminCarrierMetric {
+  id: string;
+  name: string;
+  protocol: string;
+  status: string;
+  latency: string;
+  throughput: string;
+  total: number;
+  delivery_rate: number;
+  share_percentage: number;
+}
+
+export interface AdminRecentCampaign {
+  reference: string;
+  name: string;
+  business_name: string;
+  sender_id: string;
+  recipient_count: number;
+  cost_credits: number;
+  status: string;
+  created_at: string;
+}
+
+export interface AdminPipelineSummary {
+  queued: number;
+  processing: number;
+  completed: number;
+  failed: number;
+  total: number;
+  recent_campaigns: AdminRecentCampaign[];
+}
+
+export interface AdminRecentActivityItem {
+  id: string;
+  type: string;
+  channel: string;
+  business_name: string;
+  amount_units: number;
+  running_balance: number;
+  description: string;
+  created_at: string;
+}
+
+export interface AdminObservabilityData {
+  vitals: AdminVitals;
+  gateway_mode: string;
+  carriers: AdminCarrierMetric[];
+  pipeline: AdminPipelineSummary;
+  recent_activity: AdminRecentActivityItem[];
+}
+
+/**
+ * Fetch platform-wide observability vitals and carrier telemetry (Admin only)
+ * Endpoint: GET /api/v1/businesses/admin-observability/
+ */
+export const getAdminObservability = async (
+  config?: AxiosConfig
+): Promise<AdminObservabilityData> => {
+  const response: AxiosResponse<AdminObservabilityData> = await apiActions.get(
+    "/api/v1/businesses/admin-observability/",
+    config
+  );
+  return response.data;
+};
+

@@ -11,6 +11,7 @@ import {
   reactivateBusiness,
   updateBusiness,
   UpdateBusinessPayload,
+  getAdminObservability,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -111,3 +112,19 @@ export function useReactivateBusiness() {
     },
   });
 }
+
+/**
+ * Query hook to fetch real-time platform observability vitals (Admin only)
+ * Configured with 30-second refetch interval for live monitoring.
+ */
+export function useFetchAdminObservability() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "observability"],
+    queryFn: () => getAdminObservability(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+  });
+}
