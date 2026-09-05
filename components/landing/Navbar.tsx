@@ -33,7 +33,7 @@ export function Navbar() {
           : "bg-white border-b border-zinc-100"
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
 
           {/* Brand Logo */}

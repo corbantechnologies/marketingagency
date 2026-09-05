@@ -102,7 +102,7 @@ export function GrowthCalculator() {
 
   return (
     <section id="calculator" className="bg-zinc-50 py-16 md:py-24 border-b border-zinc-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mb-3">
@@ -118,7 +118,7 @@ export function GrowthCalculator() {
         </div>
 
         {/* Calculator Main Box */}
-        <div className="max-w-5xl mx-auto bg-white border border-zinc-200 rounded-xl p-6 sm:p-8 shadow-xs">
+        <div className="max-w-6xl mx-auto bg-white border border-zinc-200 rounded-xl p-6 sm:p-8 shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Left Controls (7 Cols) */}
             <div className="lg:col-span-7 space-y-6">

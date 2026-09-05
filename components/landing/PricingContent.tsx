@@ -271,7 +271,7 @@ export function PricingContent() {
 
   return (
     <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded inline-flex items-center gap-1.5">
@@ -425,40 +425,42 @@ export function PricingContent() {
 
                   {/* Telecom & WhatsApp Unit Rates Matrix Snippet */}
                   <div className="bg-zinc-50 rounded p-3 mb-6 space-y-2 text-xs border border-zinc-100">
-                    <div className="flex justify-between items-center text-zinc-600">
-                      <span className="flex items-center gap-1">
-                        <span>📱 Bulk SMS Rate</span>
+                    <div className="flex justify-between items-center text-zinc-600 gap-2">
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        <span>📱 Bulk SMS</span>
                       </span>
-                      <span className="font-semibold text-zinc-900">
+                      <span className="font-semibold text-zinc-900 whitespace-nowrap text-right">
                         KSh {plan.smsRateKes.toFixed(2)} <span className="text-[10px] text-zinc-400 font-normal">/part</span>
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-emerald-800 bg-emerald-50/70 px-2 py-1 rounded border border-emerald-200/60">
-                      <span className="flex items-center gap-1 font-medium">
-                        <span>💬 WhatsApp Rate</span>
+                    <div className="flex justify-between items-center text-emerald-800 bg-emerald-50/80 px-2.5 py-1.5 rounded border border-emerald-200/70 gap-2">
+                      <span className="flex items-center gap-1.5 font-medium whitespace-nowrap">
+                        <span>💬 WhatsApp</span>
                       </span>
-                      <span className="font-bold text-emerald-900">
+                      <span className="font-bold text-emerald-900 whitespace-nowrap text-right">
                         KSh {(plan.smsRateKes * 2).toFixed(2)} <span className="text-[10px] text-emerald-700 font-normal">(2 credits)</span>
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-zinc-600">
-                      <span>✉️ Email Unit Rate</span>
-                      <span className="font-semibold text-zinc-900">
-                        KSh {plan.emailRateKes.toFixed(2)}
+                    <div className="flex justify-between items-center text-zinc-600 gap-2">
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        <span>✉️ Email</span>
+                      </span>
+                      <span className="font-semibold text-zinc-900 whitespace-nowrap text-right">
+                        KSh {plan.emailRateKes.toFixed(2)} <span className="text-[10px] text-zinc-400 font-normal">/email</span>
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-zinc-600 pt-1.5 border-t border-zinc-200/60">
-                      <span>Monthly Credits</span>
-                      <span className="font-bold text-[#581c87] text-right">
+                    <div className="flex justify-between items-center text-zinc-600 pt-1.5 border-t border-zinc-200/60 gap-2">
+                      <span className="whitespace-nowrap">Monthly Credits</span>
+                      <span className="font-bold text-[#581c87] text-right whitespace-nowrap">
                         {plan.includedSms > 0 ? (
                           <>
-                            <div>{plan.includedSms.toLocaleString()} Credits</div>
-                            <div className="text-[10px] text-zinc-400 font-normal">
-                              ({plan.includedSms.toLocaleString()} SMS or {(plan.includedSms / 2).toLocaleString()} WA)
-                            </div>
+                            <span>{plan.includedSms.toLocaleString()}</span>{" "}
+                            <span className="text-[10px] text-zinc-400 font-normal">
+                              ({(plan.includedSms / 2).toLocaleString()} WA)
+                            </span>
                           </>
                         ) : (
                           "0 (PAYG)"

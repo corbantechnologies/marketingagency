@@ -178,24 +178,25 @@ export default function AdminBroadcastPage() {
         {/* Left Column (7 cols): Broadcast Composer */}
         <div className="lg:col-span-7 bg-white border border-zinc-200 rounded-xl p-5 sm:p-7 shadow-xs space-y-5">
           {/* Channel Switcher Tabs */}
-          <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4">
             <div>
               <h2 className="text-base font-bold text-zinc-900">Compose Agency Broadcast</h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-zinc-500 mt-0.5 max-w-md">
                 Choose delivery channel and target registered businesses, portal users, or external numbers.
               </p>
             </div>
-            <div className="inline-flex p-1 bg-zinc-100 rounded-xl border border-zinc-200">
+            <div className="inline-flex items-center p-1 bg-zinc-100 rounded-xl border border-zinc-200 shrink-0 self-start sm:self-center shadow-2xs">
               <button
                 type="button"
                 onClick={() => setChannel("SMS")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                title="Bulk SMS Gateway (1 Credit / SMS)"
+                className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                   channel === "SMS"
-                    ? "bg-white text-purple-900 shadow-xs border border-purple-200/60"
-                    : "text-zinc-600 hover:text-zinc-900"
+                    ? "bg-white text-purple-950 shadow-xs border border-purple-200/70"
+                    : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50"
                 }`}
               >
-                <svg className="w-3.5 h-3.5 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-purple-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
                 <span>Bulk SMS</span>
@@ -203,17 +204,18 @@ export default function AdminBroadcastPage() {
               <button
                 type="button"
                 onClick={() => setChannel("WHATSAPP")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                title="Meta WhatsApp Cloud API (2 Credits / Message)"
+                className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                   channel === "WHATSAPP"
                     ? "bg-emerald-600 text-white shadow-xs"
-                    : "text-zinc-600 hover:text-zinc-900"
+                    : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50"
                 }`}
               >
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.301-.15-1.781-.879-2.057-.98-.276-.1-.477-.15-.678.15-.2.301-.777.98-.953 1.18-.176.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.896-.799-1.501-1.787-1.677-2.088-.176-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.176.2-.301.301-.502.1-.201.05-.377-.025-.527-.075-.15-.678-1.634-.929-2.237-.244-.588-.493-.509-.678-.518-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.03-1.054 2.512s1.079 2.914 1.23 3.115c.15.201 2.122 3.24 5.141 4.544.718.31 1.279.496 1.716.635.722.23 1.379.197 1.898.12.578-.087 1.781-.728 2.032-1.431.251-.703.251-1.305.176-1.431-.075-.126-.276-.201-.577-.351z" />
                   <path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.11 1.523 5.836L.055 23.518l5.882-1.446A11.936 11.936 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.854 0-3.593-.505-5.092-1.385l-.365-.215-3.784.931.947-3.69-.236-.376C2.518 15.736 2 13.929 2 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z" />
                 </svg>
-                <span>WhatsApp Business</span>
+                <span>WhatsApp</span>
               </button>
             </div>
           </div>
