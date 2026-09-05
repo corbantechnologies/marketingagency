@@ -85,3 +85,74 @@ export const useManualMpesaRecredit = () => {
     },
   });
 };
+
+/**
+ * Mutation hook to initiate instant Safaricom Daraja STK Push to client handset
+ */
+export const useInitiateMpesaStkPush = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: import("@/services/mpesa").MpesaStkPushPayload) => {
+      const { initiateMpesaStkPush } = await import("@/services/mpesa");
+      return initiateMpesaStkPush(payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
+    },
+  });
+};
+
+/**
+ * Query hook to poll status of an active M-Pesa STK Push session
+ */
+export const usePollMpesaStatus = (
+  checkoutRequestId: string | null,
+  enabled: boolean = false
+) => {
+  const queryClient = useQueryClient();
+
+  return useQuery({
+    queryKey: ["mpesa-poll", checkoutRequestId],
+    queryFn: async () => {
+      if (!checkoutRequestId) throw new Error("Checkout Request ID is required");
+      const { pollMpesaTransactionStatus } = await import("@/services/mpesa");
+      return pollMpesaTransactionStatus(checkoutRequestId);
+    },
+    enabled: Boolean(checkoutRequestId) && enabled,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      // Stop polling once terminal status reached
+      if (status === "SUCCESS" || status === "FAILED") {
+        if (status === "SUCCESS") {
+          queryClient.invalidateQueries({ queryKey: ["business-wallets"] });
+          queryClient.invalidateQueries({ queryKey: ["businesses"] });
+          queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
+        }
+        return false;
+      }
+      return 2000; // Poll every 2 seconds while PENDING
+    },
+    refetchIntervalInBackground: true,
+  });
+};
+
+/**
+ * Helper hook for developer sandbox callback simulation
+ */
+export const useSimulateMpesaCallback = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (checkoutRequestId: string) => {
+      const { simulateMpesaCallback } = await import("@/services/mpesa");
+      return simulateMpesaCallback(checkoutRequestId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["business-wallets"] });
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
+    },
+  });
+};
+

@@ -151,11 +151,15 @@ export default function AdminFinancePage() {
             </div>
           </div>
           <div className="mt-2 text-2xl font-extrabold text-zinc-900 tracking-tight">
-            KES {vitals?.total_revenue_kes ? vitals.total_revenue_kes.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00"}
+            {isLoading ? (
+              <span className="text-zinc-400 text-lg font-normal">Loading...</span>
+            ) : (
+              `KES ${vitals?.total_revenue_kes ? vitals.total_revenue_kes.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00"}`
+            )}
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100">
-            <span>24h: KES {vitals?.revenue_24h_kes?.toLocaleString() || "0"}</span>
-            <span>30d: KES {vitals?.revenue_30d_kes?.toLocaleString() || "0"}</span>
+            <span>24h: KES {isLoading ? "..." : (vitals?.revenue_24h_kes?.toLocaleString() || "0")}</span>
+            <span>30d: KES {isLoading ? "..." : (vitals?.revenue_30d_kes?.toLocaleString() || "0")}</span>
           </div>
         </div>
 
@@ -170,10 +174,14 @@ export default function AdminFinancePage() {
             </div>
           </div>
           <div className="mt-2 text-2xl font-extrabold text-zinc-900 tracking-tight">
-            KES {vitals?.total_carrier_cost_kes ? vitals.total_carrier_cost_kes.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00"}
+            {isLoading ? (
+              <span className="text-zinc-400 text-lg font-normal">Loading...</span>
+            ) : (
+              `KES ${vitals?.total_carrier_cost_kes ? vitals.total_carrier_cost_kes.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00"}`
+            )}
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100">
-            <span>24h Cost: KES {vitals?.carrier_cost_24h_kes?.toFixed(2) || "0.00"}</span>
+            <span>24h Cost: KES {isLoading ? "..." : (vitals?.carrier_cost_24h_kes?.toFixed(2) || "0.00")}</span>
             <span>Rate: ~0.30 KES/SMS</span>
           </div>
         </div>
@@ -189,11 +197,15 @@ export default function AdminFinancePage() {
             </div>
           </div>
           <div className="mt-2 text-2xl font-extrabold text-emerald-600 tracking-tight">
-            KES {vitals?.gross_profit_kes ? vitals.gross_profit_kes.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00"}
+            {isLoading ? (
+              <span className="text-zinc-400 text-lg font-normal">Loading...</span>
+            ) : (
+              `KES ${vitals?.gross_profit_kes ? vitals.gross_profit_kes.toLocaleString("en-US", { minimumFractionDigits: 2 }) : "0.00"}`
+            )}
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100">
             <span>Profit Margin:</span>
-            <span className="font-semibold text-emerald-600">{vitals?.profit_margin_pct?.toFixed(1) || "0.0"}%</span>
+            <span className="font-semibold text-emerald-600">{isLoading ? "..." : `${vitals?.profit_margin_pct?.toFixed(1) || "0.0"}%`}</span>
           </div>
         </div>
 
@@ -208,11 +220,15 @@ export default function AdminFinancePage() {
             </div>
           </div>
           <div className="mt-2 text-2xl font-extrabold text-zinc-900 tracking-tight">
-            {vitals?.total_dispatched_sms ? vitals.total_dispatched_sms.toLocaleString() : "0"}
+            {isLoading ? (
+              <span className="text-zinc-400 text-lg font-normal">Loading...</span>
+            ) : (
+              vitals?.total_dispatched_sms ? vitals.total_dispatched_sms.toLocaleString() : "0"
+            )}
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100">
             <span>Total M-Pesa Top-Ups:</span>
-            <span className="font-semibold text-zinc-700">{vitals?.total_tx_count || 0}</span>
+            <span className="font-semibold text-zinc-700">{isLoading ? "..." : (vitals?.total_tx_count || 0)}</span>
           </div>
         </div>
       </div>
@@ -233,7 +249,14 @@ export default function AdminFinancePage() {
           </span>
         </div>
 
-        {vipList.length === 0 ? (
+        {isLoading ? (
+          <div className="p-8 text-center text-sm text-zinc-400 flex items-center justify-center gap-2">
+            <svg className="w-4 h-4 animate-spin text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Loading VIP client spend rankings from database...</span>
+          </div>
+        ) : vipList.length === 0 ? (
           <div className="p-8 text-center text-sm text-zinc-500">
             No top-up transactions recorded yet. Once clients purchase SMS credits, rankings will populate here.
           </div>
@@ -265,7 +288,7 @@ export default function AdminFinancePage() {
                           </span>
                         </div>
                         <div className="text-xs text-zinc-500">
-                          Owner: {client.owner_name} &bull; {client.owner_email}
+                          Owner: {client.owner_name || "Workspace Admin"} &bull; {client.owner_email || "—"}
                         </div>
                       </div>
                     </div>
@@ -273,18 +296,20 @@ export default function AdminFinancePage() {
                     <div className="flex items-center gap-6 self-end sm:self-center">
                       <div className="text-right">
                         <div className="text-xs text-zinc-400">Top-Up Count</div>
-                        <div className="text-xs font-semibold text-zinc-700">{client.topup_count} purchases</div>
+                        <div className="text-xs font-semibold text-zinc-700">
+                          {client.topup_count ?? (client as any).transaction_count ?? 0} purchases
+                        </div>
                       </div>
                       <div className="text-right">
                         <div className="text-xs text-zinc-400">Current Balance</div>
                         <div className="text-xs font-semibold text-purple-700 font-mono">
-                          {client.current_wallet_balance?.toLocaleString() || 0} Credits
+                          {(client.current_wallet_balance ?? 0).toLocaleString()} Credits
                         </div>
                       </div>
                       <div className="text-right min-w-[110px]">
                         <div className="text-xs text-zinc-400">Total Spend</div>
                         <div className="text-sm font-bold text-emerald-600 font-mono">
-                          KES {client.total_spent_kes.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                          KES {(client.total_spent_kes || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                         </div>
                       </div>
                     </div>
@@ -346,7 +371,18 @@ export default function AdminFinancePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 text-xs">
-              {filteredTransactions.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-zinc-400">
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4 animate-spin text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Querying live M-Pesa audit ledger...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-8 text-center text-zinc-400">
                     No transactions matching &quot;{searchQuery}&quot; found.

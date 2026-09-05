@@ -505,7 +505,7 @@ export default function BusinessOnboardingGuidePage() {
                 </div>
                 <h3 className="font-bold text-sm text-zinc-900">Top Up SMS Credit Wallet</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
-                  Purchase wholesale SMS units via instant Safaricom M-PESA Daraja STK push.
+                  Accounts start with 0 credits (no complimentary test credits). Purchase wholesale SMS units via instant Safaricom M-PESA Daraja STK push from KSh 100.
                 </p>
               </div>
               <div className="pt-4 mt-2 text-xs font-semibold text-[#581c87] group-hover:underline inline-flex items-center gap-1">
