@@ -9,6 +9,23 @@ export function FeaturesContent() {
   const coreFeatures = [
     {
       icon: (
+        <svg className="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.301-.15-1.781-.879-2.057-.98-.276-.1-.477-.15-.678.15-.2.301-.777.98-.953 1.18-.176.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.896-.799-1.501-1.787-1.677-2.088-.176-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.176.2-.301.301-.502.1-.201.05-.377-.025-.527-.075-.15-.678-1.634-.929-2.237-.244-.588-.493-.509-.678-.518-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.03-1.054 2.512s1.079 2.914 1.23 3.115c.15.201 2.122 3.24 5.141 4.544.718.31 1.279.496 1.716.635.722.23 1.379.197 1.898.12.578-.087 1.781-.728 2.032-1.431.251-.703.251-1.305.176-1.431-.075-.126-.276-.201-.577-.351z" />
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.11 1.523 5.836L.055 23.518l5.882-1.446A11.936 11.936 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.854 0-3.593-.505-5.092-1.385l-.365-.215-3.784.931.947-3.69-.236-.376C2.518 15.736 2 13.929 2 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z" />
+        </svg>
+      ),
+      title: "Meta WhatsApp Cloud API Engine",
+      badge: "98% Open Rate",
+      description:
+        "Official Meta Cloud API integration for Kenya and East Africa. Broadcast high-resolution promotional image flyers, PDF catalogs, and interactive CTA buttons directly to your customer's WhatsApp inbox.",
+      highlights: [
+        "Interactive buttons ([Buy Now], [Chat on WhatsApp])",
+        "Real-time Blue Ticks delivery & read reports (READ ✓✓)",
+        "Zero telecom alphanumeric registration delay",
+      ],
+    },
+    {
+      icon: (
         <svg className="w-6 h-6 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
         </svg>
@@ -16,7 +33,7 @@ export function FeaturesContent() {
       title: "Telco-Grade Bulk SMS Engine",
       badge: "1,000+ SMS / sec",
       description:
-        "Direct Tier-1 carrier interconnects with Safaricom and Airtel Kenya. Guaranteed sub-3-second handset delivery latency with real-time Delivery Reports (DLR).",
+        "Direct Tier-1 carrier interconnects with Safaricom and Airtel Kenya. Guaranteed sub-3-second handset delivery latency with real-time Delivery Reports (DLR) and automatic fallback.",
       highlights: [
         "GSM 03.38 160-char & concatenated messaging",
         "Automated DND / opt-out suppression filtering",
@@ -34,7 +51,7 @@ export function FeaturesContent() {
       description:
         "Establish immediate trust by displaying your official registered business name (e.g. YOURBRAND) instead of generic digits on recipient mobile handsets.",
       highlights: [
-        "Fast-track 12-24 hr whitelisting approval",
+        "Fast-track whitelisting with Safaricom & Airtel",
         "Simultaneous submission to all Kenyan carriers",
         "Compliant with Communications Authority (CA) rules",
       ],
@@ -61,14 +78,14 @@ export function FeaturesContent() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
         </svg>
       ),
-      title: "Instant M-PESA STK Push Top-Ups",
+      title: "Unified M-PESA Wallet (SMS + WhatsApp)",
       badge: "Zero Delay",
       description:
-        "Fund your dual-channel SMS and Email wallets anytime in KES via Safaricom Daraja STK push. Credits never expire and activate instantly.",
+        "Fund your unified credit wallet anytime in KES via Safaricom Daraja M-PESA STK push. 1 Credit = 1 SMS, 2 Credits = 1 WhatsApp flyer. Credits never expire.",
       highlights: [
-        "Instant credit crediting upon PIN entry",
+        "Instant credit allocation upon PIN entry",
         "Automated PDF tax invoices & receipts",
-        "Dedicated SMS and Email credit counter caches",
+        "One unified wallet for both SMS & WhatsApp campaigns",
       ],
     },
     {

@@ -144,10 +144,13 @@ export interface AgencyBroadcastMetadata {
   all_businesses_count: number;
   all_users_count: number;
   gateway_provider: string;
+  whatsapp_enabled?: boolean;
+  whatsapp_phone_number_id?: string;
 }
 
 export interface AgencyBroadcastPayload {
   name: string;
+  channel?: "SMS" | "WHATSAPP";
   sender_id?: string;
   message_template: string;
   target_audience: "ALL_BUSINESSES" | "ALL_USERS" | "MANUAL";

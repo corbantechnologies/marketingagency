@@ -118,15 +118,15 @@ export default function AdminInspectorPage() {
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100">
             <span>Saf: {vitals?.safaricom_count || 0}</span>
+            <span>WA: {vitals?.whatsapp_count || 0}</span>
             <span>Airtel: {vitals?.airtel_count || 0}</span>
-            <span>Telkom: {vitals?.telkom_count || 0}</span>
           </div>
         </div>
 
         {/* Delivery Rate */}
         <div className="p-4 bg-white rounded-xl border border-zinc-200 shadow-2xs">
           <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
-            <span>Handset Delivery Rate</span>
+            <span>Omnichannel Delivery Rate</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -136,13 +136,13 @@ export default function AdminInspectorPage() {
           <div className="mt-2 text-2xl font-extrabold text-emerald-600 tracking-tight">
             {vitals?.delivery_rate_pct?.toFixed(1) || "100.0"}%
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Confirmed telco receipt</p>
+          <p className="text-[11px] text-zinc-500 mt-1">Confirmed telco & Meta receipt</p>
         </div>
 
-        {/* Delivered Messages */}
+        {/* Delivered & Reads */}
         <div className="p-4 bg-white rounded-xl border border-zinc-200 shadow-2xs">
           <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
-            <span>Delivered Handsets</span>
+            <span>Delivered & Read</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -152,7 +152,9 @@ export default function AdminInspectorPage() {
           <div className="mt-2 text-2xl font-extrabold text-zinc-900 tracking-tight">
             {vitals?.delivered_count ? vitals.delivered_count.toLocaleString() : "0"}
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">DLR acknowledged by telco</p>
+          <p className="text-[11px] text-sky-600 font-medium mt-1">
+            Includes {vitals?.read_count || 0} WhatsApp Blue Ticks (✓✓)
+          </p>
         </div>
 
         {/* Failed / Bounced */}
@@ -201,7 +203,7 @@ export default function AdminInspectorPage() {
           {/* Operator Filter */}
           <div className="flex items-center gap-1.5">
             <span className="text-zinc-500 font-medium">Carrier:</span>
-            {["ALL", "SAFARICOM", "AIRTEL", "TELKOM"].map((op) => (
+            {["ALL", "SAFARICOM", "AIRTEL", "TELKOM", "WHATSAPP"].map((op) => (
               <button
                 key={op}
                 type="button"
@@ -211,7 +213,7 @@ export default function AdminInspectorPage() {
                 }}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors cursor-pointer ${
                   operator === op
-                    ? "bg-[#581c87] text-white"
+                    ? op === "WHATSAPP" ? "bg-emerald-600 text-white" : "bg-[#581c87] text-white"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                 }`}
               >
@@ -223,7 +225,7 @@ export default function AdminInspectorPage() {
           {/* Status Filter */}
           <div className="flex items-center gap-1.5">
             <span className="text-zinc-500 font-medium">DLR Status:</span>
-            {["ALL", "DELIVERED", "SENT", "FAILED"].map((st) => (
+            {["ALL", "READ", "DELIVERED", "SENT", "FAILED"].map((st) => (
               <button
                 key={st}
                 type="button"
@@ -233,11 +235,11 @@ export default function AdminInspectorPage() {
                 }}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors cursor-pointer ${
                   status === st
-                    ? "bg-[#581c87] text-white"
+                    ? st === "READ" ? "bg-sky-600 text-white" : "bg-[#581c87] text-white"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                 }`}
               >
-                {st === "ALL" ? "All Statuses" : st}
+                {st === "ALL" ? "All Statuses" : st === "READ" ? "READ (✓✓)" : st}
               </button>
             ))}
           </div>
@@ -275,8 +277,10 @@ export default function AdminInspectorPage() {
                     <td className="py-3 px-4">
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          msg.network_operator === "SAFARICOM"
-                            ? "bg-emerald-100 text-emerald-800"
+                          msg.network_operator === "WHATSAPP"
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                            : msg.network_operator === "SAFARICOM"
+                            ? "bg-emerald-50 text-emerald-700"
                             : msg.network_operator === "AIRTEL"
                             ? "bg-rose-100 text-rose-800"
                             : "bg-blue-100 text-blue-800"
@@ -299,14 +303,16 @@ export default function AdminInspectorPage() {
                     <td className="py-3 px-4">
                       <span
                         className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                          msg.status === "DELIVERED"
+                          msg.status === "READ"
+                            ? "bg-sky-50 text-sky-700 border border-sky-200"
+                            : msg.status === "DELIVERED"
                             ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                             : msg.status === "FAILED" || msg.status === "UNDELIVERABLE"
                             ? "bg-rose-50 text-rose-700 border border-rose-200"
                             : "bg-amber-50 text-amber-700 border border-amber-200"
                         }`}
                       >
-                        {msg.status}
+                        {msg.status === "READ" ? "READ ✓✓" : msg.status}
                       </span>
                       {msg.failure_reason && (
                         <div className="text-[10px] text-rose-600 mt-0.5 truncate max-w-[140px]" title={msg.failure_reason}>

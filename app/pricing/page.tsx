@@ -5,16 +5,16 @@ import { PricingContent } from "@/components/landing/PricingContent";
 import { Footer } from "@/components/landing/Footer";
 
 export const metadata: Metadata = {
-  title: "Pricing & Plans | LJK Marketing Agency Kenya",
+  title: "WhatsApp Marketing & Bulk SMS Pricing Kenya | Unified Credit Plans",
   description:
-    "Transparent Bulk SMS, Email Marketing & Messaging pricing plans in Kenya. Tier-1 direct Safaricom & Airtel carrier routes, M-PESA top-ups, and no expiring credits.",
+    "Transparent pricing for Meta WhatsApp Business broadcasts and Tier-1 Bulk SMS in Kenya. 1 Credit = 1 SMS, 2 Credits = 1 WhatsApp flyer. Instant M-PESA top-ups, no monthly expiry.",
   alternates: {
     canonical: "https://www.ljkmarketingagency.co.ke/pricing",
   },
   openGraph: {
-    title: "Pricing & Plans | LJK Marketing Agency Kenya",
+    title: "WhatsApp Marketing & Bulk SMS Pricing Kenya | LJK Marketing Agency",
     description:
-      "Wholesale Bulk SMS from KSh 0.28/SMS, M-PESA instant top-ups, custom Alphanumeric Sender IDs, and developer REST APIs.",
+      "Send interactive WhatsApp flyers with CTA buttons and Tier-1 Bulk SMS from KSh 0.28/credit. Instant M-PESA wallet top-ups, verified Meta API, and real-time Blue Ticks.",
     url: "https://www.ljkmarketingagency.co.ke/pricing",
   },
 };

@@ -48,14 +48,14 @@ const fallbackPlans: PlanItem[] = [
     hasAutoresponders: false,
     hasDedicatedIp: false,
     supportTier: "Standard Email Support",
-    badge: "No Expiry",
+    badge: "Unified Wallet",
     features: [
-      "Pay-as-you-go SMS at KSh 0.65/SMS",
+      "Unified wallet: 1 Credit = 1 SMS | 2 Credits = 1 WhatsApp",
+      "Pay-as-you-go SMS at KSh 0.65 · WhatsApp at KSh 1.30",
+      "Meta WhatsApp Business & Bulk SMS Composer",
       "Instant M-PESA top-ups (from KSh 100)",
-      "1-click Excel/CSV contact import",
+      "Real-time delivery reports & Blue Ticks tracking",
       "Shared Alphanumeric Sender ID",
-      "Standard delivery reports (DLR)",
-      "Email & Community support",
     ],
     ctaText: "Start Free / Top Up",
     ctaHref: "/auth/signup",
@@ -63,7 +63,7 @@ const fallbackPlans: PlanItem[] = [
   {
     id: "growth",
     name: "Business Growth",
-    tagline: "Most popular for retail shops, salons & clinics",
+    tagline: "Most popular for retail brands, clinics & modern SMEs",
     priceKesMonthly: 4999,
     priceKesAnnual: 4249, // 15% discount
     smsRateKes: 0.45,
@@ -80,12 +80,12 @@ const fallbackPlans: PlanItem[] = [
     isPopular: true,
     badge: "Most Popular",
     features: [
-      "10,000 Included SMS credits / month",
-      "Discounted rate: KSh 0.45 per extra SMS",
-      "1 Custom Alphanumeric Sender ID",
-      "Smart Contact Groups & Tagging",
-      "Dynamic SMS links & click tracking",
-      "Scheduled birthday & holiday campaigns",
+      "10,000 Unified Credits / mo (10,000 SMS or 5,000 WhatsApp)",
+      "Discounted overage: KSh 0.45/SMS · KSh 0.90/WhatsApp",
+      "Meta Cloud API broadcasts with rich flyers & CTA buttons",
+      "1 Custom Alphanumeric Sender ID (Safaricom & Airtel)",
+      "Real-time Blue Ticks (READ ✓✓) & DLR receipts",
+      "Smart Contact Groups & dynamic tag interpolation",
       "Priority WhatsApp & phone support",
     ],
     ctaText: "Get Business Growth",
@@ -110,12 +110,12 @@ const fallbackPlans: PlanItem[] = [
     supportTier: "Priority WhatsApp & Phone",
     badge: "High Velocity",
     features: [
-      "45,000 Included SMS credits / month",
-      "Volume rate: KSh 0.38 per extra SMS",
+      "45,000 Unified Credits / mo (45,000 SMS or 22,500 WhatsApp)",
+      "Volume rate: KSh 0.38/SMS · KSh 0.76/WhatsApp",
       "Up to 3 Custom Branded Sender IDs",
-      "REST API keys & Webhook callbacks",
-      "2-Way SMS keyword autoresponders",
-      "Shopify & WooCommerce 1-click sync",
+      "Meta WhatsApp Cloud API & REST API webhooks",
+      "Automated WhatsApp & SMS keyword autoresponders",
+      "Shopify & WooCommerce 1-click customer sync",
       "Dedicated account strategist",
     ],
     ctaText: "Scale Your Messaging",
@@ -124,7 +124,7 @@ const fallbackPlans: PlanItem[] = [
   {
     id: "enterprise",
     name: "Enterprise SLA",
-    tagline: "Custom carrier infrastructure for banks & FinTechs",
+    tagline: "Custom carrier & Meta infrastructure for enterprises",
     priceKesMonthly: 45000,
     priceKesAnnual: 38250,
     smsRateKes: 0.28,
@@ -140,13 +140,12 @@ const fallbackPlans: PlanItem[] = [
     supportTier: "Dedicated Account Strategist",
     badge: "Carrier Grade",
     features: [
-      "150,000+ Included SMS credits",
-      "Tier-1 wholesale rate: From KSh 0.28/SMS",
-      "Dedicated SMPP 3.4 server interconnect",
-      "Sub-1.8s transactional OTP latency SLA",
-      "Dedicated IP warming & DMARC alignment",
-      "Custom billing terms & post-paid invoicing",
-      "24/7 Priority Emergency NOC line",
+      "150,000+ Unified Omnichannel Credits",
+      "Tier-1 wholesale rate: From KSh 0.28/credit",
+      "Direct Meta Cloud API & SMPP 3.4 server interconnect",
+      "Dedicated IP & direct telecom carrier gateway",
+      "Unlimited Contacts & Group Segments",
+      "Custom SLA & 24/7 Phone NOC Escalation",
     ],
     ctaText: "Contact Enterprise Desk",
     ctaHref: "/contact",
@@ -237,8 +236,12 @@ export function PricingContent() {
 
   const pricingFaqs = [
     {
-      q: "Do purchased SMS credits ever expire?",
-      a: "No. Prepaid SMS and Email credits purchased on LJK never expire as long as your account is active. You can top up anytime via M-PESA and use your balance whenever you need to send campaigns.",
+      q: "How does the unified credit wallet work for SMS and WhatsApp?",
+      a: "One single wallet balance powers both Bulk SMS and Meta WhatsApp Business. 1 Credit sends 1 standard Bulk SMS (160 plain characters), and 2 Credits send 1 interactive WhatsApp marketing message (rich flyer image, catalog, and CTA buttons). When composing campaigns, the platform automatically calculates credit deduction so you never have to juggle multiple wallets.",
+    },
+    {
+      q: "Do purchased credits ever expire?",
+      a: "No. Prepaid SMS and WhatsApp credits purchased on LJK never expire as long as your account is active. You can top up anytime via M-PESA and use your balance whenever you need to send campaigns.",
     },
     {
       q: "How does the M-PESA top-up process work?",
@@ -258,7 +261,7 @@ export function PricingContent() {
     },
     {
       q: "Are there any hidden setup fees or maintenance charges?",
-      a: "Zero hidden fees. You only pay for your active subscription tier or the exact SMS/Email units you purchase. Standard delivery reports, CSV contact uploads, and dashboard tools are fully included.",
+      a: "Zero hidden fees. You only pay for your active subscription tier or the exact units you purchase. Standard delivery reports, real-time Blue Ticks, CSV contact uploads, and dashboard tools are fully included.",
     },
   ];
 
@@ -267,14 +270,15 @@ export function PricingContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#581c87] bg-purple-50 px-3 py-1 rounded">
-            Simple, Transparent Bulk SMS &amp; Email Rates
+          <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Unified WhatsApp &amp; Bulk SMS Credit Wallet
           </span>
           <h1 className="text-xl font-semibold text-zinc-900 mt-4 mb-3 tracking-tight">
-            Predictable Wholesale Pricing for Growing Kenyan Businesses
+            Transparent Pricing for Meta WhatsApp Business &amp; Tier-1 Bulk SMS
           </h1>
           <p className="text-sm sm:text-base font-normal text-zinc-600 leading-relaxed">
-            No surprise overages. No hidden line fees. Choose a flexible monthly subscription bundle or scale on-demand with pure Pay-As-You-Go M-PESA top-ups.
+            1 Credit = 1 Bulk SMS · 2 Credits = 1 WhatsApp Flyer. No surprise overages, no separate balances, and instant M-PESA top-ups that never expire.
           </p>
 
           {/* Billing Cycle & Currency Switcher Controls */}

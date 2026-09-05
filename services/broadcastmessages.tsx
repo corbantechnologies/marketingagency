@@ -8,6 +8,7 @@ export type MessageDeliveryStatus =
   | "QUEUED"
   | "SENT"
   | "DELIVERED"
+  | "READ"
   | "FAILED"
   | "UNDELIVERABLE";
 
@@ -27,6 +28,7 @@ export interface BroadcastMessage {
   network_operator?: string | null;
   message_id?: string | null;
   delivery_timestamp?: string | null;
+  read_timestamp?: string | null;
   failure_reason?: string | null;
   reference: string;
   code: string;
@@ -38,6 +40,7 @@ export interface BroadcastMessage {
 export interface BroadcastMessageStats {
   total_messages: number;
   delivered: number;
+  read?: number;
   sent: number;
   failed: number;
   queued: number;
@@ -127,6 +130,7 @@ export interface MessageInspectorItem {
   cost_credits: number;
   status: MessageDeliveryStatus;
   delivery_timestamp: string | null;
+  read_timestamp?: string | null;
   failure_reason: string;
   created_at: string;
   timeline: MessageInspectorTimelineItem[];
@@ -135,9 +139,11 @@ export interface MessageInspectorItem {
 export interface MessageInspectorVitals {
   total_messages: number;
   delivered_count: number;
+  read_count?: number;
   failed_count: number;
   pending_count: number;
   delivery_rate_pct: number;
+  whatsapp_count?: number;
   safaricom_count: number;
   airtel_count: number;
   telkom_count: number;
