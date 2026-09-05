@@ -21,6 +21,11 @@ import {
   updateProfile,
   updateUser,
   UserFilterParams,
+  getAdminAnnouncement,
+  saveAdminAnnouncement,
+  clearAdminAnnouncement,
+  getActivePublicAnnouncement,
+  SaveAnnouncementPayload,
 } from "@/services/accounts";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import useUserMemberCode from "../authentication/useUserMemberCode";
@@ -179,5 +184,66 @@ export function useReactivateAccount() {
       queryClient.invalidateQueries({ queryKey: ["account", reference] });
       queryClient.invalidateQueries({ queryKey: ["usersList"] });
     },
+  });
+}
+
+/**
+ * Hook to fetch current system announcement config and presets (Admin only)
+ */
+export function useFetchAdminAnnouncement() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "announcement"],
+    queryFn: () => getAdminAnnouncement(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 15_000,
+  });
+}
+
+/**
+ * Mutation hook to publish or update an announcement
+ */
+export function useSaveAdminAnnouncement() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (payload: SaveAnnouncementPayload) => saveAdminAnnouncement(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "announcement"] });
+      queryClient.invalidateQueries({ queryKey: ["public", "announcement"] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to deactivate / clear active announcement
+ */
+export function useClearAdminAnnouncement() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: () => clearAdminAnnouncement(authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "announcement"] });
+      queryClient.invalidateQueries({ queryKey: ["public", "announcement"] });
+    },
+  });
+}
+
+/**
+ * Hook to fetch active public announcement for client banner display
+ */
+export function useFetchActivePublicAnnouncement() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["public", "announcement"],
+    queryFn: () => getActivePublicAnnouncement(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   });
 }

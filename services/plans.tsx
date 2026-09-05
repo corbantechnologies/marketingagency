@@ -266,3 +266,131 @@ export const seedPlans = async (
   return response.data;
 };
 
+// ============================================================================
+// Telecom Rate Card & Margin Simulation Services (Admin Only)
+// ============================================================================
+
+export interface WholesaleBenchmarks {
+  safaricom_base_kes: number;
+  airtel_base_kes: number;
+  telkom_base_kes: number;
+  blended_wholesale_cost_kes: number;
+}
+
+export interface MarkupTargets {
+  standard_markup_pct: number;
+  volume_markup_pct: number;
+  enterprise_markup_pct: number;
+}
+
+export interface MarketShareWeights {
+  safaricom: number;
+  airtel: number;
+  telkom: number;
+}
+
+export interface PlanMarginItem {
+  reference: string;
+  name: string;
+  slug: string;
+  category: string;
+  price_kes: number;
+  sms_rate_kes: number;
+  included_sms_credits: number;
+  safaricom_margin_pct: number;
+  airtel_margin_pct: number;
+  telkom_margin_pct: number;
+  blended_margin_pct: number;
+  profit_per_10k_kes: number;
+}
+
+export interface AdminRateCardResponse {
+  wholesale_benchmarks: WholesaleBenchmarks;
+  markup_targets: MarkupTargets;
+  market_share_weights: MarketShareWeights;
+  plans: PlanMarginItem[];
+}
+
+export interface SaveRateCardsPayload {
+  wholesale?: {
+    safaricom_base_kes?: number;
+    airtel_base_kes?: number;
+    telkom_base_kes?: number;
+  };
+  markup_targets?: {
+    standard_markup_pct?: number;
+    volume_markup_pct?: number;
+    enterprise_markup_pct?: number;
+  };
+}
+
+export interface RateSimulationPayload {
+  volume: number;
+  retail_rate_kes: number;
+  safaricom_pct?: number;
+  airtel_pct?: number;
+  telkom_pct?: number;
+}
+
+export interface RateSimulationResult {
+  simulation: {
+    volume: number;
+    retail_rate_kes: number;
+    total_invoiced_kes: number;
+    total_wholesale_cost_kes: number;
+    gross_profit_kes: number;
+    margin_pct: number;
+    breakdown: {
+      safaricom: { volume: number; cost_kes: number; base_rate: number };
+      airtel: { volume: number; cost_kes: number; base_rate: number };
+      telkom: { volume: number; cost_kes: number; base_rate: number };
+    };
+  };
+}
+
+/**
+ * Fetch wholesale benchmarks, markup targets, and plan margins
+ * Endpoint: GET /api/v1/plans/admin-rate-cards/
+ */
+export const getAdminRateCards = async (
+  config?: AxiosConfig
+): Promise<AdminRateCardResponse> => {
+  const response: AxiosResponse<AdminRateCardResponse> = await apiActions.get(
+    "/api/v1/plans/admin-rate-cards/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Update wholesale benchmarks and markup targets
+ * Endpoint: POST /api/v1/plans/admin-rate-cards/
+ */
+export const saveAdminRateCards = async (
+  data: SaveRateCardsPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; rate_cards: any }> => {
+  const response = await apiActions.post(
+    "/api/v1/plans/admin-rate-cards/",
+    data,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Simulate campaign profitability across telco networks
+ * Endpoint: POST /api/v1/plans/admin-rate-cards/simulate/
+ */
+export const simulateRateMargins = async (
+  data: RateSimulationPayload,
+  config?: AxiosConfig
+): Promise<RateSimulationResult> => {
+  const response: AxiosResponse<RateSimulationResult> = await apiActions.post(
+    "/api/v1/plans/admin-rate-cards/simulate/",
+    data,
+    config
+  );
+  return response.data;
+};
+

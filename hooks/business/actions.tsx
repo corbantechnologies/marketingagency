@@ -11,6 +11,13 @@ import {
   reactivateBusiness,
   updateBusiness,
   UpdateBusinessPayload,
+  getAdminObservability,
+  refreshCarrierBalances,
+  getAlertRecipients,
+  manageAlertRecipient,
+  getAdminSenderIdQueue,
+  reviewAdminSenderId,
+  ReviewSenderIdPayload,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -111,3 +118,96 @@ export function useReactivateBusiness() {
     },
   });
 }
+
+/**
+ * Query hook to fetch real-time platform observability vitals (Admin only)
+ * Configured with 30-second refetch interval for live monitoring.
+ */
+export function useFetchAdminObservability() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "observability"],
+    queryFn: () => getAdminObservability(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+  });
+}
+
+/**
+ * Mutation hook to manually poll upstream carrier balances from Africa's Talking and Advanta
+ */
+export function useRefreshCarrierBalances() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: () => refreshCarrierBalances(authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+}
+
+/**
+ * Query hook to fetch all alert & reminder recipient emails
+ */
+export function useFetchAlertRecipients() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "alert-recipients"],
+    queryFn: () => getAlertRecipients(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+  });
+}
+
+/**
+ * Mutation hook to add, remove, or test alert recipient emails
+ */
+export function useManageAlertRecipients() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (payload: { action: "add" | "remove" | "test"; email?: string }) =>
+      manageAlertRecipient(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "alert-recipients"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+}
+
+/**
+ * Query hook to fetch Sender ID verification queue (Admin only)
+ */
+export function useFetchAdminSenderIdQueue(statusFilter?: string) {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "sender-ids", statusFilter],
+    queryFn: () => getAdminSenderIdQueue(statusFilter, authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 15_000,
+  });
+}
+
+/**
+ * Mutation hook to approve or reject a Sender ID
+ */
+export function useReviewAdminSenderId() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (payload: ReviewSenderIdPayload) => reviewAdminSenderId(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "sender-ids"] });
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+    },
+  });
+}
+
+

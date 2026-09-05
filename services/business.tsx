@@ -207,3 +207,246 @@ export const reactivateBusiness = async (
   );
   return response.data;
 };
+
+// ============================================================================
+// Admin Observability Interfaces & API
+// ============================================================================
+
+export interface AdminVitals {
+  active_businesses: number;
+  total_businesses: number;
+  total_users: number;
+  active_users: number;
+  floating_sms_credits: number;
+  floating_email_credits: number;
+  total_messages_dispatched: number;
+  messages_last_24h: number;
+  global_delivery_rate: number;
+}
+
+export interface AdminCarrierMetric {
+  id: string;
+  name: string;
+  protocol: string;
+  status: string;
+  latency: string;
+  throughput: string;
+  total: number;
+  delivery_rate: number;
+  share_percentage: number;
+}
+
+export interface AdminRecentCampaign {
+  reference: string;
+  name: string;
+  business_name: string;
+  sender_id: string;
+  recipient_count: number;
+  cost_credits: number;
+  status: string;
+  created_at: string;
+}
+
+export interface AdminPipelineSummary {
+  queued: number;
+  processing: number;
+  completed: number;
+  failed: number;
+  total: number;
+  recent_campaigns: AdminRecentCampaign[];
+}
+
+export interface AdminRecentActivityItem {
+  id: string;
+  type: string;
+  channel: string;
+  business_name: string;
+  amount_units: number;
+  running_balance: number;
+  description: string;
+  created_at: string;
+}
+
+export interface CarrierBalanceItem {
+  provider: string;
+  environment?: string;
+  account_username?: string;
+  partner_id?: string;
+  balance_kes: number;
+  currency: string;
+  estimated_credits: number;
+  status: "HEALTHY" | "LOW" | "CRITICAL" | "UNCONFIGURED" | "ERROR";
+  raw_string?: string;
+  error?: string | null;
+  last_checked: string;
+}
+
+export interface CarrierBalancesData {
+  africastalking: CarrierBalanceItem;
+  advanta: CarrierBalanceItem;
+  total_liquidity_kes: number;
+  total_estimated_credits: number;
+  overall_status: "HEALTHY" | "LOW" | "CRITICAL";
+  active_provider: string;
+  threshold_kes: number;
+  critical_threshold_kes: number;
+  last_evaluated: string;
+}
+
+export interface AdminObservabilityData {
+  vitals: AdminVitals;
+  gateway_mode: string;
+  carrier_balances?: CarrierBalancesData;
+  carriers: AdminCarrierMetric[];
+  pipeline: AdminPipelineSummary;
+  recent_activity: AdminRecentActivityItem[];
+}
+
+/**
+ * Fetch platform-wide observability vitals and carrier telemetry (Admin only)
+ * Endpoint: GET /api/v1/businesses/admin-observability/
+ */
+export const getAdminObservability = async (
+  config?: AxiosConfig
+): Promise<AdminObservabilityData> => {
+  const response: AxiosResponse<AdminObservabilityData> = await apiActions.get(
+    "/api/v1/businesses/admin-observability/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Force refresh upstream carrier balances directly from Africa's Talking & Advanta APIs (Admin only)
+ * Endpoint: POST /api/v1/businesses/admin-observability/refresh-carrier-balances/
+ */
+export const refreshCarrierBalances = async (
+  config?: AxiosConfig
+): Promise<{ success: boolean; carrier_balances: CarrierBalancesData; alert_sent: boolean }> => {
+  const response = await apiActions.post(
+    "/api/v1/businesses/admin-observability/refresh-carrier-balances/",
+    {},
+    config
+  );
+  return response.data;
+};
+
+export interface AlertRecipientItem {
+  email: string;
+  name?: string;
+  source: string;
+}
+
+export interface AlertRecipientsBreakdown {
+  all_recipients: string[];
+  total_count: number;
+  registered_admins: AlertRecipientItem[];
+  env_emails: AlertRecipientItem[];
+  custom_emails: AlertRecipientItem[];
+}
+
+/**
+ * Fetch all configured reminder and alert recipient emails (Admin only)
+ * Endpoint: GET /api/v1/businesses/admin-observability/alert-recipients/
+ */
+export const getAlertRecipients = async (
+  config?: AxiosConfig
+): Promise<AlertRecipientsBreakdown> => {
+  const response = await apiActions.get(
+    "/api/v1/businesses/admin-observability/alert-recipients/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Manage reminder recipient emails: add, remove, or trigger test notification
+ * Endpoint: POST /api/v1/businesses/admin-observability/alert-recipients/
+ */
+export const manageAlertRecipient = async (
+  payload: { action: "add" | "remove" | "test"; email?: string },
+  config?: AxiosConfig
+): Promise<{ success: boolean; detail: string; recipients?: AlertRecipientsBreakdown }> => {
+  const response = await apiActions.post(
+    "/api/v1/businesses/admin-observability/alert-recipients/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
+// ============================================================================
+// Module 2: Admin Sender ID Approval & Telco Vetting Queue
+// ============================================================================
+
+export interface SenderIdQueueItem {
+  reference: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  owner_name: string;
+  owner_email: string;
+  sender_id: string;
+  sender_id_status: "PENDING" | "APPROVED" | "REJECTED";
+  sender_id_rejection_reason: string;
+  tax_pin: string;
+  registration_number: string;
+  registration_date: string | null;
+  registration_document_url: string | null;
+  wallet_balance: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SenderIdQueueResponse {
+  vitals: {
+    total_pending: number;
+    total_approved: number;
+    total_rejected: number;
+    total_count: number;
+  };
+  results: SenderIdQueueItem[];
+}
+
+export interface ReviewSenderIdPayload {
+  business_reference: string;
+  action: "APPROVE" | "REJECT";
+  rejection_reason?: string;
+}
+
+/**
+ * Fetch Sender ID review queue (Admin only)
+ * Endpoint: GET /api/v1/businesses/admin-sender-ids/
+ */
+export const getAdminSenderIdQueue = async (
+  statusFilter?: string,
+  config?: AxiosConfig
+): Promise<SenderIdQueueResponse> => {
+  const params = statusFilter && statusFilter !== "ALL" ? { status: statusFilter } : {};
+  const response: AxiosResponse<SenderIdQueueResponse> = await apiActions.get(
+    "/api/v1/businesses/admin-sender-ids/",
+    {
+      ...config,
+      params: { ...params, ...config?.params },
+    }
+  );
+  return response.data;
+};
+
+/**
+ * Approve or reject client business Sender ID (Admin only)
+ * Endpoint: POST /api/v1/businesses/admin-sender-ids/review/
+ */
+export const reviewAdminSenderId = async (
+  payload: ReviewSenderIdPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; sender_id_status: string }> => {
+  const response = await apiActions.post(
+    "/api/v1/businesses/admin-sender-ids/review/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
+

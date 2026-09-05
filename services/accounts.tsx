@@ -418,3 +418,98 @@ export const reactivateAccount = async (
   );
   return response.data;
 };
+
+// ============================================================================
+// Module 4: Global Client Announcement & System Banner Engine
+// ============================================================================
+
+export type AnnouncementType = "INFO" | "WARNING" | "CRITICAL" | "SUCCESS";
+
+export interface AnnouncementPreset {
+  id: string;
+  title: string;
+  message: string;
+  type: AnnouncementType;
+  link_url?: string;
+  link_label?: string;
+}
+
+export interface SystemAnnouncementData {
+  id: string;
+  title: string;
+  message: string;
+  type: AnnouncementType;
+  is_active: boolean;
+  link_url?: string;
+  link_label?: string;
+  created_at: string | null;
+  created_by?: string;
+  presets?: AnnouncementPreset[];
+}
+
+export interface SaveAnnouncementPayload {
+  title: string;
+  message: string;
+  type?: AnnouncementType;
+  is_active?: boolean;
+  link_url?: string;
+  link_label?: string;
+}
+
+/**
+ * Fetch announcement configuration and presets (Admin only)
+ * Endpoint: GET /api/v1/auth/admin-announcement/
+ */
+export const getAdminAnnouncement = async (
+  config?: AxiosConfig
+): Promise<SystemAnnouncementData> => {
+  const response: AxiosResponse<SystemAnnouncementData> = await apiActions.get(
+    "/api/v1/auth/admin-announcement/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Publish or update system announcement banner (Admin only)
+ * Endpoint: POST /api/v1/auth/admin-announcement/
+ */
+export const saveAdminAnnouncement = async (
+  payload: SaveAnnouncementPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; announcement: SystemAnnouncementData }> => {
+  const response = await apiActions.post(
+    "/api/v1/auth/admin-announcement/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Deactivate / Clear active announcement banner (Admin only)
+ * Endpoint: DELETE /api/v1/auth/admin-announcement/
+ */
+export const clearAdminAnnouncement = async (
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string }> => {
+  const response = await apiActions.delete(
+    "/api/v1/auth/admin-announcement/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Fetch active public announcement for client dashboard display
+ * Endpoint: GET /api/v1/auth/announcement/active/
+ */
+export const getActivePublicAnnouncement = async (
+  config?: AxiosConfig
+): Promise<{ announcement: SystemAnnouncementData | null }> => {
+  const response = await apiActions.get(
+    "/api/v1/auth/announcement/active/",
+    config
+  );
+  return response.data;
+};

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { BusinessNavbar } from "@/components/business/Navbar";
 import { BusinessSidebar } from "@/components/business/Sidebar";
+import { GlobalAnnouncementBanner } from "@/components/common/GlobalAnnouncementBanner";
 
 export default function BusinessLayout({
   children,
@@ -29,6 +30,7 @@ export default function BusinessLayout({
         />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full min-w-0 overflow-y-auto">
+          <GlobalAnnouncementBanner />
           {children}
         </main>
       </div>
