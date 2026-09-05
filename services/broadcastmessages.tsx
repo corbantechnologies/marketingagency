@@ -99,3 +99,103 @@ export const getBroadcastMessageStats = async (
   );
   return response.data;
 };
+
+// ============================================================================
+// Module 4: Global Message Inspector & Carrier DLR Search
+// ============================================================================
+
+export interface MessageInspectorTimelineItem {
+  step: string;
+  timestamp: string | null;
+  detail: string;
+  status: "COMPLETED" | "PENDING" | "FAILED" | "IN_FLIGHT";
+}
+
+export interface MessageInspectorItem {
+  reference: string;
+  code: string;
+  phone_number: string;
+  network_operator: string;
+  message_id: string;
+  sender_id: string;
+  campaign_name: string;
+  campaign_reference: string;
+  business_name: string;
+  business_reference: string;
+  rendered_message: string;
+  segments: number;
+  cost_credits: number;
+  status: MessageDeliveryStatus;
+  delivery_timestamp: string | null;
+  failure_reason: string;
+  created_at: string;
+  timeline: MessageInspectorTimelineItem[];
+}
+
+export interface MessageInspectorVitals {
+  total_messages: number;
+  delivered_count: number;
+  failed_count: number;
+  pending_count: number;
+  delivery_rate_pct: number;
+  safaricom_count: number;
+  airtel_count: number;
+  telkom_count: number;
+}
+
+export interface MessageInspectorResponse {
+  vitals: MessageInspectorVitals;
+  pagination: {
+    page: number;
+    page_size: number;
+    total_pages: number;
+  };
+  results: MessageInspectorItem[];
+}
+
+export interface MessageInspectorFilterParams {
+  search?: string;
+  operator?: string;
+  status?: string;
+  business_reference?: string;
+  campaign_reference?: string;
+  page?: number;
+  page_size?: number;
+}
+
+/**
+ * Global message inspection across recipient phone, carrier ID, and business (Admin only)
+ * Endpoint: GET /api/v1/broadcast-messages/admin-inspector/
+ */
+export const getAdminMessageInspector = async (
+  params?: MessageInspectorFilterParams,
+  config?: AxiosConfig
+): Promise<MessageInspectorResponse> => {
+  const response: AxiosResponse<MessageInspectorResponse> = await apiActions.get(
+    "/api/v1/broadcast-messages/admin-inspector/",
+    {
+      ...config,
+      params: { ...params, ...config?.params },
+    }
+  );
+  return response.data;
+};
+
+/**
+ * Export filtered message delivery logs to CSV (Admin only)
+ * Endpoint: GET /api/v1/broadcast-messages/admin-inspector/export/
+ */
+export const exportAdminMessageLogs = async (
+  params?: MessageInspectorFilterParams,
+  config?: AxiosConfig
+): Promise<Blob> => {
+  const response = await apiActions.get(
+    "/api/v1/broadcast-messages/admin-inspector/export/",
+    {
+      ...config,
+      params: { ...params, ...config?.params },
+      responseType: "blob",
+    }
+  );
+  return response.data;
+};

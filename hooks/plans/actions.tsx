@@ -13,6 +13,11 @@ import {
   seedPlans,
   updatePlan,
   UpdatePlanPayload,
+  getAdminRateCards,
+  saveAdminRateCards,
+  SaveRateCardsPayload,
+  simulateRateMargins,
+  RateSimulationPayload,
 } from "@/services/plans";
 import useAxiosAuth, { getFreshAuthHeaders } from "../authentication/useAxiosAuth";
 
@@ -158,6 +163,54 @@ export function useSeedPlans() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["plans"] });
+    },
+  });
+}
+
+// ============================================================================
+// Telecom Rate Card Hooks (Admin Only)
+// ============================================================================
+
+/**
+ * Query hook to fetch wholesale benchmarks and commercial plan margins
+ */
+export function useFetchAdminRateCards() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["adminRateCards", Boolean(authConfig.headers.Authorization)],
+    queryFn: async () => {
+      const liveAuth = await getFreshAuthHeaders();
+      return getAdminRateCards(liveAuth);
+    },
+  });
+}
+
+/**
+ * Mutation hook to save wholesale benchmarks and markup targets
+ */
+export function useSaveAdminRateCards() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: SaveRateCardsPayload) => {
+      const authConfig = await getFreshAuthHeaders();
+      return saveAdminRateCards(data, authConfig);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminRateCards"] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to simulate campaign margin and profit
+ */
+export function useSimulateRateMargins() {
+  return useMutation({
+    mutationFn: async (data: RateSimulationPayload) => {
+      const authConfig = await getFreshAuthHeaders();
+      return simulateRateMargins(data, authConfig);
     },
   });
 }

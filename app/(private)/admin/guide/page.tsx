@@ -7,7 +7,14 @@ import { useFetchAdminObservability } from "@/hooks/business/actions";
 
 export default function AdminGuidancePage() {
   const [activeTab, setActiveTab] = useState<
-    "carriers" | "sender_ids" | "broadcast" | "tenants" | "dlr_routing"
+    | "carriers"
+    | "finance"
+    | "sender_ids"
+    | "compliance"
+    | "inspector"
+    | "rates"
+    | "announcements"
+    | "broadcast"
   >("carriers");
 
   const { data: obsData } = useFetchAdminObservability();
@@ -22,107 +29,161 @@ export default function AdminGuidancePage() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-purple-200 mb-3 backdrop-blur-xs">
             <span>🛡️ LJK Agency Operations Playbook</span>
             <span>&bull;</span>
-            <span>Standard Operating Procedures</span>
+            <span>Enterprise Standard Operating Procedures</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             Agency Administrator Guidance &amp; SOP
           </h1>
           <p className="text-sm sm:text-base text-purple-100/90 mt-2 leading-relaxed">
-            Essential operational playbooks for managing upstream telecom liquidity, Safaricom Sender ID vetting, multi-tenant moderation, and failover routing.
+            Comprehensive operational playbooks for carrier liquidity management, M-Pesa Daraja audits, CAK compliance, forensic message inspection, telecom rate modeling, and broadcast governance.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-medium">
+          <div className="mt-6 flex flex-wrap items-center gap-2.5 text-xs font-medium">
             <Link
               href="/admin/dashboard"
-              className="px-4 py-2 bg-white text-[#581c87] font-bold rounded-lg hover:bg-purple-50 transition-colors shadow-xs"
+              className="px-3.5 py-1.5 bg-white text-[#581c87] font-bold rounded-lg hover:bg-purple-50 transition-colors shadow-xs"
             >
               &larr; Admin Dashboard
             </Link>
             <Link
-              href="/admin/broadcast"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+              href="/admin/finance"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
             >
-              Agency Broadcast Hub
+              💰 Finance &amp; Ledger
             </Link>
             <Link
-              href="/admin/routing"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+              href="/admin/rates"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
             >
-              Carrier Routing &amp; DLR
+              📊 Rate Cards &amp; Margins
+            </Link>
+            <Link
+              href="/admin/inspector"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+            >
+              🔍 Message Inspector
+            </Link>
+            <Link
+              href="/admin/sender-ids"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+            >
+              🏷️ Sender ID Queue
+            </Link>
+            <Link
+              href="/admin/compliance"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+            >
+              🛡️ Compliance Shield
+            </Link>
+            <Link
+              href="/admin/announcements"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+            >
+              📢 System Announcements
             </Link>
           </div>
         </div>
       </div>
 
       {/* 2. Navigation Tabs */}
-      <div className="flex border-b border-zinc-200 overflow-x-auto no-scrollbar gap-2">
+      <div className="flex border-b border-zinc-200 overflow-x-auto no-scrollbar gap-1 text-xs sm:text-sm font-semibold">
         <button
           type="button"
           onClick={() => setActiveTab("carriers")}
-          className={`pb-3 px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "carriers"
               ? "border-[#581c87] text-[#581c87]"
               : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
           }`}
         >
-          <span>📡 Carrier Liquidity &amp; Float</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-[#581c87] border border-purple-200">
+          <span>📡 Carrier Float &amp; Alerts</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-50 text-[#581c87] border border-purple-200 font-bold">
             Core
           </span>
         </button>
 
         <button
           type="button"
+          onClick={() => setActiveTab("finance")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "finance"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>💰 Finance &amp; M-Pesa Ledger</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("rates")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "rates"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>📊 Rate Cards &amp; Margins</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("inspector")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "inspector"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>🔍 Message Inspector &amp; DLR</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab("sender_ids")}
-          className={`pb-3 px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "sender_ids"
               ? "border-[#581c87] text-[#581c87]"
               : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
           }`}
         >
-          <span>🏷️ Sender ID Vetting SOP</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
-            Compliance
-          </span>
+          <span>🏷️ Sender ID Vetting</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("compliance")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "compliance"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>🛡️ Compliance Shield &amp; CAK</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("announcements")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "announcements"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>📢 System Announcements</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab("broadcast")}
-          className={`pb-3 px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "broadcast"
               ? "border-[#581c87] text-[#581c87]"
               : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
           }`}
         >
-          <span>📢 Agency Broadcast Hub</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
-            Master LJK_AGENCY
-          </span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("tenants")}
-          className={`pb-3 px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
-            activeTab === "tenants"
-              ? "border-[#581c87] text-[#581c87]"
-              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
-          }`}
-        >
-          <span>🏢 Tenant Moderation &amp; Quotas</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("dlr_routing")}
-          className={`pb-3 px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
-            activeTab === "dlr_routing"
-              ? "border-[#581c87] text-[#581c87]"
-              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
-          }`}
-        >
-          <span>⚡ Telecom Routing &amp; DLR Receipts</span>
+          <span>📣 Agency Broadcast Hub</span>
         </button>
       </div>
 
@@ -135,7 +196,7 @@ export default function AdminGuidancePage() {
           <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <h2 className="text-base sm:text-lg font-bold text-zinc-900">
-                Dual-Provider Telecom Architecture &amp; Profit Margins
+                Dual-Provider Telecom Architecture &amp; Liquidity Guard
               </h2>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 Least-Cost Routing (LCR) Active
@@ -302,15 +363,209 @@ export default function AdminGuidancePage() {
         </div>
       )}
 
-      {/* TAB 2: SENDER ID APPROVAL SOP */}
+      {/* TAB 2: FINANCE & M-PESA TOP-UP LEDGER */}
+      {activeTab === "finance" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                  Financial Intelligence &amp; M-Pesa Daraja Audit SOP
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Managing client wallet top-ups, tracking wholesale margins, and manual re-credits.
+                </p>
+              </div>
+              <Link
+                href="/admin/finance"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              >
+                Open Finance Hub &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">1. Real-Time M-Pesa Daraja Audit</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Every automated wallet top-up logs the official Safaricom 10-character alphanumeric receipt token (e.g. <code>SH78XYZ123</code>). Admins can search and cross-reference against corporate bank statements in seconds.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">2. 👑 VIP Client Spend Ranking</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Identifies top 5 revenue-generating clients by cumulative top-up volume. Shows current wallet balance, transaction frequency, and proportion of total platform revenue to inform enterprise account management.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">3. Support Manual Re-Credit SOP</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  When network callback drops occur between Safaricom Daraja and our server, admins can open the <strong>&quot;Manual M-Pesa Re-Credit&quot;</strong> modal to credit the client. Automatically blocks duplicate receipt entries.
+                </p>
+              </div>
+            </div>
+
+            {/* Manual Recredit Checklist */}
+            <div className="bg-amber-50/60 border border-amber-200 rounded-xl p-4 space-y-2 text-xs text-amber-900">
+              <div className="font-bold text-sm text-amber-950 flex items-center gap-2">
+                <span>⚠️ Support Procedure for Missing M-Pesa Top-Ups</span>
+              </div>
+              <ol className="list-decimal pl-5 space-y-1.5 pt-1 text-amber-900/90">
+                <li>Verify the client&apos;s M-Pesa confirmation SMS on the Safaricom Daraja web portal or corporate till statement.</li>
+                <li>Confirm the receipt token is not already credited in the <Link href="/admin/finance" className="underline font-bold">Audit Ledger</Link>.</li>
+                <li>Navigate to <Link href="/admin/finance" className="underline font-bold">/admin/finance</Link>, click <strong>&quot;Manual M-Pesa Re-Credit&quot;</strong>, select the client business, enter the amount and the official receipt code.</li>
+                <li>The system immediately credits <code>BusinessWallet.sms_credit_balance</code> and logs an admin audit trace with zero database schema migrations.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: RATE CARDS & MARGINS */}
+      {activeTab === "rates" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                  Telecom Rate Cards &amp; Auto-Markup Playbook
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Wholesale carrier benchmarks, plan margin heatmaps, and live campaign profitability modeling.
+                </p>
+              </div>
+              <Link
+                href="/admin/rates"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              >
+                Open Rate Cards &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 space-y-2">
+                <div className="font-bold text-sm text-emerald-950">1. Wholesale Benchmark Matrix</div>
+                <p className="text-xs text-emerald-900/80 leading-relaxed">
+                  Admins configure the direct wholesale cost contracted with Advanta or Africa&apos;s Talking: Safaricom (KES 0.2800), Airtel (KES 0.2500), and Telkom (KES 0.2200). The engine calculates a live weighted blended cost (~KES 0.2695).
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/40 space-y-2">
+                <div className="font-bold text-sm text-purple-950">2. Commercial Margin Heatmap</div>
+                <p className="text-xs text-purple-900/80 leading-relaxed">
+                  Every active commercial package is audited against wholesale carrier rates. Margins are tagged: <strong>Emerald (≥55%)</strong>, <strong>Amber (35%–54%)</strong>, and <strong>Red (&lt;35%)</strong>, showing projected gross profit per 10,000 SMS broadcast.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-blue-200 bg-blue-50/40 space-y-2">
+                <div className="font-bold text-sm text-blue-950">3. Campaign Profit Simulator</div>
+                <p className="text-xs text-blue-900/80 leading-relaxed">
+                  Interactive sandbox for quoting high-volume corporate deals (e.g. 50,000 to 500,000 SMS). Sliders calculate total invoiced revenue, wholesale carrier costs, and net agency margin before closing enterprise agreements.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 space-y-2">
+              <div className="font-bold text-zinc-900">💡 Pricing Strategy Recommendation for Account Managers</div>
+              <p className="leading-relaxed">
+                Aim for a blended gross margin of at least <strong>60%</strong> on prepaid packages. For custom enterprise contracts exceeding 250,000 SMS/month, a negotiated floor of KES 0.50 – 0.60 retail guarantees a healthy 45%–55% margin while beating standard market rates.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: MESSAGE INSPECTOR & DLR SEARCH */}
+      {activeTab === "inspector" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                  Global Message Inspector &amp; Carrier DLR Forensics
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Troubleshooting delivery complaints, verifying carrier IDs, and forensic CSV audit logs.
+                </p>
+              </div>
+              <Link
+                href="/admin/inspector"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              >
+                Open Message Inspector &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">1. Instant Phone &amp; Carrier Lookup</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Search across recipient numbers in either local (<code>0712345678</code>) or international (<code>+254712345678</code>) format, upstream carrier IDs (<code>ATXid_...</code>), or client business names with instant results.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">2. 3-Step Delivery Timeline Drawer</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Clicking any message opens a right-hand inspection drawer showing all 3 stages: <strong>Platform Ingestion</strong> &rarr; <strong>Carrier Dispatch</strong> &rarr; <strong>Handset Delivery</strong>, including raw carrier error codes for bounces.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">3. 1-Click Forensic CSV Export</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Download complete delivery spreadsheets filtered by date, operator, or status for dispute resolution or sharing verified delivery proof with enterprise clients.
+                </p>
+              </div>
+            </div>
+
+            {/* Operator Prefix Reference */}
+            <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 space-y-3 text-xs">
+              <div className="font-bold text-zinc-900">🇰🇪 Kenyan Telecom Operator Prefix Quick-Reference</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 bg-white rounded-lg border border-emerald-200 space-y-1">
+                  <span className="font-bold text-emerald-800">Safaricom (~70% Market)</span>
+                  <p className="text-[11px] text-zinc-500 font-mono">070x, 071x, 072x, 079x, 0740-48, 0757-59, 0768-69, 0110-15</p>
+                </div>
+                <div className="p-3 bg-white rounded-lg border border-red-200 space-y-1">
+                  <span className="font-bold text-red-800">Airtel Kenya (~25% Market)</span>
+                  <p className="text-[11px] text-zinc-500 font-mono">073x, 0750-56, 078x, 0100-09</p>
+                </div>
+                <div className="p-3 bg-white rounded-lg border border-blue-200 space-y-1">
+                  <span className="font-bold text-blue-800">Telkom Kenya (~5% Market)</span>
+                  <p className="text-[11px] text-zinc-500 font-mono">077x</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: SENDER ID APPROVAL SOP */}
       {activeTab === "sender_ids" && (
         <div className="space-y-6">
           <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
-            <h2 className="text-base sm:text-lg font-bold text-zinc-900 border-b border-zinc-100 pb-3">
-              Alphanumeric Sender ID Vetting &amp; Telco Registration SOP
-            </h2>
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                  Alphanumeric Sender ID Vetting &amp; Telco Registration SOP
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Communications Authority of Kenya (CAK) regulations and automated email feedback.
+                </p>
+              </div>
+              <Link
+                href="/admin/sender-ids"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              >
+                Open Sender ID Queue &rarr;
+              </Link>
+            </div>
+
             <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-              In Kenya, custom 11-character Alphanumeric Sender IDs (e.g. <code>SAFARICOM</code>, <code>NAIVAS</code>, <code>LJK_AGENCY</code>) are regulated by the <strong>Communications Authority of Kenya (CAK)</strong> and must be vetted before whitelisting on Safaricom and Airtel networks.
+              In Kenya, custom 11-character Alphanumeric Sender IDs (e.g. <code>SAFARICOM</code>, <code>NAIVAS</code>, <code>LJK_AGENCY</code>) are regulated by CAK and must be vetted before whitelisting on Safaricom and Airtel networks.
             </p>
 
             <div className="space-y-4 pt-2">
@@ -319,9 +574,9 @@ export default function AdminGuidancePage() {
                   1
                 </div>
                 <div className="space-y-1 text-xs sm:text-sm">
-                  <div className="font-bold text-zinc-900">Client Application Submission</div>
+                  <div className="font-bold text-zinc-900">Queue Review &amp; KYC Inspection</div>
                   <p className="text-zinc-600">
-                    The tenant requests their desired Sender ID (up to 11 alphanumeric characters) via <code>/business/sender-ids</code>. Status enters <code>PENDING</code>.
+                    Open <Link href="/admin/sender-ids" className="underline font-semibold text-[#581c87]">/admin/sender-ids</Link>. Click <strong>&quot;Inspect KYC Document&quot;</strong> to review the business&apos;s uploaded Certificate of Incorporation or Business Name Registration in the in-app modal.
                   </p>
                 </div>
               </div>
@@ -331,15 +586,10 @@ export default function AdminGuidancePage() {
                   2
                 </div>
                 <div className="space-y-1 text-xs sm:text-sm">
-                  <div className="font-bold text-zinc-900">KYC Verification &amp; Document Review</div>
+                  <div className="font-bold text-zinc-900">Name Match &amp; Brand Authorization Check</div>
                   <p className="text-zinc-600">
-                    Admins inspect tenant documents:
+                    Verify the requested 11-character alphanumeric header matches the legal company name. Brand names of third-party trademarks (e.g. banks, telcos, government agencies) must be rejected unless an explicit Letter of Authorization (LOA) is attached.
                   </p>
-                  <ul className="list-disc pl-5 text-zinc-600 space-y-1 text-xs pt-1">
-                    <li>Certificate of Incorporation / Business Name Registration (BNR).</li>
-                    <li>KRA PIN Certificate of the company.</li>
-                    <li>Official Letter of Authorization (LOA) printed on client company letterhead authorizing LJK Marketing Agency to provision the Sender ID.</li>
-                  </ul>
                 </div>
               </div>
 
@@ -348,9 +598,9 @@ export default function AdminGuidancePage() {
                   3
                 </div>
                 <div className="space-y-1 text-xs sm:text-sm">
-                  <div className="font-bold text-zinc-900">Telecom Submission (Advanta / Africa&apos;s Talking)</div>
+                  <div className="font-bold text-zinc-900">Upstream Telco Submission</div>
                   <p className="text-zinc-600">
-                    LJK admin submits the LOA and company credentials to Advanta or Africa&apos;s Talking telco desk for onward submission to Safaricom NOC and Airtel Kenya. Telco turnaround is typically <strong>24 – 72 business hours</strong>.
+                    Submit the LOA and company credentials to Advanta or Africa&apos;s Talking telco desk for Safaricom NOC and Airtel whitelisting. Telco turnaround is typically <strong>24 – 72 business hours</strong>.
                   </p>
                 </div>
               </div>
@@ -360,9 +610,9 @@ export default function AdminGuidancePage() {
                   4
                 </div>
                 <div className="space-y-1 text-xs sm:text-sm">
-                  <div className="font-bold text-zinc-900">Platform Activation</div>
+                  <div className="font-bold text-zinc-900">1-Click Approval / Rejection Feedback</div>
                   <p className="text-zinc-600">
-                    Once Safaricom confirms whitelisting, the admin navigates to <Link href="/admin/businesses" className="text-[#581c87] underline font-semibold">Admin Businesses</Link>, clicks on the business, and updates Sender ID status to <code>APPROVED</code>. The tenant can immediately dispatch under their brand name!
+                    Click <strong>&quot;Approve Live&quot;</strong> to activate the header. The system dispatches an automated HTML email via Resend guiding the tenant to start sending. If rejected, supply the specific revision reason which is emailed to the business owner immediately.
                   </p>
                 </div>
               </div>
@@ -371,7 +621,117 @@ export default function AdminGuidancePage() {
         </div>
       )}
 
-      {/* TAB 3: AGENCY BROADCAST HUB */}
+      {/* TAB 6: COMPLIANCE SHIELD & CAK */}
+      {activeTab === "compliance" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                  Anti-Fraud, Phishing &amp; CAK Marketing Hours Shield
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Automated threat heuristics, regulatory windows, and content moderation workflows.
+                </p>
+              </div>
+              <Link
+                href="/admin/compliance"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              >
+                Open Compliance Shield &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50/40 space-y-2">
+                <div className="font-bold text-sm text-red-950">1. Heuristic Phishing Scans</div>
+                <p className="text-xs text-red-900/80 leading-relaxed">
+                  Campaigns are automatically scanned for banking impersonation (&quot;send to this number&quot;, &quot;mpesa reversal&quot;, &quot;pin&quot;, &quot;fuliza loan&quot;), lottery scams, and suspicious URL shorteners (<code>bit.ly</code>, <code>tinyurl.com</code>).
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/40 space-y-2">
+                <div className="font-bold text-sm text-amber-950">2. CAK Marketing Hours Window</div>
+                <p className="text-xs text-amber-900/80 leading-relaxed">
+                  Under CAK rules, promotional marketing SMS in Kenya may only be dispatched between <strong>07:00 AM and 07:00 PM EAT (UTC+3)</strong>. The Compliance Shield monitors this window in real-time with automated timezone conversion.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/40 space-y-2">
+                <div className="font-bold text-sm text-purple-950">3. Quarantine vs Admin Override</div>
+                <p className="text-xs text-purple-900/80 leading-relaxed">
+                  Flagged campaigns appear in the Compliance Quarantined list with risk scores. Admins can 1-click <strong>&quot;🚨 Quarantine &amp; Halt&quot;</strong> to protect telco routes, or <strong>&quot;✓ Admin Override&quot;</strong> if verified legitimate.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 space-y-2">
+              <div className="font-bold text-zinc-900">📖 Tag Cloud Keyword Manager</div>
+              <p className="leading-relaxed">
+                Admins can add custom phishing terms, deceptive phrases, or brand names directly in the Compliance Dashboard tag cloud. Changes take effect across all campaigns immediately without code deploys.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 7: SYSTEM ANNOUNCEMENTS */}
+      {activeTab === "announcements" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                  Global Client Announcement &amp; Incident Banner Engine
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Broadcasting scheduled maintenance, upstream route delays, and emergency notices.
+                </p>
+              </div>
+              <Link
+                href="/admin/announcements"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+              >
+                Open Announcements &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">Severity Themes &amp; Appearance</div>
+                <ul className="list-disc pl-5 text-xs text-zinc-600 space-y-1">
+                  <li><strong>INFO (Purple/Blue):</strong> General updates, new feature rollouts, direct route additions.</li>
+                  <li><strong>WARNING (Amber):</strong> Scheduled carrier maintenance, temporary Safaricom callback delays.</li>
+                  <li><strong>CRITICAL (Red):</strong> Telco gateway downtime, emergency SMPP maintenance.</li>
+                  <li><strong>SUCCESS (Emerald):</strong> Restored services, successful carrier failover completion.</li>
+                </ul>
+              </div>
+
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">⚡ 1-Click Operational Presets</div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  The engine includes pre-authored incident templates:
+                </p>
+                <ul className="list-disc pl-5 text-xs text-zinc-600 space-y-1">
+                  <li><em>Scheduled Telco Gateway Maintenance</em></li>
+                  <li><em>Safaricom M-Pesa Top-Up Callback Delays</em></li>
+                  <li><em>High-Speed Direct Telco Route Live</em></li>
+                  <li><em>Holiday Support &amp; Network Hours Notice</em></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 space-y-2">
+              <div className="font-bold text-zinc-900">Client Visibility &amp; Session Dismissal</div>
+              <p className="leading-relaxed">
+                Active banners appear pinned at the very top of all business client dashboard pages (<code>/business/*</code>). Clients can close the banner for their current browsing session with the &times; button without affecting other users.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 8: AGENCY BROADCAST HUB */}
       {activeTab === "broadcast" && (
         <div className="space-y-6">
           <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
@@ -423,88 +783,6 @@ export default function AdminGuidancePage() {
               <p>
                 <strong>Sender ID Fallback:</strong> Dispatches default to <code>LJK_AGENCY</code>. If the alphanumeric sender ID is pending carrier approval, the backend automatically falls back to Africa&apos;s Talking standard route to guarantee immediate delivery.
               </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: TENANT MODERATION */}
-      {activeTab === "tenants" && (
-        <div className="space-y-6">
-          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
-            <h2 className="text-base sm:text-lg font-bold text-zinc-900 border-b border-zinc-100 pb-3">
-              Tenant Workspace Moderation &amp; Quota Safeguards
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-              As an aggregator, LJK Marketing is legally accountable to telecom operators and regulatory bodies for traffic originating through its platform.
-            </p>
-
-            <div className="space-y-4 pt-2">
-              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2 text-xs sm:text-sm">
-                <div className="font-bold text-zinc-900">Deactivating Non-Compliant Businesses</div>
-                <p className="text-zinc-600">
-                  If a business is flagged for sending unsolicited spam, deceptive betting links, or phishing SMS, navigate to <Link href="/admin/businesses" className="text-[#581c87] underline font-semibold">Admin Businesses</Link>, select the tenant, and click <strong>Deactivate Business</strong>. This immediately freezes outbound broadcasts and halts API token requests.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2 text-xs sm:text-sm">
-                <div className="font-bold text-zinc-900">Prepaid Wallet Validation (Zero Credit Risk)</div>
-                <p className="text-zinc-600">
-                  Every campaign dispatch enforces atomic credit checks against <code>BusinessWallet.sms_credit_balance</code> before messages hit telecom SMPP pipes. Businesses cannot send more messages than their prepaid credit balance.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2 text-xs sm:text-sm">
-                <div className="font-bold text-zinc-900">Safaricom Promotional Hours Restriction</div>
-                <p className="text-zinc-600">
-                  Under CAK guidelines, promotional marketing SMS in Kenya may only be dispatched between <strong>08:00 AM and 07:00 PM EAT</strong>. Transactional OTPs and order updates are exempt and deliver 24/7.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 5: TELECOM ROUTING & DLR */}
-      {activeTab === "dlr_routing" && (
-        <div className="space-y-6">
-          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-              <h2 className="text-base sm:text-lg font-bold text-zinc-900">
-                Inbound Carrier DLR Webhooks &amp; Telemetry
-              </h2>
-              <Link
-                href="/admin/routing"
-                className="text-xs font-semibold text-[#581c87] hover:underline"
-              >
-                View Live Transceivers &rarr;
-              </Link>
-            </div>
-            <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-              When messages are sent through telecom towers, carriers report delivery statuses back asynchronously via webhooks.
-            </p>
-
-            <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 space-y-3 text-xs">
-              <div className="font-mono text-zinc-700">
-                <strong>Webhook URL:</strong> <code>POST /api/v1/broadcast-messages/dlr/callback/</code>
-              </div>
-              <p className="text-zinc-600 leading-relaxed">
-                Accepts asynchronous delivery receipt payloads from both Africa&apos;s Talking and Advanta Africa, matching carrier message IDs to update <code>BroadcastMessage.status</code>:
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="p-3 bg-white rounded-lg border border-emerald-200">
-                  <span className="font-bold text-emerald-800">DELIVERED</span>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Handset confirmed receipt (Safaricom / Airtel acknowledged).</p>
-                </div>
-                <div className="p-3 bg-white rounded-lg border border-blue-200">
-                  <span className="font-bold text-blue-800">SENT</span>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Dispatched into carrier queues, awaiting handset acknowledgement.</p>
-                </div>
-                <div className="p-3 bg-white rounded-lg border border-red-200">
-                  <span className="font-bold text-red-800">FAILED</span>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Absent subscriber, number disconnected, or DND (Do Not Disturb) active.</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
