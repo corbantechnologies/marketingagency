@@ -5,16 +5,16 @@ import { ContactContent } from "@/components/contact/ContactContent";
 import { Footer } from "@/components/landing/Footer";
 
 export const metadata: Metadata = {
-  title: "Contact Us & Support | LJK Marketing Agency Kenya",
+  title: "Contact Us & Omnichannel Support | LJK Marketing Agency Kenya",
   description:
-    "Get in touch with LJK Marketing Agency in Nairobi. Inquire about Bulk SMS wholesale rates, custom Alphanumeric Sender IDs, developer APIs, or emergency NOC support.",
+    "Get in touch with LJK Marketing Agency in Nairobi. Inquire about Meta WhatsApp Business setup, Bulk SMS wholesale routes, custom Sender IDs, or developer APIs.",
   alternates: {
     canonical: "https://www.ljkmarketingagency.co.ke/contact",
   },
   openGraph: {
-    title: "Contact Us & Support | LJK Marketing Agency Kenya",
+    title: "Contact Us & Omnichannel Support | LJK Marketing Agency Kenya",
     description:
-      "Direct carrier routes, M-PESA SMS top-ups, and developer API assistance. Average response time under 15 minutes.",
+      "Direct carrier SMS routes, Meta WhatsApp Cloud API onboarding, M-PESA top-ups, and developer API assistance in Nairobi.",
     url: "https://www.ljkmarketingagency.co.ke/contact",
   },
 };

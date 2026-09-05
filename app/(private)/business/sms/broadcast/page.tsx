@@ -64,12 +64,15 @@ function BroadcastComposerForm({
   }, [preselectedTemplateRef, templates]);
 
   // Form state
+  const [channel, setChannel] = useState<"SMS" | "WHATSAPP">("SMS");
   const [campaignName, setCampaignName] = useState("");
   const [senderId, setSenderId] = useState(initialSenderId);
   const [audienceMode, setAudienceMode] = useState<"group" | "all" | "manual">("group");
   const [selectedGroupRef, setSelectedGroupRef] = useState<string>(initialGroupRef);
   const [manualNumbers, setManualNumbers] = useState("");
   const [message, setMessage] = useState(initialMessage);
+
+  const isWhatsApp = channel === "WHATSAPP";
 
   // Recipient resolution
   const recipientCount = useMemo(() => {
@@ -113,25 +116,29 @@ function BroadcastComposerForm({
     }
   }, [charCount, isUnicode]);
 
-  // Total credits calculation
-  const totalCostCredits = recipientCount * segments;
+  // Total credits calculation (WhatsApp: flat 2 credits/msg, SMS: segments)
+  const totalCostCredits = isWhatsApp ? recipientCount * 2 : recipientCount * segments;
   const hasInsufficientCredits = totalCostCredits > smsBalance;
 
-  // Variable-Length Inflation Detection
+  // Variable-Length Inflation Detection (only for 160-char SMS)
   const hasDynamicTags = /\{(first_name|last_name|name|phone_number|email)\}/.test(message);
   const isNearBoundary = !isUnicode ? charCount >= 148 && charCount <= 160 : charCount >= 62 && charCount <= 70;
-  const showInflationWarning = hasDynamicTags && isNearBoundary;
+  const showInflationWarning = !isWhatsApp && hasDynamicTags && isNearBoundary;
 
   // Handset preview interpolation
   const samplePreviewText = useMemo(() => {
-    if (!message) return "Your SMS message will appear here in real-time as you compose...";
+    if (!message) {
+      return isWhatsApp
+        ? "Your WhatsApp message will appear here in real-time as you compose..."
+        : "Your SMS message will appear here in real-time as you compose...";
+    }
     return message
       .replace(/\{first_name\}/g, "Sarah")
       .replace(/\{last_name\}/g, "Kamau")
       .replace(/\{name\}/g, "Sarah Kamau")
       .replace(/\{phone_number\}/g, "+254712345678")
       .replace(/\{email\}/g, "sarah@gmail.com");
-  }, [message]);
+  }, [message, isWhatsApp]);
 
   // Tag Inserter into textarea cursor position
   const handleInsertTag = (tag: string) => {
@@ -175,16 +182,18 @@ function BroadcastComposerForm({
     createCampaignMutation.mutate(
       {
         name: campaignName.trim(),
-        sender_id: senderId,
+        sender_id: isWhatsApp ? "WHATSAPP" : senderId,
         message_template: message,
-        channel: "SMS",
+        channel: channel,
         target_group_reference: audienceMode === "group" ? selectedGroupRef : undefined,
         send_to_all_contacts: audienceMode === "all",
         manual_numbers: audienceMode === "manual" ? manualNumbers : undefined,
       },
       {
         onSuccess: (data) => {
-          toast.success(`Broadcast queued! Dispatched to ${data.recipient_count} recipients via Celery worker.`);
+          toast.success(
+            `${isWhatsApp ? "WhatsApp" : "SMS"} broadcast queued! Dispatched to ${data.recipient_count} recipients via Celery worker.`
+          );
           setCampaignName("");
           setMessage("");
           setManualNumbers("");
@@ -251,6 +260,70 @@ function BroadcastComposerForm({
         {/* Left 8 cols: Campaign Composer Form */}
         <div className="lg:col-span-8 bg-white border border-zinc-200 rounded-xl p-5 sm:p-7 shadow-xs">
           <form onSubmit={handleLaunchBroadcast} className="space-y-6">
+            {/* Channel Selector Switcher */}
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">
+                Dispatch Channel
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setChannel("SMS")}
+                  className={`p-3.5 rounded-xl border flex items-center gap-3 text-left transition-all cursor-pointer ${
+                    channel === "SMS"
+                      ? "bg-purple-50/90 border-[#581c87] ring-1 ring-[#581c87] shadow-xs"
+                      : "bg-zinc-50 border-zinc-200 hover:bg-zinc-100"
+                  }`}
+                >
+                  <div
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
+                      channel === "SMS" ? "bg-[#581c87] text-white" : "bg-zinc-200 text-zinc-700"
+                    }`}
+                  >
+                    📱
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                      <span>Bulk SMS</span>
+                      {channel === "SMS" && (
+                        <span className="text-[10px] bg-purple-200 text-[#581c87] font-semibold px-1.5 py-0.2 rounded">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-zinc-500 mt-0.5">Tier-1 Direct Carrier &bull; 1 credit/part</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setChannel("WHATSAPP")}
+                  className={`p-3.5 rounded-xl border flex items-center gap-3 text-left transition-all cursor-pointer ${
+                    channel === "WHATSAPP"
+                      ? "bg-emerald-50/90 border-emerald-600 ring-1 ring-emerald-600 shadow-xs"
+                      : "bg-zinc-50 border-zinc-200 hover:bg-zinc-100"
+                  }`}
+                >
+                  <div
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
+                      channel === "WHATSAPP" ? "bg-emerald-600 text-white" : "bg-zinc-200 text-zinc-700"
+                    }`}
+                  >
+                    💬
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                      <span>WhatsApp Business</span>
+                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded border border-emerald-300">
+                        Meta Cloud API
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-zinc-500 mt-0.5">Rich Cards &bull; 2 credits/msg &bull; 98% Read Rate</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
             {/* Campaign Title & Sender ID Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -261,30 +334,44 @@ function BroadcastComposerForm({
                   type="text"
                   value={campaignName}
                   onChange={(e) => setCampaignName(e.target.value)}
-                  placeholder="e.g. Weekend Flash Sale Promo"
+                  placeholder={isWhatsApp ? "e.g. VIP Customer WhatsApp Promo" : "e.g. Weekend Flash Sale Promo"}
                   className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87]"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5">
-                  Sender ID Header
+                  {isWhatsApp ? "WhatsApp Business Identity" : "Sender ID Header"}
                 </label>
-                <div className="flex items-center gap-2">
-                  <select
-                    value={senderId}
-                    onChange={(e) => setSenderId(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
-                  >
-                    {activeBusiness?.sender_id && activeBusiness.sender_id_status === "APPROVED" && (
-                      <option value={activeBusiness.sender_id}>
-                        {activeBusiness.sender_id} (Official Verified)
-                      </option>
-                    )}
-                    <option value="LJK_AGENCY">LJK_AGENCY (Tier-1 Shared Route)</option>
-                    <option value="PROMOTIONAL">PROMOTIONAL (Standard Bulk)</option>
-                  </select>
-                </div>
+                {isWhatsApp ? (
+                  <div className="w-full px-3.5 py-2.5 rounded-lg border border-emerald-200 bg-emerald-50/60 text-xs text-emerald-900 font-medium flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 font-semibold">
+                      <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                      </svg>
+                      LJK Marketing Agency
+                    </span>
+                    <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">
+                      Corban Tech LTD
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={senderId}
+                      onChange={(e) => setSenderId(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
+                    >
+                      {activeBusiness?.sender_id && activeBusiness.sender_id_status === "APPROVED" && (
+                        <option value={activeBusiness.sender_id}>
+                          {activeBusiness.sender_id} (Official Verified)
+                        </option>
+                      )}
+                      <option value="LJK_AGENCY">LJK_AGENCY (Tier-1 Shared Route)</option>
+                      <option value="PROMOTIONAL">PROMOTIONAL (Standard Bulk)</option>
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -501,11 +588,15 @@ function BroadcastComposerForm({
               <div>
                 <div className="text-xs text-zinc-600">
                   Estimated Total Cost:{" "}
-                  <span className="font-extrabold text-base text-[#581c87] font-mono">
+                  <span className={`font-extrabold text-base font-mono ${isWhatsApp ? "text-emerald-700" : "text-[#581c87]"}`}>
                     {totalCostCredits.toLocaleString()} Credits
                   </span>{" "}
                   <span className="text-zinc-400">
-                    ({recipientCount.toLocaleString()} recipients &times; {segments} {segments === 1 ? "part" : "parts"})
+                    {isWhatsApp ? (
+                      `(${recipientCount.toLocaleString()} recipients × 2 Credits/msg)`
+                    ) : (
+                      `(${recipientCount.toLocaleString()} recipients × ${segments} ${segments === 1 ? "part" : "parts"})`
+                    )}
                   </span>
                 </div>
                 {hasInsufficientCredits && (
@@ -527,7 +618,9 @@ function BroadcastComposerForm({
                   <button
                     type="submit"
                     disabled={createCampaignMutation.isPending || recipientCount === 0}
-                    className="py-2.5 px-6 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50"
+                    className={`py-2.5 px-6 text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50 ${
+                      isWhatsApp ? "bg-emerald-600 hover:bg-emerald-700" : "bg-[#581c87] hover:bg-[#4a1572]"
+                    }`}
                   >
                     {createCampaignMutation.isPending ? (
                       <>
@@ -539,14 +632,14 @@ function BroadcastComposerForm({
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>
-                        <span>Enqueuing Dispatch...</span>
+                        <span>Enqueuing {isWhatsApp ? "WhatsApp" : "SMS"} Dispatch...</span>
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
-                        <span>Queue &amp; Send Broadcast</span>
+                        <span>Queue &amp; Send {isWhatsApp ? "WhatsApp Broadcast" : "SMS Broadcast"}</span>
                       </>
                     )}
                   </button>
@@ -561,34 +654,92 @@ function BroadcastComposerForm({
           {/* Mobile Handset Preview */}
           <div className="bg-zinc-900 text-white rounded-2xl p-5 shadow-xl border-4 border-zinc-800">
             <div className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-3 flex items-center justify-between">
-              <span>Handset Preview</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{isWhatsApp ? "WhatsApp Handset Preview" : "SMS Handset Preview"}</span>
+              <span className={`w-2 h-2 rounded-full ${isWhatsApp ? "bg-emerald-400" : "bg-purple-400"} animate-pulse`} />
             </div>
 
-            {/* Handset Notification bubble */}
-            <div className="bg-zinc-800/95 rounded-2xl p-4 border border-zinc-700/60 space-y-2">
-              <div className="flex items-center justify-between text-[11px] text-zinc-400 pb-1.5 border-b border-zinc-700/40">
-                <span className="text-purple-300 font-bold font-mono tracking-wider">{senderId}</span>
-                <span className="text-[10px]">Direct Tier-1</span>
+            {isWhatsApp ? (
+              /* WhatsApp Screen Mockup */
+              <div className="bg-[#0b141a] rounded-2xl overflow-hidden border border-zinc-700/60 shadow-inner">
+                {/* WhatsApp Chat App Bar */}
+                <div className="bg-[#1f2c34] px-3 py-2.5 flex items-center gap-2.5 border-b border-[#2a3942]">
+                  <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-[11px] text-white shrink-0">
+                    LJK
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-bold text-zinc-100 truncate">LJK Marketing</span>
+                      <svg className="w-3 h-3 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                      </svg>
+                    </div>
+                    <div className="text-[9px] text-emerald-400 font-medium">Official Business Account</div>
+                  </div>
+                </div>
+
+                {/* WhatsApp Chat Body */}
+                <div className="p-3.5 space-y-2 bg-[radial-gradient(#1f2c34_1px,transparent_1px)] [background-size:12px_12px] min-h-[140px] flex flex-col justify-end">
+                  <div className="ml-auto max-w-[90%] bg-[#005c4b] text-zinc-100 rounded-lg rounded-tr-xs p-2.5 shadow-sm space-y-1.5 border border-[#025142]">
+                    <p className="text-xs leading-relaxed break-words font-sans">
+                      {samplePreviewText}
+                    </p>
+                    <div className="flex items-center justify-end gap-1 text-[9px] text-emerald-200/80 pt-0.5">
+                      <span>10:45 AM</span>
+                      {/* Double Blue Ticks */}
+                      <span className="text-sky-400 font-bold">✓✓</span>
+                    </div>
+                  </div>
+
+                  {/* Interactive Button CTA Previews */}
+                  <div className="ml-auto max-w-[90%] w-full space-y-1 pt-1">
+                    <div className="py-1.5 px-3 bg-[#1f2c34] hover:bg-[#2a3942] rounded text-[11px] text-sky-400 font-semibold text-center border border-[#2a3942] transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                      <span>🌐</span>
+                      <span>Visit Website</span>
+                    </div>
+                    <div className="py-1.5 px-3 bg-[#1f2c34] hover:bg-[#2a3942] rounded text-[11px] text-sky-400 font-semibold text-center border border-[#2a3942] transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                      <span>💬</span>
+                      <span>Reply on WhatsApp</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-zinc-100 leading-relaxed break-words font-sans">
-                {samplePreviewText}
-              </p>
-              <div className="text-[9px] text-zinc-400 text-right pt-1">
-                Just now &bull; Delivered
+            ) : (
+              /* SMS Notification bubble */
+              <div className="bg-zinc-800/95 rounded-2xl p-4 border border-zinc-700/60 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 pb-1.5 border-b border-zinc-700/40">
+                  <span className="text-purple-300 font-bold font-mono tracking-wider">{senderId}</span>
+                  <span className="text-[10px]">Direct Tier-1 SMS</span>
+                </div>
+                <p className="text-xs text-zinc-100 leading-relaxed break-words font-sans">
+                  {samplePreviewText}
+                </p>
+                <div className="text-[9px] text-zinc-400 text-right pt-1">
+                  Just now &bull; Delivered
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Guidelines */}
           <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs space-y-3 text-xs">
-            <h3 className="font-bold text-zinc-900">CA Regulatory &amp; Gateway Rules</h3>
-            <ul className="space-y-2 text-zinc-600 list-disc list-inside leading-relaxed text-[11px]">
-              <li>Promotional SMS permitted between <strong>8:00 AM &ndash; 7:00 PM</strong> in Kenya.</li>
-              <li>Include your business brand or helpline for transparent identification.</li>
-              <li>Every dispatch writes an immutable ledger entry on your business wallet.</li>
-              <li>Delivery reports (DLR) appear in real time under Delivery Reports.</li>
-            </ul>
+            <h3 className="font-bold text-zinc-900">
+              {isWhatsApp ? "Meta WhatsApp Cloud API Guidelines" : "CA Regulatory & Gateway Rules"}
+            </h3>
+            {isWhatsApp ? (
+              <ul className="space-y-2 text-zinc-600 list-disc list-inside leading-relaxed text-[11px]">
+                <li>Dispatches through <strong>Meta WhatsApp Cloud API</strong> under Corban Technologies LTD.</li>
+                <li>Instant <strong>98%+ read rate</strong> with guaranteed delivery directly to WhatsApp chat.</li>
+                <li>Real-time <strong>Blue Ticks (Read Receipts)</strong> tracked in delivery reports.</li>
+                <li>Replies open a <strong>24-hour free customer care window</strong> for instant engagement.</li>
+              </ul>
+            ) : (
+              <ul className="space-y-2 text-zinc-600 list-disc list-inside leading-relaxed text-[11px]">
+                <li>Promotional SMS permitted between <strong>8:00 AM &ndash; 7:00 PM</strong> in Kenya.</li>
+                <li>Include your business brand or helpline for transparent identification.</li>
+                <li>Every dispatch writes an immutable ledger entry on your business wallet.</li>
+                <li>Delivery reports (DLR) appear in real time under Delivery Reports.</li>
+              </ul>
+            )}
           </div>
 
           {/* Recent Broadcasts Mini-List */}

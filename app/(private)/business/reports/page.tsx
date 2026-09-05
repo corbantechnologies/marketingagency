@@ -183,6 +183,7 @@ export default function DeliveryReportsPage() {
                   className="px-2.5 py-1.5 rounded-lg border border-zinc-300 text-xs text-zinc-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
                 >
                   <option value="ALL">All Statuses</option>
+                  <option value="READ">Read (Blue Ticks)</option>
                   <option value="DELIVERED">Delivered</option>
                   <option value="SENT">Sent (In-Flight)</option>
                   <option value="QUEUED">Queued</option>
@@ -194,7 +195,8 @@ export default function DeliveryReportsPage() {
                   onChange={(e) => setOperatorFilter(e.target.value)}
                   className="px-2.5 py-1.5 rounded-lg border border-zinc-300 text-xs text-zinc-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
                 >
-                  <option value="ALL">All Carriers</option>
+                  <option value="ALL">All Channels</option>
+                  <option value="WHATSAPP">WhatsApp Business</option>
                   <option value="SAFARICOM">Safaricom</option>
                   <option value="AIRTEL">Airtel</option>
                   <option value="TELKOM">Telkom</option>
@@ -269,7 +271,9 @@ export default function DeliveryReportsPage() {
                         <td className="py-3 px-3 whitespace-nowrap">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                              msg.network_operator === "SAFARICOM"
+                              msg.network_operator === "WHATSAPP"
+                                ? "bg-emerald-600 text-white border border-emerald-700"
+                                : msg.network_operator === "SAFARICOM"
                                 ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
                                 : msg.network_operator === "AIRTEL"
                                 ? "bg-red-50 text-red-800 border border-red-200"
@@ -283,7 +287,9 @@ export default function DeliveryReportsPage() {
                         <td className="py-3 px-3 whitespace-nowrap">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                              msg.status === "DELIVERED"
+                              msg.status === "READ"
+                                ? "bg-sky-50 text-sky-800 border border-sky-300"
+                                : msg.status === "DELIVERED"
                                 ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
                                 : msg.status === "SENT"
                                 ? "bg-purple-50 text-purple-800 border border-purple-200"
@@ -292,7 +298,7 @@ export default function DeliveryReportsPage() {
                                 : "bg-red-50 text-red-800 border border-red-200"
                             }`}
                           >
-                            {msg.status}
+                            {msg.status === "READ" ? "READ ✓✓" : msg.status}
                           </span>
                         </td>
 

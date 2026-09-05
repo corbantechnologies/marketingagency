@@ -5,16 +5,16 @@ import { FeaturesContent } from "@/components/landing/FeaturesContent";
 import { Footer } from "@/components/landing/Footer";
 
 export const metadata: Metadata = {
-  title: "Platform Features & Capabilities | LJK Marketing Agency Kenya",
+  title: "Meta WhatsApp Business API & SMS Gateway Features | LJK Marketing Agency",
   description:
-    "Explore enterprise Bulk SMS, Alphanumeric Sender IDs, smart contact segmentation, M-PESA STK push billing, and developer REST APIs in Kenya.",
+    "Launch high-converting WhatsApp marketing campaigns with rich image flyers, interactive CTA buttons, and real-time Blue Ticks tracking, backed by Tier-1 Bulk SMS and developer APIs in Kenya.",
   alternates: {
     canonical: "https://www.ljkmarketingagency.co.ke/features",
   },
   openGraph: {
-    title: "Platform Features & Capabilities | LJK Marketing Agency Kenya",
+    title: "Meta WhatsApp Business API & SMS Gateway Features | LJK Marketing Agency",
     description:
-      "Direct carrier interconnects, sub-3s delivery latency, Alphanumeric Sender IDs, M-PESA billing, and developer REST APIs.",
+      "Interactive WhatsApp flyer broadcasts, CTA buttons, real-time Blue Ticks, Tier-1 carrier SMS interconnects, and M-PESA billing.",
     url: "https://www.ljkmarketingagency.co.ke/features",
   },
 };

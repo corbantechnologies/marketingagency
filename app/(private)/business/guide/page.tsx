@@ -48,6 +48,12 @@ export default function BusinessOnboardingGuidePage() {
 
   const sampleTemplates = [
     {
+      title: "WhatsApp Promo: Rich Flyer & CTA Button",
+      category: "WhatsApp",
+      text: "🌟 *FLASH WEEKEND SALE!* 🌟\n\nHello {first_name}, enjoy *30% OFF* all new arrivals at {business_name}!\n\n✨ Premium Quality\n🚚 Free Delivery in Nairobi\n\nTap below to claim your discount now:",
+      chars: 185,
+    },
+    {
       title: "Flash Sale & Promotional Discount",
       category: "Marketing",
       text: "Hello {first_name}, enjoy 20% OFF all items at {business_name} this weekend only! Use code FLASH20 at checkout. Shop now: https://shop.co.ke",
@@ -82,19 +88,20 @@ export default function BusinessOnboardingGuidePage() {
   const portalNavigationGuides = [
     {
       id: "nav-sms",
-      title: "Send Bulk SMS Broadcasts",
+      title: "WhatsApp Business & Bulk SMS Composer",
       href: "/business/sms/broadcast",
-      badge: "Core Campaign Tool",
+      badge: "Flagship Omnichannel Tool",
       description:
-        "Compose high-speed SMS blasts to contact groups, your entire customer directory, or pasted phone numbers.",
+        "Compose high-converting Meta WhatsApp Business broadcasts or Tier-1 Bulk SMS blasts from a single unified composer.",
       keyFeatures: [
-        "Dynamic Tag Pills: Click `+ {first_name}` to personalize each recipient's SMS.",
-        "GSM 03.38 Segment Meter: Live counter shows single (160) vs concatenated (153/part) usage.",
-        "Variable-Length Inflation Safeguard: Warns when text is close to 160 characters with dynamic tags.",
-        "Handset Preview: Live smartphone mockup renders sample text in real time.",
-        "Asynchronous Dispatch: Enqueues blasts in <100ms via Celery background workers.",
+        "Channel Switcher: Toggle between Meta WhatsApp Business (2 credits) and Tier-1 Bulk SMS (1 credit).",
+        "WhatsApp Rich Format: Dispatch up to 1,024 characters with interactive CTA buttons ([Shop Now], [Chat on WhatsApp]).",
+        "Dynamic Tag Pills: Click `+ {first_name}` to personalize each recipient's broadcast automatically.",
+        "GSM 03.38 Segment Meter: Live counter shows single (160) vs concatenated (153/part) SMS usage.",
+        "Live Handset Mockup: Real-time smartphone preview renders WhatsApp chat bubbles with Blue Ticks or 4G SMS.",
+        "Asynchronous Dispatch: Enqueues thousands of messages in <100ms via Celery background workers.",
       ],
-      actionText: "Open SMS Composer",
+      actionText: "Open Broadcast Composer",
     },
     {
       id: "nav-contacts",

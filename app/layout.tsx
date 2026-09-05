@@ -33,26 +33,30 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ljkmarketingagency.co.ke"),
   title: {
-    default: "LJK Marketing Agency | Bulk SMS Provider, Email Marketing & Growth Systems",
+    default: "LJK Marketing Agency | Official Meta WhatsApp Business API & Bulk SMS Gateway Kenya",
     template: "%s | LJK Marketing Agency",
   },
   description:
-    "LJK Marketing Agency is Kenya's leading high-deliverability Bulk SMS gateway, enterprise Email Marketing, and revenue automation agency. We provide direct Tier-1 telecom routes, custom Sender IDs, high-inbox email campaigns, and developer APIs.",
+    "Kenya's premier WhatsApp-First marketing platform and Tier-1 Bulk SMS gateway. Launch interactive WhatsApp flyer broadcasts, one-tap CTA campaigns, and high-deliverability SMS with real-time Blue Ticks and unified wallet billing.",
   keywords: [
+    "WhatsApp Business API Kenya",
+    "Meta WhatsApp Marketing Kenya",
+    "Bulk WhatsApp Sender Nairobi",
+    "WhatsApp Marketing Agency Kenya",
+    "WhatsApp Business Cloud API",
+    "Interactive WhatsApp templates",
+    "WhatsApp Blue Ticks tracking",
     "Bulk SMS Kenya",
     "Bulk SMS provider Kenya",
-    "Bulk SMS marketing",
     "SMS gateway API Kenya",
-    "Email marketing agency Kenya",
-    "Transactional SMS gateway",
-    "Promotional bulk SMS",
     "Custom Sender ID registration",
     "Safaricom SMS integration",
     "Airtel SMS API",
-    "Email deliverability services",
+    "M-Pesa SMS and WhatsApp notifications",
+    "Email marketing agency Kenya",
     "Ecommerce marketing automation",
     "LJK Marketing Agency",
-    "High volume messaging Africa",
+    "Corban Technologies LTD",
     "Direct carrier SMS routes",
   ],
   authors: [
@@ -62,7 +66,7 @@ export const metadata: Metadata = {
     },
   ],
   creator: "LJK Marketing Agency",
-  publisher: "LJK Marketing Agency",
+  publisher: "Corban Technologies LTD",
   formatDetection: {
     email: true,
     address: true,
@@ -87,23 +91,23 @@ export const metadata: Metadata = {
     locale: "en_KE",
     url: "https://www.ljkmarketingagency.co.ke",
     siteName: "LJK Marketing Agency",
-    title: "LJK Marketing Agency | Bulk SMS Provider, Email Marketing & Growth Systems",
+    title: "LJK Marketing Agency | Meta WhatsApp Business Marketing & Bulk SMS Kenya",
     description:
-      "Enterprise Bulk SMS gateway with 99.4% delivery, custom branded Sender ID, high-inbox email infrastructure, and automated revenue campaigns across Kenya and globally.",
+      "Supercharge customer reach in Kenya with interactive WhatsApp flyer campaigns, 98% open rates, real-time Blue Ticks tracking, and Tier-1 Bulk SMS fallback.",
     images: [
       {
         url: "/ljk-logo.svg",
         width: 1200,
         height: 630,
-        alt: "LJK Marketing Agency - Bulk SMS & Email Marketing Infrastructure",
+        alt: "LJK Marketing Agency - Meta WhatsApp Business & Bulk SMS Infrastructure",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LJK Marketing Agency | Bulk SMS & Email Marketing Infrastructure",
+    title: "LJK Marketing Agency | Meta WhatsApp Business & Bulk SMS Infrastructure",
     description:
-      "High-throughput Tier-1 SMS routes, inbox-guaranteed email marketing, and automated customer communication systems.",
+      "Direct Meta WhatsApp Cloud API broadcasts with rich flyers & CTA buttons, plus high-throughput Tier-1 SMS routes across Kenya and globally.",
     images: ["/ljk-logo.svg"],
     creator: "@ljkmarketing",
   },
@@ -121,11 +125,12 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "MarketingAgency",
   name: "LJK Marketing Agency",
+  alternateName: "Corban Technologies LTD",
   url: "https://www.ljkmarketingagency.co.ke",
   logo: "https://www.ljkmarketingagency.co.ke/ljk-logo.svg",
   image: "https://www.ljkmarketingagency.co.ke/ljk-logo.svg",
   description:
-    "LJK Marketing Agency is a premier Bulk SMS provider, email marketing powerhouse, and growth marketing agency delivering direct carrier telecom routes, developer APIs, and lifecycle automation.",
+    "LJK Marketing Agency is Kenya's premier WhatsApp-First marketing platform and Tier-1 Bulk SMS gateway, delivering direct Meta Cloud API messaging, custom alphanumeric SMS sender IDs, and lifecycle revenue automation.",
   priceRange: "KSh / $$$",
   telephone: "+254-700-000000",
   email: "growth@ljkmarketingagency.co.ke",
@@ -146,8 +151,16 @@ const jsonLd = {
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Bulk SMS & Digital Marketing Services",
+    name: "WhatsApp Business & Bulk SMS Marketing Services",
     itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Official Meta WhatsApp Business Cloud API & Interactive Marketing",
+          description: "Direct Meta Cloud API messaging with rich image/PDF flyers, interactive CTA buttons, 98% open rates, and real-time Blue Ticks delivery tracking in Kenya.",
+        },
+      },
       {
         "@type": "Offer",
         itemOffered: {
@@ -160,24 +173,16 @@ const jsonLd = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "Transactional OTP & Alert SMS API",
-          description: "Low-latency (<2.4s) OTP verification and transactional messaging gateway with REST API and SMPP 3.4 connectivity.",
+          name: "Transactional OTP & Omnichannel Verification API",
+          description: "Low-latency (<2.4s) OTP verification over WhatsApp and SMS with REST API and webhook callback support.",
         },
       },
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "High-Inbox Email Marketing & IP Warming",
-          description: "Dedicated IP warmup, automated email workflows, SPF/DKIM/DMARC optimization, and subscriber lifecycle management.",
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Lifecycle & Retention Automation",
-          description: "Behavior-triggered multi-channel SMS and Email sequences for cart recovery and customer repeat retention.",
+          name: "Unified Credit Wallet & Multi-Channel Campaigns",
+          description: "Unified pay-as-you-go credit wallet supporting 1 Credit = 1 SMS and 2 Credits = 1 WhatsApp marketing message.",
         },
       },
     ],

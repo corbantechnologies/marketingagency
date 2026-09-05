@@ -8,18 +8,39 @@ export function Services() {
 
   const services = [
     {
+      id: "whatsapp-marketing",
+      category: "messaging",
+      title: "Meta WhatsApp Business Marketing",
+      tagline: "Direct Meta Cloud API & Rich Interactive Campaigns",
+      description:
+        "Transform direct customer engagement with official Meta WhatsApp Business broadcasts. Dispatch stunning image flyers, product catalogs, and interactive CTA buttons with an incredible 98% open rate and real-time Blue Ticks verification.",
+      metrics: "98.0% Open Rate · Real-Time Blue Ticks",
+      deliverables: [
+        "Rich media broadcasts (HD image flyers, PDFs & catalogs)",
+        "Interactive one-tap CTA buttons ([Shop Now], [Chat on WhatsApp])",
+        "Official Meta Cloud API under verified business profile",
+        "Live Blue Ticks delivery & read status telemetry (READ ✓✓)",
+      ],
+      icon: (
+        <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.301-.15-1.781-.879-2.057-.98-.276-.1-.477-.15-.678.15-.2.301-.777.98-.953 1.18-.176.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.896-.799-1.501-1.787-1.677-2.088-.176-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.176.2-.301.301-.502.1-.201.05-.377-.025-.527-.075-.15-.678-1.634-.929-2.237-.244-.588-.493-.509-.678-.518-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.03-1.054 2.512s1.079 2.914 1.23 3.115c.15.201 2.122 3.24 5.141 4.544.718.31 1.279.496 1.716.635.722.23 1.379.197 1.898.12.578-.087 1.781-.728 2.032-1.431.251-.703.251-1.305.176-1.431-.075-.126-.276-.201-.577-.351z" />
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.11 1.523 5.836L.055 23.518l5.882-1.446A11.936 11.936 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.854 0-3.593-.505-5.092-1.385l-.365-.215-3.784.931.947-3.69-.236-.376C2.518 15.736 2 13.929 2 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z" />
+        </svg>
+      ),
+    },
+    {
       id: "bulk-sms",
       category: "messaging",
       title: "Enterprise Bulk SMS Gateway",
-      tagline: "Direct Tier-1 Telecom Routing & 99.4% Delivery",
+      tagline: "Direct Tier-1 Telecom Routing & Universal Fallback",
       description:
-        "High-throughput SMS broadcasting for promotional flash sales, product alerts, and mission-critical transactional OTPs with custom branded alphanumeric Sender IDs and real-time delivery receipts (DLR).",
-      metrics: "99.4% Delivery · <2.4s Latency",
+        "High-throughput SMS broadcasting for promotional flash sales, product alerts, and mission-critical transactional OTPs with custom branded alphanumeric Sender IDs and automated fallback for WhatsApp campaigns.",
+      metrics: "99.4% Delivery · 100% Mobile Coverage",
       deliverables: [
-        "Custom Alphanumeric Sender ID registration",
-        "High-throughput dispatch (up to 50,000 SMS/min)",
+        "Custom Alphanumeric Sender ID registration (Safaricom & Airtel)",
+        "Automated universal fallback for contacts without data or WhatsApp",
         "Transactional OTP, billing & alert automation",
-        "Live delivery reports (DLR) & failure analytics",
+        "Unified pay-as-you-go credit wallet (1 Credit = 1 SMS)",
       ],
       icon: (
         <svg className="w-5 h-5 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
