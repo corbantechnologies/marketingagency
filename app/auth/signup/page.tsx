@@ -134,7 +134,7 @@ export default function BusinessSignupPage() {
         <span className="w-5 h-5 rounded-full bg-[#581c87] text-white flex items-center justify-center text-xs font-bold shrink-0">
           ✓
         </span>
-        <span>Includes <strong>50 complimentary SMS test credits</strong> &amp; default workspace.</span>
+        <span>Includes <strong>Tier-1 carrier routing</strong>, PAYG top-ups via M-PESA &amp; default workspace.</span>
       </div>
 
       {errorMessage && (

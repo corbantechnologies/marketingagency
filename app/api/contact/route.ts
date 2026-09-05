@@ -147,8 +147,8 @@ export async function POST(request: Request) {
                 <div style="font-size: 12px; font-weight: 600; color: #71717a; text-transform: uppercase; margin-bottom: 8px;">What Happens Next:</div>
                 <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #3f3f46; line-height: 1.6;">
                   <li>A dedicated telecom & messaging engineer is reviewing your route requirements and volume tier.</li>
-                  <li>You will receive your custom route deliverability analysis and trial credentials within <strong>12 business hours</strong>.</li>
-                  <li>If you requested test credits, your trial account will be provisioned automatically.</li>
+                  <li>You will receive your custom route deliverability analysis and account setup guidance within <strong>12 business hours</strong>.</li>
+                  <li>Our team will guide you through sender ID compliance, carrier routing, and Pay-As-You-Go activation.</li>
                 </ul>
               </div>
               <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin: 16px 0 0 0;">

@@ -6,7 +6,7 @@ export function Hero() {
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleQuickTrial = (e: React.FormEvent) => {
+  const handleQuickAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!phoneOrEmail) return;
     setSubmitted(true);
@@ -55,8 +55,8 @@ export function Hero() {
               repeat revenue with sub-second delivery speed.
             </p>
 
-            {/* Quick Audit / Test Form */}
-            <form onSubmit={handleQuickTrial} className="w-full max-w-lg mb-8">
+            {/* Quick Audit Form */}
+            <form onSubmit={handleQuickAudit} className="w-full max-w-lg mb-8">
               <div className="flex flex-col sm:flex-row gap-2.5 p-1.5 bg-zinc-50 border border-zinc-300 rounded shadow-xs">
                 <input
                   type="text"
@@ -70,7 +70,7 @@ export function Hero() {
                   type="submit"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#581c87] hover:bg-[#4a1572] text-white px-5 py-2.5 rounded text-xs sm:text-sm font-semibold transition-colors shadow-xs shrink-0 cursor-pointer"
                 >
-                  <span>{submitted ? "Preparing Audit..." : "Get Free Audit & Test Credits"}</span>
+                  <span>{submitted ? "Preparing Audit..." : "Get Free Deliverability Audit"}</span>
                   <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
@@ -80,7 +80,7 @@ export function Hero() {
                 <svg className="w-3.5 h-3.5 text-[#581c87]" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                Includes 50 complimentary test SMS credits & full deliverability audit.
+                Includes full telecom carrier route benchmark & deliverability audit.
               </p>
             </form>
 

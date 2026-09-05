@@ -277,7 +277,7 @@ export function GrowthCalculator() {
                   href="/#audit"
                   className="w-full inline-flex items-center justify-center bg-white text-[#581c87] hover:bg-purple-50 py-2.5 px-4 rounded text-xs sm:text-sm font-semibold transition-colors text-center shadow-xs"
                 >
-                  Claim 50 Free Test SMS Credits
+                  Request Free Deliverability Audit
                 </Link>
               </div>
             </div>

@@ -57,7 +57,7 @@ export function AuditForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          inquiryType: "Free 14-Point Growth Audit & 50 Test Credits",
+          inquiryType: "Free 14-Point Growth & Deliverability Audit",
         }),
       });
 
@@ -87,12 +87,12 @@ export function AuditForm() {
               Free Messaging & Deliverability Audit
             </div>
             <h2 className="text-xl font-semibold text-zinc-900 tracking-tight mb-4">
-              Get Your SMS & Email Deliverability Audit + 50 Test Credits
+              Get Your SMS & Email Deliverability Audit
             </h2>
             <p className="text-sm font-normal text-zinc-600 leading-relaxed mb-8">
               Experience direct Tier-1 carrier routing. Our messaging engineers will audit your current
-              sending domain, analyze carrier spam filters, test route latency, and provision your
-              test account with 50 complimentary SMS credits.
+              sending domain, analyze carrier spam filters, test route latency, and provide custom
+              routing recommendations.
             </p>
 
             {/* What's in the audit list */}
@@ -154,10 +154,10 @@ export function AuditForm() {
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold text-zinc-900">
-                    Audit Request & Test Credits Initialized!
+                    Audit Request Successfully Received!
                   </h3>
                   <p className="text-sm font-normal text-zinc-600 max-w-md mx-auto">
-                    Thank you, <span className="font-semibold text-zinc-800">{formData.name}</span>. An LJK messaging engineer has received your request for <span className="font-semibold text-zinc-800">{formData.website || "your company"}</span>. Your route deliverability report and sandbox API test credentials will be emailed within 12 hours.
+                    Thank you, <span className="font-semibold text-zinc-800">{formData.name}</span>. An LJK messaging engineer has received your request for <span className="font-semibold text-zinc-800">{formData.website || "your company"}</span>. Your route deliverability report and carrier benchmark analysis will be emailed within 12 business hours.
                   </p>
                   <button
                     type="button"
@@ -183,10 +183,10 @@ export function AuditForm() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="border-b border-zinc-100 pb-4 mb-2">
                     <h3 className="text-base font-semibold text-zinc-900">
-                      Request Messaging Audit & Test Account
+                      Request Messaging Deliverability Audit
                     </h3>
                     <p className="text-xs font-normal text-zinc-500 mt-0.5">
-                      100% complimentary. Includes 50 live SMS test credits & route latency review.
+                      100% free consultation. Includes route latency review & spam shield analysis.
                     </p>
                   </div>
 
@@ -339,10 +339,10 @@ export function AuditForm() {
                     className="w-full inline-flex items-center justify-center gap-2 bg-[#581c87] hover:bg-[#4a1572] disabled:opacity-75 text-white py-3 px-6 rounded text-sm font-semibold transition-colors shadow-xs"
                   >
                     {isSubmitting ? (
-                      <span>Setting Up Audit & Test Credits...</span>
+                      <span>Submitting Audit Request...</span>
                     ) : (
                       <>
-                        <span>Claim Free Audit & 50 Test Credits</span>
+                        <span>Request Free Deliverability Audit</span>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                         </svg>

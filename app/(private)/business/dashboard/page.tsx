@@ -64,12 +64,12 @@ export default function BusinessDashboardPage() {
               </Link>
             </div>
             <div className="text-3xl font-bold text-[#581c87] mt-2">
-              50 <span className="text-sm font-normal text-zinc-500">Credits</span>
+              0 <span className="text-sm font-normal text-zinc-500">Credits</span>
             </div>
           </div>
           <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-            <span>Complimentary starter balance active</span>
+            <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+            <span>Top up via M-PESA to activate balance</span>
           </div>
         </div>
 
@@ -164,13 +164,13 @@ export default function BusinessDashboardPage() {
               </div>
               <h3 className="text-sm font-semibold text-zinc-900">No SMS campaigns sent yet</h3>
               <p className="text-xs text-zinc-500 max-w-sm mx-auto mt-1 mb-4">
-                You have 50 free SMS credits ready to use. Send your first broadcast to test live delivery speed.
+                Top up your wallet via M-PESA from KSh 100 to launch your first high-deliverability SMS broadcast.
               </p>
               <Link
-                href="/business/sms/broadcast"
+                href="/business/billing"
                 className="inline-flex items-center gap-1.5 py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-md transition-colors shadow-xs"
               >
-                <span>Send First Test Message</span>
+                <span>Top Up &amp; Send First Message</span>
                 <span aria-hidden="true">&rarr;</span>
               </Link>
             </div>

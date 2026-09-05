@@ -114,7 +114,7 @@ export function Footer() {
               </li>
               <li>
                 <a href="#audit" className="hover:text-purple-300 transition-colors">
-                  Claim 50 Test Credits
+                  Request Deliverability Audit
                 </a>
               </li>
             </ul>
