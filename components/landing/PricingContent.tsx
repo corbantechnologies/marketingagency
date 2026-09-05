@@ -423,26 +423,46 @@ export function PricingContent() {
                     )}
                   </div>
 
-                  {/* Telecom Unit Rates Matrix Snippet */}
+                  {/* Telecom & WhatsApp Unit Rates Matrix Snippet */}
                   <div className="bg-zinc-50 rounded p-3 mb-6 space-y-2 text-xs border border-zinc-100">
                     <div className="flex justify-between items-center text-zinc-600">
-                      <span>SMS Unit Rate</span>
+                      <span className="flex items-center gap-1">
+                        <span>📱 Bulk SMS Rate</span>
+                      </span>
                       <span className="font-semibold text-zinc-900">
-                        KSh {plan.smsRateKes.toFixed(2)}
+                        KSh {plan.smsRateKes.toFixed(2)} <span className="text-[10px] text-zinc-400 font-normal">/part</span>
                       </span>
                     </div>
+
+                    <div className="flex justify-between items-center text-emerald-800 bg-emerald-50/70 px-2 py-1 rounded border border-emerald-200/60">
+                      <span className="flex items-center gap-1 font-medium">
+                        <span>💬 WhatsApp Rate</span>
+                      </span>
+                      <span className="font-bold text-emerald-900">
+                        KSh {(plan.smsRateKes * 2).toFixed(2)} <span className="text-[10px] text-emerald-700 font-normal">(2 credits)</span>
+                      </span>
+                    </div>
+
                     <div className="flex justify-between items-center text-zinc-600">
-                      <span>Email Unit Rate</span>
+                      <span>✉️ Email Unit Rate</span>
                       <span className="font-semibold text-zinc-900">
                         KSh {plan.emailRateKes.toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-zinc-600 pt-1 border-t border-zinc-200/60">
-                      <span>Monthly Included SMS</span>
-                      <span className="font-semibold text-[#581c87]">
-                        {plan.includedSms > 0
-                          ? `${plan.includedSms.toLocaleString()} SMS`
-                          : "0 (PAYG)"}
+
+                    <div className="flex justify-between items-center text-zinc-600 pt-1.5 border-t border-zinc-200/60">
+                      <span>Monthly Credits</span>
+                      <span className="font-bold text-[#581c87] text-right">
+                        {plan.includedSms > 0 ? (
+                          <>
+                            <div>{plan.includedSms.toLocaleString()} Credits</div>
+                            <div className="text-[10px] text-zinc-400 font-normal">
+                              ({plan.includedSms.toLocaleString()} SMS or {(plan.includedSms / 2).toLocaleString()} WA)
+                            </div>
+                          </>
+                        ) : (
+                          "0 (PAYG)"
+                        )}
                       </span>
                     </div>
                   </div>
@@ -531,14 +551,33 @@ export function PricingContent() {
                     </td>
                   ))}
                 </tr>
+                <tr className="bg-emerald-50/50">
+                  <td className="py-3 font-semibold text-emerald-950">WhatsApp Marketing Rate</td>
+                  {plans.map((p) => (
+                    <td
+                      key={p.id}
+                      className="py-3 font-bold text-emerald-900"
+                    >
+                      {p.smsRateKes > 0 ? `KSh ${(p.smsRateKes * 2).toFixed(2)} / msg` : "KSh 1.30 / msg"}
+                    </td>
+                  ))}
+                </tr>
                 <tr>
-                  <td className="py-3 font-medium text-zinc-900">Monthly Included SMS</td>
+                  <td className="py-3 font-medium text-zinc-900">WhatsApp Cloud API Engine</td>
+                  {plans.map((p) => (
+                    <td key={p.id} className="py-3 text-emerald-700 font-semibold">
+                      ✓ Meta Cloud API
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="py-3 font-medium text-zinc-900">Monthly Included Credits</td>
                   {plans.map((p) => (
                     <td
                       key={p.id}
                       className={`py-3 ${p.isPopular ? "font-semibold text-[#581c87]" : ""}`}
                     >
-                      {p.includedSms > 0 ? `${p.includedSms.toLocaleString()} SMS` : "—"}
+                      {p.includedSms > 0 ? `${p.includedSms.toLocaleString()} Credits` : "—"}
                     </td>
                   ))}
                 </tr>
