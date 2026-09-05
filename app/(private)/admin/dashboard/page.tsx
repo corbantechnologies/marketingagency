@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import {
   useFetchAdminObservability,
   useRefreshCarrierBalances,
+  useFetchAlertRecipients,
+  useManageAlertRecipients,
 } from "@/hooks/business/actions";
 
 export default function AdminDashboardPage() {
@@ -30,6 +32,65 @@ export default function AdminDashboardPage() {
   const refreshCarrierBalancesMutation = useRefreshCarrierBalances();
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [selectedCarrierForTopUp, setSelectedCarrierForTopUp] = useState<"AT" | "ADVANTA">("AT");
+
+  // Alert Recipients Manager State
+  const { data: recipientsData } = useFetchAlertRecipients();
+  const manageRecipientsMutation = useManageAlertRecipients();
+  const [isRecipientsModalOpen, setIsRecipientsModalOpen] = useState(false);
+  const [newRecipientEmail, setNewRecipientEmail] = useState("");
+  const [isAddingRecipient, setIsAddingRecipient] = useState(false);
+  const [isSendingTestAlert, setIsSendingTestAlert] = useState(false);
+
+  const handleAddRecipient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newRecipientEmail || !newRecipientEmail.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    setIsAddingRecipient(true);
+    try {
+      const res = await manageRecipientsMutation.mutateAsync({
+        action: "add",
+        email: newRecipientEmail,
+      });
+      if (res?.success) {
+        toast.success(res.detail || "Email added to alert recipients.");
+        setNewRecipientEmail("");
+      } else {
+        toast.error(res?.detail || "Could not add email.");
+      }
+    } catch {
+      toast.error("Failed to add recipient email.");
+    } finally {
+      setIsAddingRecipient(false);
+    }
+  };
+
+  const handleRemoveRecipient = async (email: string) => {
+    try {
+      const res = await manageRecipientsMutation.mutateAsync({
+        action: "remove",
+        email,
+      });
+      if (res?.success) {
+        toast.success(res.detail || "Email removed from alert list.");
+      }
+    } catch {
+      toast.error("Failed to remove email.");
+    }
+  };
+
+  const handleSendTestAlert = async () => {
+    setIsSendingTestAlert(true);
+    try {
+      const res = await manageRecipientsMutation.mutateAsync({ action: "test" });
+      toast.success(res?.detail || "Test alert dispatched to all recipients!");
+    } catch {
+      toast.error("Failed to send test alert.");
+    } finally {
+      setIsSendingTestAlert(false);
+    }
+  };
 
   const handlePollCarrierBalances = async () => {
     try {
@@ -109,6 +170,12 @@ export default function AdminDashboardPage() {
           >
             Carrier Routing
           </Link>
+          <Link
+            href="/admin/guide"
+            className="py-2 px-3.5 bg-purple-50 hover:bg-purple-100 text-[#581c87] border border-purple-200 text-xs font-semibold rounded-lg transition-colors"
+          >
+            📖 Admin Playbook
+          </Link>
         </div>
       </div>
 
@@ -140,6 +207,17 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsRecipientsModalOpen(true)}
+              className="py-1.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border border-zinc-200 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+              title="Manage who receives carrier balance and financial reminder emails"
+            >
+              <span>🔔 Alert Recipients</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-[#581c87] text-white text-[10px] font-bold">
+                {recipientsData?.total_count || 1}
+              </span>
+            </button>
             <button
               type="button"
               onClick={handlePollCarrierBalances}
@@ -677,6 +755,134 @@ export default function AdminDashboardPage() {
                 className="py-2 px-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Alert Recipients Manager Modal */}
+      {isRecipientsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-zinc-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-100 text-[#581c87] flex items-center justify-center font-bold text-sm">
+                  🔔
+                </div>
+                <div>
+                  <h3 className="font-bold text-zinc-900 text-sm">Reminder &amp; Alert Recipients</h3>
+                  <p className="text-[11px] text-zinc-500">
+                    Who receives carrier float warnings, 8 AM standup &amp; 8 PM reconciliations
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsRecipientsModalOpen(false)}
+                className="text-zinc-400 hover:text-zinc-700 text-sm cursor-pointer p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Add New Email Form */}
+            <form onSubmit={handleAddRecipient} className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Enter email (e.g. finance@ljkmarketing.com)"
+                value={newRecipientEmail}
+                onChange={(e) => setNewRecipientEmail(e.target.value)}
+                disabled={isAddingRecipient}
+                className="flex-1 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-xs text-zinc-900 focus:outline-none focus:border-[#581c87] transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={isAddingRecipient || !newRecipientEmail}
+                className="py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 cursor-pointer shrink-0"
+              >
+                {isAddingRecipient ? "Adding..." : "+ Add Recipient"}
+              </button>
+            </form>
+
+            {/* Recipients List */}
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                Active Notification Recipients ({recipientsData?.total_count || 0})
+              </div>
+
+              {recipientsData?.all_recipients && recipientsData.all_recipients.length > 0 ? (
+                <div className="divide-y divide-zinc-100 border border-zinc-200 rounded-xl overflow-hidden text-xs">
+                  {recipientsData.registered_admins.map((adm) => (
+                    <div key={adm.email} className="p-3 flex items-center justify-between bg-white hover:bg-zinc-50">
+                      <div>
+                        <div className="font-semibold text-zinc-900">{adm.email}</div>
+                        <div className="text-[10px] text-zinc-500">{adm.name} &bull; {adm.source}</div>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
+                        Admin User
+                      </span>
+                    </div>
+                  ))}
+
+                  {recipientsData.env_emails.map((env) => (
+                    <div key={env.email} className="p-3 flex items-center justify-between bg-white hover:bg-zinc-50">
+                      <div>
+                        <div className="font-semibold text-zinc-900">{env.email}</div>
+                        <div className="text-[10px] text-zinc-500">{env.source}</div>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                        .env Config
+                      </span>
+                    </div>
+                  ))}
+
+                  {recipientsData.custom_emails.map((cust) => (
+                    <div key={cust.email} className="p-3 flex items-center justify-between bg-white hover:bg-zinc-50">
+                      <div>
+                        <div className="font-semibold text-zinc-900">{cust.email}</div>
+                        <div className="text-[10px] text-zinc-500">{cust.source}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          Custom
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveRecipient(cust.email)}
+                          className="text-red-500 hover:text-red-700 text-xs font-bold p-1 cursor-pointer"
+                          title="Remove email"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-xs text-zinc-400">
+                  Loading alert recipients...
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="pt-3 border-t border-zinc-100 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handleSendTestAlert}
+                disabled={isSendingTestAlert}
+                className="py-1.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <span>{isSendingTestAlert ? "Sending..." : "✉️ Send Test Alert to All"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsRecipientsModalOpen(false)}
+                className="py-1.5 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              >
+                Done
               </button>
             </div>
           </div>

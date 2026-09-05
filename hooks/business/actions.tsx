@@ -13,6 +13,8 @@ import {
   UpdateBusinessPayload,
   getAdminObservability,
   refreshCarrierBalances,
+  getAlertRecipients,
+  manageAlertRecipient,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -144,4 +146,35 @@ export function useRefreshCarrierBalances() {
     },
   });
 }
+
+/**
+ * Query hook to fetch all alert & reminder recipient emails
+ */
+export function useFetchAlertRecipients() {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "alert-recipients"],
+    queryFn: () => getAlertRecipients(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+  });
+}
+
+/**
+ * Mutation hook to add, remove, or test alert recipient emails
+ */
+export function useManageAlertRecipients() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (payload: { action: "add" | "remove" | "test"; email?: string }) =>
+      manageAlertRecipient(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "alert-recipients"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+}
+
 

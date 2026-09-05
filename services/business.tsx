@@ -331,3 +331,48 @@ export const refreshCarrierBalances = async (
   return response.data;
 };
 
+export interface AlertRecipientItem {
+  email: string;
+  name?: string;
+  source: string;
+}
+
+export interface AlertRecipientsBreakdown {
+  all_recipients: string[];
+  total_count: number;
+  registered_admins: AlertRecipientItem[];
+  env_emails: AlertRecipientItem[];
+  custom_emails: AlertRecipientItem[];
+}
+
+/**
+ * Fetch all configured reminder and alert recipient emails (Admin only)
+ * Endpoint: GET /api/v1/businesses/admin-observability/alert-recipients/
+ */
+export const getAlertRecipients = async (
+  config?: AxiosConfig
+): Promise<AlertRecipientsBreakdown> => {
+  const response = await apiActions.get(
+    "/api/v1/businesses/admin-observability/alert-recipients/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Manage reminder recipient emails: add, remove, or trigger test notification
+ * Endpoint: POST /api/v1/businesses/admin-observability/alert-recipients/
+ */
+export const manageAlertRecipient = async (
+  payload: { action: "add" | "remove" | "test"; email?: string },
+  config?: AxiosConfig
+): Promise<{ success: boolean; detail: string; recipients?: AlertRecipientsBreakdown }> => {
+  const response = await apiActions.post(
+    "/api/v1/businesses/admin-observability/alert-recipients/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
+
