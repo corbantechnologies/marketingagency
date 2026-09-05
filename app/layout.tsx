@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     "Safaricom SMS integration",
     "Airtel SMS API",
     "Email deliverability services",
-    "Klaviyo marketing automation",
+    "Ecommerce marketing automation",
     "LJK Marketing Agency",
     "High volume messaging Africa",
     "Direct carrier SMS routes",

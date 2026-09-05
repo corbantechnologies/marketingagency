@@ -30,7 +30,7 @@ export function AuditForm() {
     "Bulk Promotional SMS Broadcast",
     "Transactional OTP & Alert Gateway",
     "Email Deliverability & IP Warming",
-    "Klaviyo / Shopify Lifecycle Automation",
+    "Ecommerce Lifecycle Automation",
     "REST API & SMPP 3.4 Integration",
     "Subscriber List Growth & Paid Ads",
   ];

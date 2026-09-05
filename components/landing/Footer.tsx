@@ -55,7 +55,7 @@ export function Footer() {
               </li>
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Lifecycle Klaviyo Automations
+                  Ecommerce Lifecycle Automations
                 </a>
               </li>
               <li>
