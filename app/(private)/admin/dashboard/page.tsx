@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -32,6 +32,31 @@ export default function AdminDashboardPage() {
   const refreshCarrierBalancesMutation = useRefreshCarrierBalances();
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [selectedCarrierForTopUp, setSelectedCarrierForTopUp] = useState<"AT" | "ADVANTA">("AT");
+
+  // Popover Actions State
+  const [isActionsPopoverOpen, setIsActionsPopoverOpen] = useState(false);
+  const actionsPopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (actionsPopoverRef.current && !actionsPopoverRef.current.contains(event.target as Node)) {
+        setIsActionsPopoverOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsActionsPopoverOpen(false);
+      }
+    }
+    if (isActionsPopoverOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isActionsPopoverOpen]);
 
   // Alert Recipients Manager State
   const { data: recipientsData } = useFetchAlertRecipients();
@@ -175,8 +200,9 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        {/* Quick Action Shortcuts */}
-        <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+        {/* Quick Action Shortcuts / Popover */}
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto relative" ref={actionsPopoverRef}>
+          {/* Direct 1-Click Refresh Button */}
           <button
             type="button"
             onClick={handleRefresh}
@@ -192,26 +218,198 @@ export default function AdminDashboardPage() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>{isRefreshing || isFetching ? "Refreshing..." : "Refresh"}</span>
+            <span className="hidden sm:inline">{isRefreshing || isFetching ? "Refreshing..." : "Refresh"}</span>
           </button>
-          <Link
-            href="/admin/businesses"
-            className="py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+
+          {/* Popover Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsActionsPopoverOpen((prev) => !prev)}
+            aria-expanded={isActionsPopoverOpen}
+            aria-haspopup="true"
+            className="py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95"
           >
-            Manage Workspaces
-          </Link>
-          <Link
-            href="/admin/routing"
-            className="py-2 px-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-lg transition-colors"
-          >
-            Carrier Routing
-          </Link>
-          <Link
-            href="/admin/guide"
-            className="py-2 px-3.5 bg-purple-50 hover:bg-purple-100 text-[#581c87] border border-purple-200 text-xs font-semibold rounded-lg transition-colors"
-          >
-            📖 Admin Playbook
-          </Link>
+            <svg className="w-3.5 h-3.5 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span>Admin Actions</span>
+            <svg
+              className={`w-3.5 h-3.5 text-purple-200 transition-transform duration-200 ${isActionsPopoverOpen ? "rotate-180" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Floating Popover Panel */}
+          {isActionsPopoverOpen && (
+            <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border border-zinc-200 rounded-xl shadow-xl z-50 overflow-hidden divide-y divide-zinc-100 animate-in fade-in zoom-in-95 duration-150">
+              {/* Header */}
+              <div className="px-4 py-3 bg-zinc-50/80 flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-zinc-900">Admin Actions &amp; Navigation</div>
+                  <div className="text-[10px] text-zinc-500">Quick shortcuts and controls</div>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-[#581c87]">
+                  Console
+                </span>
+              </div>
+
+              {/* Navigation Shortcuts */}
+              <div className="p-2 space-y-1">
+                <Link
+                  href="/admin/businesses"
+                  onClick={() => setIsActionsPopoverOpen(false)}
+                  className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#581c87] flex items-center justify-center shrink-0 group-hover:bg-[#581c87] group-hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-zinc-900 group-hover:text-[#581c87] transition-colors flex items-center justify-between">
+                      <span>Manage Workspaces</span>
+                      <span className="text-[10px] text-zinc-400 font-normal">&rarr;</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-500 truncate">
+                      View, configure &amp; manage tenant businesses
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/admin/routing"
+                  onClick={() => setIsActionsPopoverOpen(false)}
+                  className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors flex items-center justify-between">
+                      <span>Carrier Routing</span>
+                      <span className="text-[10px] text-zinc-400 font-normal">&rarr;</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-500 truncate">
+                      Advanta &amp; Africa&apos;s Talking failover routing
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/admin/guide"
+                  onClick={() => setIsActionsPopoverOpen(false)}
+                  className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-zinc-50 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors flex items-center justify-between">
+                      <span>📖 Admin Playbook</span>
+                      <span className="text-[10px] text-zinc-400 font-normal">&rarr;</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-500 truncate">
+                      Zero-burn architecture, policies &amp; runbook
+                    </div>
+                  </div>
+                </Link>
+              </div>
+
+              {/* Operations & Utilities */}
+              <div className="p-2 space-y-1 bg-zinc-50/40">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsActionsPopoverOpen(false);
+                    setIsRecipientsModalOpen(true);
+                  }}
+                  className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-100 text-left transition-colors cursor-pointer group"
+                >
+                  <div className="w-7 h-7 rounded-md bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 text-xs">
+                    🔔
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-zinc-900 flex items-center justify-between">
+                      <span>Alert Recipients &amp; Limits</span>
+                      <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#581c87] text-white">
+                        {recipientsData?.total_count || 1}
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-zinc-500 truncate">
+                      Thresholds &amp; email delivery roster
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsActionsPopoverOpen(false);
+                    handlePollCarrierBalances();
+                  }}
+                  disabled={refreshCarrierBalancesMutation.isPending}
+                  className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-100 text-left transition-colors cursor-pointer disabled:opacity-50 group"
+                >
+                  <div className="w-7 h-7 rounded-md bg-purple-50 text-[#581c87] flex items-center justify-center shrink-0 text-xs">
+                    <svg
+                      className={`w-3.5 h-3.5 ${refreshCarrierBalancesMutation.isPending ? "animate-spin text-[#581c87]" : ""}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-zinc-900">
+                      {refreshCarrierBalancesMutation.isPending ? "Polling Balances..." : "Poll Carrier Balances"}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 truncate">
+                      Query Advanta &amp; Africa&apos;s Talking float APIs
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Quick links footer */}
+              <div className="px-3 py-2 bg-zinc-50 text-[10px] text-zinc-500 flex items-center justify-between">
+                <span className="font-semibold text-zinc-600">Quick Modules:</span>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/admin/finance"
+                    onClick={() => setIsActionsPopoverOpen(false)}
+                    className="hover:text-[#581c87] hover:underline"
+                  >
+                    Finance
+                  </Link>
+                  <span>&bull;</span>
+                  <Link
+                    href="/admin/rates"
+                    onClick={() => setIsActionsPopoverOpen(false)}
+                    className="hover:text-[#581c87] hover:underline"
+                  >
+                    Rates
+                  </Link>
+                  <span>&bull;</span>
+                  <Link
+                    href="/admin/audit"
+                    onClick={() => setIsActionsPopoverOpen(false)}
+                    className="hover:text-[#581c87] hover:underline"
+                  >
+                    Audit
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
