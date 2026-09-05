@@ -1,19 +1,66 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useFetchBusinesses } from "@/hooks/business/actions";
+import { useFetchBusinessWallets } from "@/hooks/businesswallets/actions";
+import { useFetchCampaigns } from "@/hooks/campaigns/actions";
+import { useFetchContacts } from "@/hooks/contacts/actions";
 
 export default function BusinessDashboardPage() {
   const { data: session } = useSession();
   const { data: businessesData, isLoading: isBusinessesLoading } = useFetchBusinesses();
+  const { data: walletsData, isLoading: isWalletsLoading } = useFetchBusinessWallets();
+  const { data: campaignsData, isLoading: isCampaignsLoading } = useFetchCampaigns();
+  const { data: contactsData, isLoading: isContactsLoading } = useFetchContacts();
 
-  const businesses = Array.isArray(businessesData)
-    ? businessesData
-    : businessesData?.results || [];
+  const businesses = useMemo(() => {
+    if (Array.isArray(businessesData)) return businessesData;
+    return (businessesData as any)?.results || [];
+  }, [businessesData]);
 
   const primaryBusiness = businesses[0];
+
+  const wallets = useMemo(() => {
+    if (Array.isArray(walletsData)) return walletsData;
+    return (walletsData as any)?.results || [];
+  }, [walletsData]);
+
+  const primaryWallet = wallets[0] || primaryBusiness?.wallet;
+  const smsBalance: number = primaryWallet?.sms_credit_balance ?? 0;
+  const emailBalance: number = primaryWallet?.email_credit_balance ?? 0;
+
+  const campaigns = useMemo(() => {
+    if (Array.isArray(campaignsData)) return campaignsData;
+    return (campaignsData as any)?.results || [];
+  }, [campaignsData]);
+
+  const totalSmsSent = useMemo(() => {
+    return campaigns.reduce((acc: number, c: any) => acc + (Number(c.recipient_count) || 0), 0);
+  }, [campaigns]);
+
+  const contacts = useMemo(() => {
+    if (Array.isArray(contactsData)) return contactsData;
+    return (contactsData as any)?.results || [];
+  }, [contactsData]);
+
+  const totalContacts = contacts.length;
+
+  const formatDate = (isoString?: string) => {
+    if (!isoString) return "—";
+    try {
+      return new Date(isoString).toLocaleDateString("en-KE", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return isoString;
+    }
+  };
 
   return (
     <div className="space-y-6 w-full max-w-none">
@@ -27,7 +74,8 @@ export default function BusinessDashboardPage() {
             SMS &amp; Customer Messaging Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-zinc-600 mt-1 break-words">
-            Logged in as <span className="font-medium text-zinc-900">{session?.user?.email}</span> &bull; Account Code: <span className="font-mono text-zinc-800">{session?.user?.member_code || session?.user?.code || "MA26001"}</span>
+            Logged in as <span className="font-medium text-zinc-900">{session?.user?.email}</span> &bull; Account Code:{" "}
+            <span className="font-mono text-zinc-800">{session?.user?.member_code || session?.user?.code || primaryBusiness?.code || "MA26001"}</span>
           </p>
         </div>
 
@@ -50,6 +98,37 @@ export default function BusinessDashboardPage() {
         </div>
       </div>
 
+      {/* Zero Complimentary Policy Banner — Shown when balance is 0 */}
+      {!isWalletsLoading && smsBalance === 0 && (
+        <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0 text-amber-800 text-lg">
+              💳
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-amber-950 text-xs sm:text-sm">
+                  100% Prepaid Account &bull; Zero Complimentary Credits
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200/70 text-amber-900 border border-amber-300 uppercase tracking-wider">
+                  Top-Up Required
+                </span>
+              </div>
+              <p className="text-xs text-amber-800/90 mt-0.5 leading-relaxed">
+                LJK operates strictly on wholesale carrier infrastructure with <strong>zero complimentary or free trial credits</strong>. Top up your wallet via M-PESA (from KSh 100) to activate dispatch capabilities.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/business/billing"
+            className="py-2 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 text-center shadow-xs flex items-center justify-center gap-1.5"
+          >
+            <span>Top Up via M-PESA</span>
+            <span aria-hidden="true">&rarr;</span>
+          </Link>
+        </div>
+      )}
+
       {/* 4 Core Business Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
         {/* Metric 1: SMS Balance */}
@@ -64,12 +143,27 @@ export default function BusinessDashboardPage() {
               </Link>
             </div>
             <div className="text-3xl font-bold text-[#581c87] mt-2">
-              0 <span className="text-sm font-normal text-zinc-500">Credits</span>
+              {isWalletsLoading ? (
+                <span className="text-zinc-400 text-xl font-normal">Loading...</span>
+              ) : (
+                <>
+                  {smsBalance.toLocaleString()} <span className="text-sm font-normal text-zinc-500">Credits</span>
+                </>
+              )}
             </div>
           </div>
           <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-            <span>Top up via M-PESA to activate balance</span>
+            {smsBalance > 0 ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                <span className="text-emerald-700 font-medium">Prepaid balance active &bull; Ready to send</span>
+              </>
+            ) : (
+              <>
+                <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+                <span>Prepaid float: 0 credits &bull; Top up via M-PESA</span>
+              </>
+            )}
           </div>
         </div>
 
@@ -85,11 +179,17 @@ export default function BusinessDashboardPage() {
               </Link>
             </div>
             <div className="text-3xl font-bold text-zinc-900 mt-2">
-              0 <span className="text-sm font-normal text-zinc-500">Messages</span>
+              {isCampaignsLoading ? (
+                <span className="text-zinc-400 text-xl font-normal">Loading...</span>
+              ) : (
+                <>
+                  {totalSmsSent.toLocaleString()} <span className="text-sm font-normal text-zinc-500">Messages</span>
+                </>
+              )}
             </div>
           </div>
           <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center gap-1.5">
-            <span className="text-purple-600 font-semibold">&bull; 0</span> sent this billing cycle
+            <span className="text-purple-600 font-semibold">&bull; {campaigns.length}</span> campaign{campaigns.length === 1 ? "" : "s"} dispatched
           </div>
         </div>
 
@@ -125,7 +225,13 @@ export default function BusinessDashboardPage() {
               </Link>
             </div>
             <div className="text-3xl font-bold text-zinc-900 mt-2">
-              0 <span className="text-sm font-normal text-zinc-500">Recipients</span>
+              {isContactsLoading ? (
+                <span className="text-zinc-400 text-xl font-normal">Loading...</span>
+              ) : (
+                <>
+                  {totalContacts.toLocaleString()} <span className="text-sm font-normal text-zinc-500">Recipients</span>
+                </>
+              )}
             </div>
           </div>
           <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center gap-1.5">
@@ -155,25 +261,79 @@ export default function BusinessDashboardPage() {
               </Link>
             </div>
 
-            {/* Empty State */}
-            <div className="border-2 border-dashed border-zinc-200 rounded-lg p-8 text-center my-2">
-              <div className="w-12 h-12 mx-auto rounded-full bg-purple-50 text-[#581c87] flex items-center justify-center mb-3">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
+            {isCampaignsLoading ? (
+              <div className="py-8 text-center text-xs text-zinc-400">Loading campaign activity...</div>
+            ) : campaigns.length > 0 ? (
+              <div className="divide-y divide-zinc-100 overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="text-zinc-400 font-bold uppercase tracking-wider border-b border-zinc-200 pb-2">
+                      <th className="py-2.5 px-2">Campaign Name</th>
+                      <th className="py-2.5 px-2">Recipients</th>
+                      <th className="py-2.5 px-2">Credits Consumed</th>
+                      <th className="py-2.5 px-2">Status</th>
+                      <th className="py-2.5 px-2 text-right">Dispatched</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100">
+                    {campaigns.slice(0, 5).map((camp: any) => (
+                      <tr key={camp.id || camp.reference} className="hover:bg-zinc-50/60 transition-colors">
+                        <td className="py-3 px-2">
+                          <div className="font-semibold text-zinc-900 truncate max-w-xs">{camp.name}</div>
+                          <div className="text-[11px] text-zinc-500 font-mono">
+                            Sender: {camp.sender_id || "LJK_AGENCY"}
+                          </div>
+                        </td>
+                        <td className="py-3 px-2 font-mono text-zinc-700">
+                          {Number(camp.recipient_count || 0).toLocaleString()}
+                        </td>
+                        <td className="py-3 px-2 font-mono font-semibold text-purple-900">
+                          {Number(camp.total_cost_credits || 0).toLocaleString()} Credits
+                        </td>
+                        <td className="py-3 px-2">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              camp.status === "COMPLETED"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : camp.status === "PROCESSING"
+                                ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                : camp.status === "FAILED"
+                                ? "bg-red-50 text-red-700 border border-red-200"
+                                : "bg-blue-50 text-blue-700 border border-blue-200"
+                            }`}
+                          >
+                            {camp.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 text-right text-zinc-500 whitespace-nowrap">
+                          {formatDate(camp.created_at)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <h3 className="text-sm font-semibold text-zinc-900">No SMS campaigns sent yet</h3>
-              <p className="text-xs text-zinc-500 max-w-sm mx-auto mt-1 mb-4">
-                Top up your wallet via M-PESA from KSh 100 to launch your first high-deliverability SMS broadcast.
-              </p>
-              <Link
-                href="/business/billing"
-                className="inline-flex items-center gap-1.5 py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-md transition-colors shadow-xs"
-              >
-                <span>Top Up &amp; Send First Message</span>
-                <span aria-hidden="true">&rarr;</span>
-              </Link>
-            </div>
+            ) : (
+              /* Empty State Explicitly Stating Zero Complimentary Policy */
+              <div className="border-2 border-dashed border-zinc-200 rounded-lg p-8 text-center my-2">
+                <div className="w-12 h-12 mx-auto rounded-full bg-purple-50 text-[#581c87] flex items-center justify-center mb-3">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                </div>
+                <h3 className="text-sm font-semibold text-zinc-900">No SMS campaigns sent yet</h3>
+                <p className="text-xs text-zinc-500 max-w-md mx-auto mt-1 mb-4 leading-relaxed">
+                  Accounts start with 0 credits (no complimentary test credits). Top up your wallet via M-PESA from KSh 100 to launch your first high-deliverability SMS broadcast.
+                </p>
+                <Link
+                  href="/business/billing"
+                  className="inline-flex items-center gap-1.5 py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-md transition-colors shadow-xs"
+                >
+                  <span>Top Up Wallet via M-PESA</span>
+                  <span aria-hidden="true">&rarr;</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Registered Workspaces Card */}
@@ -191,7 +351,7 @@ export default function BusinessDashboardPage() {
               <div className="py-8 text-center text-xs text-zinc-500">Loading workspace data...</div>
             ) : businesses.length > 0 ? (
               <div className="divide-y divide-zinc-100">
-                {businesses.map((biz) => (
+                {businesses.map((biz: any) => (
                   <div key={biz.id || biz.reference} className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                     <div className="min-w-0">
                       <div className="font-semibold text-zinc-900 text-sm truncate">{biz.name}</div>
@@ -279,19 +439,32 @@ export default function BusinessDashboardPage() {
             </div>
           </div>
 
-          {/* Explainer: What is a Sender ID? */}
+          {/* Explainer: Prepaid Policy & Infrastructure */}
           <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl p-5 shadow-xs space-y-2.5">
             <div className="flex items-center gap-2 text-[#581c87] font-bold text-xs uppercase tracking-wider">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>What is a Sender ID?</span>
+              <span>Prepaid Wholesale Platform</span>
             </div>
             <p className="text-xs text-zinc-700 leading-relaxed">
-              When customers receive your SMS, a <strong>Sender ID</strong> is the 11-character company name (e.g. <em>SAFARICOM</em> or <em>YOURBRAND</em>) that appears at the top of their screen instead of a random number.
+              LJK Marketing routes messages directly through Tier-1 telecom carrier pipelines. In accordance with carrier float standards, <strong>zero complimentary or trial credits</strong> are awarded on signup.
             </p>
             <p className="text-xs text-zinc-600 leading-relaxed">
-              By default, your account sends messages instantly using our shared route <code className="px-1.5 py-0.5 rounded bg-purple-100 text-[#581c87] font-mono text-[11px]">LJK_AGENCY</code>. You can also register your own dedicated company name anytime.
+              Every unit in your wallet is fully backed by real telecom float. Credits purchased via M-PESA never expire and are consumed in real time upon message dispatch.
+            </p>
+          </div>
+
+          {/* Explainer: What is a Sender ID? */}
+          <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-5 shadow-xs space-y-2.5">
+            <div className="flex items-center gap-2 text-zinc-700 font-bold text-xs uppercase tracking-wider">
+              <svg className="w-4 h-4 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              <span>Shared vs Dedicated Sender ID</span>
+            </div>
+            <p className="text-xs text-zinc-700 leading-relaxed">
+              By default, campaigns are sent immediately using our shared route <code className="px-1.5 py-0.5 rounded bg-purple-100 text-[#581c87] font-mono text-[11px]">LJK_AGENCY</code>. You can also register your dedicated 11-character brand name anytime in the Sender IDs portal.
             </p>
           </div>
         </div>

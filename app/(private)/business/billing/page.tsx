@@ -92,8 +92,8 @@ export default function BillingPage() {
       toast.error("Please enter your M-Pesa phone number");
       return;
     }
-    if (!amountNum || amountNum < 50) {
-      toast.error("Minimum top-up amount is KES 50");
+    if (!amountNum || amountNum < 100) {
+      toast.error("Minimum top-up amount is KES 100");
       return;
     }
 
@@ -195,7 +195,7 @@ export default function BillingPage() {
             </div>
           </div>
           <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 mt-3">
-            <span>Overdraft: Disabled</span>
+            <span>Prepaid: 0 Free Credits</span>
             <Link href="/pricing" className="text-[#581c87] hover:underline font-semibold">
               Compare &rarr;
             </Link>
