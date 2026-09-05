@@ -9,7 +9,12 @@ import {
   getCampaignByReference,
   createCampaign,
   deleteCampaign,
+  getAgencyBroadcastMetadata,
+  createAgencyBroadcast,
+  AgencyBroadcastPayload,
+  AgencyBroadcastMetadata,
 } from "@/services/campaigns";
+import useAxiosAuth from "../authentication/useAxiosAuth";
 
 export const CAMPAIGNS_QUERY_KEY = ["campaigns"];
 
@@ -51,3 +56,27 @@ export const useDeleteCampaign = () => {
     },
   });
 };
+
+export const useFetchAgencyBroadcastMetadata = () => {
+  const authConfig = useAxiosAuth();
+  return useQuery<AgencyBroadcastMetadata, Error>({
+    queryKey: ["agency-broadcast", "metadata"],
+    queryFn: () => getAgencyBroadcastMetadata(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 1000 * 30,
+  });
+};
+
+export const useCreateAgencyBroadcast = () => {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+  return useMutation<{ message: string; campaign: Campaign }, Error, AgencyBroadcastPayload>({
+    mutationFn: (payload: AgencyBroadcastPayload) => createAgencyBroadcast(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CAMPAIGNS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["broadcast-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+};
+

@@ -134,3 +134,53 @@ export const deleteCampaign = async (
 ): Promise<void> => {
   await apiActions.delete(`/api/v1/campaigns/${reference}/`, config);
 };
+
+// ============================================================================
+// Agency Admin Broadcast API
+// ============================================================================
+
+export interface AgencyBroadcastMetadata {
+  default_sender_id: string;
+  all_businesses_count: number;
+  all_users_count: number;
+  gateway_provider: string;
+}
+
+export interface AgencyBroadcastPayload {
+  name: string;
+  sender_id?: string;
+  message_template: string;
+  target_audience: "ALL_BUSINESSES" | "ALL_USERS" | "MANUAL";
+  manual_numbers?: string;
+}
+
+/**
+ * Fetch agency broadcast audience metrics (Admins only)
+ * Endpoint: GET /api/v1/campaigns/agency-broadcast/
+ */
+export const getAgencyBroadcastMetadata = async (
+  config?: AxiosConfig
+): Promise<AgencyBroadcastMetadata> => {
+  const response: AxiosResponse<AgencyBroadcastMetadata> = await apiActions.get(
+    "/api/v1/campaigns/agency-broadcast/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Dispatch real outbound SMS blast as LJK Marketing Agency (Admins only)
+ * Endpoint: POST /api/v1/campaigns/agency-broadcast/
+ */
+export const createAgencyBroadcast = async (
+  data: AgencyBroadcastPayload,
+  config?: AxiosConfig
+): Promise<{ message: string; campaign: Campaign }> => {
+  const response: AxiosResponse<{ message: string; campaign: Campaign }> = await apiActions.post(
+    "/api/v1/campaigns/agency-broadcast/",
+    data,
+    config
+  );
+  return response.data;
+};
+
