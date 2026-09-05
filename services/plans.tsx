@@ -274,6 +274,7 @@ export interface WholesaleBenchmarks {
   safaricom_base_kes: number;
   airtel_base_kes: number;
   telkom_base_kes: number;
+  whatsapp_base_kes?: number;
   blended_wholesale_cost_kes: number;
 }
 
@@ -281,6 +282,7 @@ export interface MarkupTargets {
   standard_markup_pct: number;
   volume_markup_pct: number;
   enterprise_markup_pct: number;
+  whatsapp_markup_pct?: number;
 }
 
 export interface MarketShareWeights {
@@ -296,12 +298,15 @@ export interface PlanMarginItem {
   category: string;
   price_kes: number;
   sms_rate_kes: number;
+  whatsapp_rate_kes?: number;
   included_sms_credits: number;
   safaricom_margin_pct: number;
   airtel_margin_pct: number;
   telkom_margin_pct: number;
   blended_margin_pct: number;
+  whatsapp_margin_pct?: number;
   profit_per_10k_kes: number;
+  whatsapp_profit_per_10k_kes?: number;
 }
 
 export interface AdminRateCardResponse {
@@ -316,15 +321,18 @@ export interface SaveRateCardsPayload {
     safaricom_base_kes?: number;
     airtel_base_kes?: number;
     telkom_base_kes?: number;
+    whatsapp_base_kes?: number;
   };
   markup_targets?: {
     standard_markup_pct?: number;
     volume_markup_pct?: number;
     enterprise_markup_pct?: number;
+    whatsapp_markup_pct?: number;
   };
 }
 
 export interface RateSimulationPayload {
+  channel?: "SMS" | "WHATSAPP";
   volume: number;
   retail_rate_kes: number;
   safaricom_pct?: number;
@@ -334,6 +342,7 @@ export interface RateSimulationPayload {
 
 export interface RateSimulationResult {
   simulation: {
+    channel?: "SMS" | "WHATSAPP";
     volume: number;
     retail_rate_kes: number;
     total_invoiced_kes: number;
@@ -341,9 +350,10 @@ export interface RateSimulationResult {
     gross_profit_kes: number;
     margin_pct: number;
     breakdown: {
-      safaricom: { volume: number; cost_kes: number; base_rate: number };
-      airtel: { volume: number; cost_kes: number; base_rate: number };
-      telkom: { volume: number; cost_kes: number; base_rate: number };
+      safaricom?: { volume: number; cost_kes: number; base_rate?: number };
+      airtel?: { volume: number; cost_kes: number; base_rate?: number };
+      telkom?: { volume: number; cost_kes: number; base_rate?: number };
+      whatsapp?: { volume: number; cost_kes: number; base_rate?: number };
     };
   };
 }
