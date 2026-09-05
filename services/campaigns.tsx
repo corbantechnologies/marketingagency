@@ -11,7 +11,7 @@ export type CampaignStatus =
   | "FAILED"
   | "CANCELLED";
 
-export type CampaignChannel = "SMS" | "EMAIL";
+export type CampaignChannel = "SMS" | "EMAIL" | "WHATSAPP";
 
 export interface Campaign {
   id: string;
