@@ -12,6 +12,7 @@ import {
   updateBusiness,
   UpdateBusinessPayload,
   getAdminObservability,
+  refreshCarrierBalances,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -127,4 +128,20 @@ export function useFetchAdminObservability() {
     staleTime: 15_000,
     refetchInterval: 30_000,
   });
-}
+}
+
+/**
+ * Mutation hook to manually poll upstream carrier balances from Africa's Talking and Advanta
+ */
+export function useRefreshCarrierBalances() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: () => refreshCarrierBalances(authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+}
+

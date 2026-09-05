@@ -3,7 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useFetchAdminObservability } from "@/hooks/business/actions";
+import toast from "react-hot-toast";
+import {
+  useFetchAdminObservability,
+  useRefreshCarrierBalances,
+} from "@/hooks/business/actions";
 
 export default function AdminDashboardPage() {
   const { data: session } = useSession();
@@ -17,10 +21,28 @@ export default function AdminDashboardPage() {
   };
 
   const vitals = obsData?.vitals;
+  const carrierBalances = obsData?.carrier_balances;
   const carriers = obsData?.carriers || [];
   const pipeline = obsData?.pipeline;
   const recentActivity = obsData?.recent_activity || [];
   const gatewayMode = obsData?.gateway_mode || "simulator";
+
+  const refreshCarrierBalancesMutation = useRefreshCarrierBalances();
+  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
+  const [selectedCarrierForTopUp, setSelectedCarrierForTopUp] = useState<"AT" | "ADVANTA">("AT");
+
+  const handlePollCarrierBalances = async () => {
+    try {
+      const res = await refreshCarrierBalancesMutation.mutateAsync();
+      if (res?.alert_sent) {
+        toast.error("Low carrier balance detected! Alert email sent to administrators.");
+      } else {
+        toast.success("Carrier balances refreshed successfully.");
+      }
+    } catch {
+      toast.error("Failed to query upstream telecom carriers.");
+    }
+  };
 
   const formatDate = (isoString?: string) => {
     if (!isoString) return "—";
@@ -87,6 +109,184 @@ export default function AdminDashboardPage() {
           >
             Carrier Routing
           </Link>
+        </div>
+      </div>
+
+      {/* Upstream Carrier Liquidity & Float Monitor */}
+      <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">
+                Upstream Telecom Carrier Float &amp; Liquidity
+              </h2>
+              {carrierBalances?.overall_status === "CRITICAL" ? (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700 border border-red-200 animate-pulse">
+                  Critical Low
+                </span>
+              ) : carrierBalances?.overall_status === "LOW" ? (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 border border-amber-200">
+                  Low Balance
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
+                  Healthy
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Live balances across primary wholesale (Advanta) and backup failover (Africa&apos;s Talking). Alerts sent to admin email.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handlePollCarrierBalances}
+              disabled={refreshCarrierBalancesMutation.isPending}
+              className="py-1.5 px-3 bg-purple-50 hover:bg-purple-100 text-[#581c87] border border-purple-200 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              title="Query Africa's Talking & Advanta balance APIs directly"
+            >
+              <svg
+                className={`w-3.5 h-3.5 ${refreshCarrierBalancesMutation.isPending ? "animate-spin text-[#581c87]" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>{refreshCarrierBalancesMutation.isPending ? "Polling..." : "Poll Carrier Balances"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Low Balance Warning Banner */}
+        {carrierBalances?.overall_status === "CRITICAL" && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex items-start gap-2.5">
+            <span className="text-base leading-none">🚨</span>
+            <div>
+              <span className="font-bold">Urgent Action Required:</span> Active telecom carrier balance is below KES {carrierBalances.critical_threshold_kes}. Client SMS campaigns are at risk of failing. Please top up the carrier float immediately.
+            </div>
+          </div>
+        )}
+
+        {/* Carrier Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Advanta Africa Card */}
+          <div className="border border-zinc-200 rounded-xl p-4 bg-gradient-to-b from-white to-zinc-50/50 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm text-zinc-900">Advanta Africa</span>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    Primary Wholesale (Max Margin)
+                  </span>
+                </div>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    carrierBalances?.advanta?.status === "HEALTHY"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : carrierBalances?.advanta?.status === "LOW"
+                      ? "bg-amber-50 text-amber-700 border border-amber-200"
+                      : carrierBalances?.advanta?.status === "CRITICAL"
+                      ? "bg-red-50 text-red-700 border border-red-200"
+                      : "bg-zinc-100 text-zinc-600 border border-zinc-200"
+                  }`}
+                >
+                  {carrierBalances?.advanta?.status || "UNCONFIGURED"}
+                </span>
+              </div>
+
+              <div className="mt-3">
+                <div className="text-2xl font-bold text-zinc-900 tracking-tight">
+                  KES {carrierBalances?.advanta ? carrierBalances.advanta.balance_kes.toLocaleString("en-KE", { minimumFractionDigits: 2 }) : "0.00"}
+                </div>
+                <div className="text-xs text-zinc-500 mt-0.5 flex items-center gap-1.5">
+                  <span>~{carrierBalances?.advanta?.estimated_credits.toLocaleString() || 0} SMS Units</span>
+                  <span className="text-zinc-300">&bull;</span>
+                  <span className="text-zinc-400">Rate: ~KES 0.30/SMS</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+              <span className="text-zinc-500 font-mono text-[11px]">
+                {carrierBalances?.advanta?.partner_id ? `Partner ID: ${carrierBalances.advanta.partner_id}` : "Pending activation"}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCarrierForTopUp("ADVANTA");
+                  setIsTopUpModalOpen(true);
+                }}
+                className="text-[#581c87] hover:text-[#4a1572] font-semibold hover:underline cursor-pointer"
+              >
+                Top-up Float &rarr;
+              </button>
+            </div>
+          </div>
+
+          {/* Africa's Talking Card */}
+          <div className="border border-zinc-200 rounded-xl p-4 bg-gradient-to-b from-white to-zinc-50/50 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm text-zinc-900">Africa&apos;s Talking</span>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                    Backup / Failover Route
+                  </span>
+                </div>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    carrierBalances?.africastalking?.status === "HEALTHY"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : carrierBalances?.africastalking?.status === "LOW"
+                      ? "bg-amber-50 text-amber-700 border border-amber-200"
+                      : carrierBalances?.africastalking?.status === "CRITICAL"
+                      ? "bg-red-50 text-red-700 border border-red-200"
+                      : "bg-zinc-100 text-zinc-600 border border-zinc-200"
+                  }`}
+                >
+                  {carrierBalances?.africastalking?.status || "CONNECTED"}
+                </span>
+              </div>
+
+              <div className="mt-3">
+                <div className="text-2xl font-bold text-zinc-900 tracking-tight">
+                  KES {carrierBalances?.africastalking ? carrierBalances.africastalking.balance_kes.toLocaleString("en-KE", { minimumFractionDigits: 2 }) : "10.00"}
+                </div>
+                <div className="text-xs text-zinc-500 mt-0.5 flex items-center gap-1.5">
+                  <span>~{carrierBalances?.africastalking?.estimated_credits.toLocaleString() || 12} SMS Units</span>
+                  <span className="text-zinc-300">&bull;</span>
+                  <span className="text-zinc-400">Account: {carrierBalances?.africastalking?.account_username || "ljk09"}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+              <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Live Gateway
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCarrierForTopUp("AT");
+                  setIsTopUpModalOpen(true);
+                }}
+                className="text-[#581c87] hover:text-[#4a1572] font-semibold hover:underline cursor-pointer"
+              >
+                Top-up Float &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Informational Zero-Burn Notice */}
+        <div className="text-[11px] text-zinc-500 flex items-center gap-2 bg-zinc-50 border border-zinc-200/70 rounded-lg px-3 py-2">
+          <span>🛡️</span>
+          <span>
+            <strong>Zero SMS Burn Guarantee:</strong> Low balance alerts (&lt; KES {carrierBalances?.threshold_kes || 500}), 08:00 AM Morning Standup, and 08:00 PM Evening Reconciliation are delivered via HTML Email (Resend) to preserve 100% of SMS liquidity for client campaigns.
+          </span>
         </div>
       </div>
 
@@ -396,6 +596,92 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Top-Up Guidance Modal */}
+      {isTopUpModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-zinc-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-100 text-[#581c87] flex items-center justify-center font-bold text-sm">
+                  {selectedCarrierForTopUp === "AT" ? "AT" : "ADV"}
+                </div>
+                <div>
+                  <h3 className="font-bold text-zinc-900 text-sm">
+                    {selectedCarrierForTopUp === "AT" ? "Africa's Talking Top-Up" : "Advanta Africa Top-Up"}
+                  </h3>
+                  <p className="text-[11px] text-zinc-500">M-Pesa Telecom Float Replenishment</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTopUpModalOpen(false)}
+                className="text-zinc-400 hover:text-zinc-700 text-sm cursor-pointer p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            {selectedCarrierForTopUp === "AT" ? (
+              <div className="space-y-3 text-xs text-zinc-600">
+                <p>Replenish your live Africa&apos;s Talking account float using Safaricom M-Pesa:</p>
+                <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 space-y-1.5 font-mono text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500 font-sans">Paybill Number:</span>
+                    <span className="font-bold text-zinc-900">220220</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500 font-sans">Account Number:</span>
+                    <span className="font-bold text-[#581c87]">ljk09</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500 font-sans">Amount:</span>
+                    <span className="text-zinc-700">Desired float (e.g. KES 1,000)</span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-zinc-500">
+                  Funds credit automatically within 60 seconds. Alternatively, top up via card at{" "}
+                  <a
+                    href="https://account.africastalking.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#581c87] underline font-medium"
+                  >
+                    account.africastalking.com
+                  </a>.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs text-zinc-600">
+                <p>Replenish your Advanta Africa wholesale credit float:</p>
+                <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 space-y-1.5 font-mono text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500 font-sans">Advanta Paybill:</span>
+                    <span className="font-bold text-zinc-900">Contact Advanta</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500 font-sans">Account Number:</span>
+                    <span className="font-bold text-[#581c87]">Your Partner ID</span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-zinc-500">
+                  Once your reseller account is activated by Advanta, payments made to their Paybill with your Partner ID credit directly to your wholesale float.
+                </p>
+              </div>
+            )}
+
+            <div className="pt-2 flex justify-end gap-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setIsTopUpModalOpen(false)}
+                className="py-2 px-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

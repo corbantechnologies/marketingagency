@@ -267,9 +267,36 @@ export interface AdminRecentActivityItem {
   created_at: string;
 }
 
+export interface CarrierBalanceItem {
+  provider: string;
+  environment?: string;
+  account_username?: string;
+  partner_id?: string;
+  balance_kes: number;
+  currency: string;
+  estimated_credits: number;
+  status: "HEALTHY" | "LOW" | "CRITICAL" | "UNCONFIGURED" | "ERROR";
+  raw_string?: string;
+  error?: string | null;
+  last_checked: string;
+}
+
+export interface CarrierBalancesData {
+  africastalking: CarrierBalanceItem;
+  advanta: CarrierBalanceItem;
+  total_liquidity_kes: number;
+  total_estimated_credits: number;
+  overall_status: "HEALTHY" | "LOW" | "CRITICAL";
+  active_provider: string;
+  threshold_kes: number;
+  critical_threshold_kes: number;
+  last_evaluated: string;
+}
+
 export interface AdminObservabilityData {
   vitals: AdminVitals;
   gateway_mode: string;
+  carrier_balances?: CarrierBalancesData;
   carriers: AdminCarrierMetric[];
   pipeline: AdminPipelineSummary;
   recent_activity: AdminRecentActivityItem[];
@@ -284,6 +311,21 @@ export const getAdminObservability = async (
 ): Promise<AdminObservabilityData> => {
   const response: AxiosResponse<AdminObservabilityData> = await apiActions.get(
     "/api/v1/businesses/admin-observability/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Force refresh upstream carrier balances directly from Africa's Talking & Advanta APIs (Admin only)
+ * Endpoint: POST /api/v1/businesses/admin-observability/refresh-carrier-balances/
+ */
+export const refreshCarrierBalances = async (
+  config?: AxiosConfig
+): Promise<{ success: boolean; carrier_balances: CarrierBalancesData; alert_sent: boolean }> => {
+  const response = await apiActions.post(
+    "/api/v1/businesses/admin-observability/refresh-carrier-balances/",
+    {},
     config
   );
   return response.data;
