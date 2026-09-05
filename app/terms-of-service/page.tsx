@@ -92,10 +92,42 @@ export default function TermsOfServicePage() {
               </ul>
             </section>
 
-            {/* Section 3 - CRITICAL PROTECTION: Spam & Opt-In */}
+            {/* Section 3 - WHATSAPP BUSINESS & SENDER BRANDING */}
+            <section className="space-y-3 p-4 bg-emerald-50/50 border border-emerald-200 rounded">
+              <h2 className="text-base font-semibold text-emerald-900">
+                3. Meta WhatsApp Business Cloud API Terms, Sender Branding & Acceptable Use
+              </h2>
+              <p className="text-zinc-800 font-medium">
+                When utilizing Meta WhatsApp Cloud API features through our platform, the Client agrees to strict compliance with Meta&rsquo;s Commercial Terms and WhatsApp Business Messaging Policies:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-zinc-700 text-xs sm:text-sm">
+                <li>
+                  <strong>Two-Tier Sender Architecture:</strong>
+                  <ul className="list-disc pl-5 mt-1 space-y-1 text-zinc-600">
+                    <li>
+                      <em>Tier 1 (Shared Agency Gateway):</em> For Starter and SME subscription tiers, broadcasts originate from LJK Marketing Agency / Corban Technologies LTD&rsquo;s verified enterprise gateway. Inside the WhatsApp conversation, message body copy, headers, promotional media, and interactive CTA buttons (e.g. &ldquo;Visit Store&rdquo;, &ldquo;Chat on WhatsApp&rdquo;) are 100% branded to the Client&rsquo;s business.
+                    </li>
+                    <li>
+                      <em>Tier 2 (Dedicated Branded Sender):</em> Scale and Enterprise SLA retainers include dedicated WhatsApp phone number provisioning under our WhatsApp Business Account (WABA), displaying the Client&rsquo;s official brand name, logo, bio, and business profile.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Prohibited Content Categories:</strong> Meta strictly prohibits the transmission of messages related to weapons, adult products or services, illicit drugs, non-certified pharmaceuticals, pyramid schemes, tobacco/vaping, and unauthorized gambling. Accounts transmitting prohibited content are subject to immediate permanent termination without refund.
+                </li>
+                <li>
+                  <strong>Opt-In Warranty & STOP Compliance:</strong> The Client warrants that all recipient phone numbers have granted explicit prior consent to receive communications via WhatsApp. Automated unsubscribe mechanisms (&ldquo;STOP&rdquo; / &ldquo;Unsubscribe&rdquo;) are automatically enforced.
+                </li>
+                <li>
+                  <strong>Disclaimer of Meta Actions:</strong> LJK Marketing Agency operates as a technical gateway connecting to Meta Platforms Ireland Ltd. <strong>LJK shall bear NO LIABILITY</strong> for message rejections, spam flagging, quality rating downgrades, or temporary delivery throttling executed by Meta&rsquo;s automated algorithmic safeguards.
+                </li>
+              </ul>
+            </section>
+
+            {/* Section 4 - CRITICAL PROTECTION: Spam & Opt-In */}
             <section className="space-y-3 p-4 bg-zinc-50 border border-zinc-200 rounded">
               <h2 className="text-base font-semibold text-zinc-900">
-                3. Anti-Spam Policy, Mandatory Opt-In Consent & Carrier Blocking
+                4. Anti-Spam Policy, Mandatory Opt-In Consent & Carrier Blocking
               </h2>
               <p>
                 LJK Marketing Agency enforces a zero-tolerance policy against unsolicited commercial communications
@@ -126,10 +158,10 @@ export default function TermsOfServicePage() {
               </ul>
             </section>
 
-            {/* Section 4 - CRITICAL PROTECTION: Full Indemnity */}
+            {/* Section 5 - CRITICAL PROTECTION: Full Indemnity */}
             <section className="space-y-3 p-4 bg-purple-50/50 border border-purple-200 rounded">
               <h2 className="text-base font-semibold text-[#581c87]">
-                4. Client Indemnification of LJK Marketing Agency
+                5. Client Indemnification of LJK Marketing Agency
               </h2>
               <p className="text-zinc-800">
                 To the fullest extent permitted by Kenyan law, the Client agrees to <strong>defend, indemnify, and hold
@@ -146,10 +178,10 @@ export default function TermsOfServicePage() {
               </ol>
             </section>
 
-            {/* Section 5 */}
+            {/* Section 6 */}
             <section className="space-y-3">
               <h2 className="text-base font-semibold text-zinc-900">
-                5. Telecom Routes, Latency & Service Availability
+                6. Telecom Routes, Latency & Service Availability
               </h2>
               <p>
                 LJK connects directly to Tier-1 telecom routes and reputable cloud messaging infrastructure. While we
@@ -170,10 +202,10 @@ export default function TermsOfServicePage() {
               </ul>
             </section>
 
-            {/* Section 6 */}
+            {/* Section 7 */}
             <section className="space-y-3">
               <h2 className="text-base font-semibold text-zinc-900">
-                6. Commercial Terms, M-PESA Billing & Non-Refundability
+                7. Commercial Terms, M-PESA Billing & Non-Refundability
               </h2>
               <ul className="list-disc pl-5 space-y-2 text-zinc-700">
                 <li>
@@ -191,10 +223,10 @@ export default function TermsOfServicePage() {
               </ul>
             </section>
 
-            {/* Section 7 */}
+            {/* Section 8 */}
             <section className="space-y-3">
               <h2 className="text-base font-semibold text-zinc-900">
-                7. Governing Law & Dispute Resolution
+                8. Governing Law & Dispute Resolution
               </h2>
               <p>
                 These Terms shall be governed by, interpreted, and construed in accordance with the <strong>laws of the
@@ -203,10 +235,10 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* Section 8 */}
+            {/* Section 9 */}
             <section className="space-y-3 pt-4 border-t border-zinc-200">
               <h2 className="text-base font-semibold text-zinc-900">
-                8. Legal & Compliance Contact
+                9. Legal & Compliance Contact
               </h2>
               <p>
                 For compliance inquiries, regulatory disclosures, or legal notices, please reach out directly:

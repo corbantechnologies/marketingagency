@@ -137,8 +137,11 @@ function BroadcastComposerForm({
       .replace(/\{last_name\}/g, "Kamau")
       .replace(/\{name\}/g, "Sarah Kamau")
       .replace(/\{phone_number\}/g, "+254712345678")
-      .replace(/\{email\}/g, "sarah@gmail.com");
-  }, [message, isWhatsApp]);
+      .replace(/\{email\}/g, "sarah@gmail.com")
+      .replace(/\{business_name\}/g, activeBusiness?.name || "Your Brand")
+      .replace(/\{business_phone\}/g, activeBusiness?.phone || "+254 7XX XXX XXX")
+      .replace(/\{business_email\}/g, activeBusiness?.email || "info@brand.co.ke");
+  }, [message, isWhatsApp, activeBusiness]);
 
   // Tag Inserter into textarea cursor position
   const handleInsertTag = (tag: string) => {
@@ -542,7 +545,9 @@ function BroadcastComposerForm({
                     { tag: "{first_name}", label: "First Name" },
                     { tag: "{last_name}", label: "Last Name" },
                     { tag: "{name}", label: "Full Name" },
-                    { tag: "{phone_number}", label: "Phone" },
+                    { tag: "{business_name}", label: "Business Name" },
+                    { tag: "{business_phone}", label: "Business Phone" },
+                    { tag: "{phone_number}", label: "Recipient Phone" },
                     { tag: "{email}", label: "Email" },
                   ].map((item) => (
                     <button

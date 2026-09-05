@@ -148,6 +148,11 @@ export default function PrivacyPolicyPage() {
                   and real-time delivery receipt (DLR) tracking.
                 </li>
                 <li>
+                  <strong>Meta WhatsApp Cloud API (Meta Platforms Ireland Ltd):</strong> Official cloud infrastructure for
+                  dispatching WhatsApp Business marketing campaigns, dynamic interactive CTA buttons, and ingesting real-time
+                  delivery and read receipts (Blue Ticks ✓✓) in compliance with Meta&rsquo;s Business Data Processing Terms.
+                </li>
+                <li>
                   <strong>Cloud Email Delivery Infrastructure:</strong> Authenticated SMTP relays and cloud email delivery
                   sub-processors (including AWS SES and Resend) for transactional and marketing email transmission.
                 </li>
