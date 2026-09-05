@@ -240,6 +240,10 @@ export function PricingContent() {
       a: "One single wallet balance powers both Bulk SMS and Meta WhatsApp Business. 1 Credit sends 1 standard Bulk SMS (160 plain characters), and 2 Credits send 1 interactive WhatsApp marketing message (rich flyer image, catalog, and CTA buttons). When composing campaigns, the platform automatically calculates credit deduction so you never have to juggle multiple wallets.",
     },
     {
+      q: "How does branding work on WhatsApp vs SMS Sender IDs? Do I need my own number?",
+      a: "On Bulk SMS, you register an 11-character Alphanumeric Sender ID. On WhatsApp, we offer two flexible branding tiers: (1) Shared Agency Gateway (Starter & Business Growth): You can start broadcasting immediately without buying extra SIM cards or doing Meta paperwork. Inside the message, your brand name is prominently featured in the header, body copy, and interactive buttons linking to your website and your direct sales WhatsApp. (2) Dedicated Custom Sender Profile (Scale & Enterprise): We provision a dedicated WhatsApp number with your official company logo, bio, and business profile under our verified Meta WhatsApp Business Account.",
+    },
+    {
       q: "Do purchased credits ever expire?",
       a: "No. Prepaid SMS and WhatsApp credits purchased on LJK never expire as long as your account is active. You can top up anytime via M-PESA and use your balance whenever you need to send campaigns.",
     },

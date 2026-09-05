@@ -281,6 +281,189 @@ export function FeaturesContent() {
         </div>
       </section>
 
+      {/* 3.5 WhatsApp Sender Branding Architecture Showcase */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+            <span>Official Meta Cloud API Architecture</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+            How WhatsApp Branding Works for Your Business
+          </h2>
+          <p className="text-xs sm:text-sm text-zinc-600 max-w-2xl mx-auto">
+            Unlike SMS where you register an 11-character alphanumeric header, WhatsApp delivers rich, verified profiles with dynamic interactive action buttons.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          {/* Tier 1 Card */}
+          <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 shadow-xs flex flex-col justify-between hover:border-emerald-300 transition-all">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-[#581c87] border border-purple-200">
+                  Starter &amp; Business Growth Plans
+                </span>
+                <span className="text-xs font-semibold text-emerald-600">Instant Setup (0 Days)</span>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-zinc-900">
+                  Tier 1: Shared Verified Agency Gateway
+                </h3>
+                <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
+                  Best for solo entrepreneurs and SMEs who want to start broadcasting immediately without buying extra SIM cards or going through 14-day telecom and Meta paperwork.
+                </p>
+              </div>
+
+              <div className="space-y-2 pt-2 text-xs text-zinc-700">
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span><strong>Dispatched via:</strong> Corban Technologies / LJK Agency Verified Route</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span><strong>100% Tenant Branded:</strong> Dynamic header, flyer image, and custom copy</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span><strong>Direct Action Buttons:</strong> Instant links to your store &amp; your sales WhatsApp</span>
+                </div>
+              </div>
+
+              {/* Realistic Mockup for Tier 1 */}
+              <div className="mt-4 p-4 rounded-xl bg-[#0b141a] text-white shadow-inner border border-zinc-800">
+                <div className="flex items-center gap-2.5 pb-3 border-b border-zinc-800 text-xs">
+                  <div className="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xs">
+                    CT
+                  </div>
+                  <div>
+                    <div className="font-bold text-emerald-400 flex items-center gap-1">
+                      <span>Corban Technologies</span>
+                      <span className="text-[10px] text-emerald-300 bg-emerald-950 px-1 rounded">Verified</span>
+                    </div>
+                    <div className="text-[10px] text-zinc-400">via LJK Marketing Gateway</div>
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <div className="bg-[#005c4b] p-3 rounded-xl rounded-tl-none text-xs text-zinc-100 space-y-2">
+                    <div className="font-bold text-amber-300 text-[11px]">
+                      🛍️ Nairobi Fresh Grocers Exclusive Offer
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-zinc-200">
+                      Hi Sarah! Nairobi Fresh Grocers is offering 20% off all organic dairy &amp; fresh produce this weekend. Show this voucher at checkout: <strong>FRESH20</strong>.
+                    </p>
+                    <div className="text-[9px] text-zinc-300 text-right flex items-center justify-end gap-1">
+                      <span>12:45 PM</span>
+                      <span className="text-sky-400 font-bold">✓✓</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 space-y-1.5">
+                    <div className="w-full py-1.5 bg-[#1f2c34] hover:bg-[#2a3942] text-sky-400 text-center text-xs font-semibold rounded-lg border border-zinc-700 flex items-center justify-center gap-1.5">
+                      <span>🌐 Visit FreshGrocers.co.ke</span>
+                    </div>
+                    <div className="w-full py-1.5 bg-[#1f2c34] hover:bg-[#2a3942] text-emerald-400 text-center text-xs font-semibold rounded-lg border border-zinc-700 flex items-center justify-center gap-1.5">
+                      <span>💬 Chat with Sales (+254 7XX...)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-zinc-100 mt-4">
+              <span className="text-[11px] text-zinc-500 font-medium">Included automatically in Starter &amp; Business Growth plans</span>
+            </div>
+          </div>
+
+          {/* Tier 2 Card */}
+          <div className="bg-white rounded-2xl border-2 border-purple-200 p-6 sm:p-8 shadow-md flex flex-col justify-between hover:border-[#581c87] transition-all relative">
+            <div className="absolute -top-3 right-6">
+              <span className="px-3 py-1 rounded-full text-[10px] font-extrabold bg-[#581c87] text-white uppercase tracking-wider shadow-sm">
+                Scale &amp; Enterprise Retainers
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  Dedicated Brand Identity
+                </span>
+                <span className="text-xs font-semibold text-purple-600">Enterprise SLA</span>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-zinc-900">
+                  Tier 2: Dedicated Custom WhatsApp Sender
+                </h3>
+                <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
+                  Engineered for corporate enterprises, multi-branch retailers, and schools who require their own official WhatsApp Business profile, company logo, and bio.
+                </p>
+              </div>
+
+              <div className="space-y-2 pt-2 text-xs text-zinc-700">
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span><strong>Own Sender Profile:</strong> Your brand logo, bio, catalog &amp; opening hours</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span><strong>Multi-Number WABA:</strong> Dedicated SIM or virtual line assigned to your workspace</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span><strong>Official Green Tick:</strong> Fast-track Meta Official Business Account (OBA) review</span>
+                </div>
+              </div>
+
+              {/* Realistic Mockup for Tier 2 */}
+              <div className="mt-4 p-4 rounded-xl bg-[#0b141a] text-white shadow-inner border border-purple-900/40">
+                <div className="flex items-center gap-2.5 pb-3 border-b border-zinc-800 text-xs">
+                  <div className="w-8 h-8 rounded-full bg-[#581c87] flex items-center justify-center font-bold text-xs text-white">
+                    NF
+                  </div>
+                  <div>
+                    <div className="font-bold text-white flex items-center gap-1">
+                      <span>Nairobi Fresh Supermarkets</span>
+                      <span className="text-emerald-400 text-xs">✓</span>
+                    </div>
+                    <div className="text-[10px] text-zinc-400">Official WhatsApp Business Account</div>
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <div className="bg-[#005c4b] p-3 rounded-xl rounded-tl-none text-xs text-zinc-100 space-y-2">
+                    <div className="font-bold text-emerald-200 text-[11px]">
+                      Weekly Branch Newsletter &bull; Westlands &amp; Kilimani
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-zinc-200">
+                      Dear Valued Customer, your monthly loyalty statement is ready. You have earned 450 bonus points redeemable at any checkout till.
+                    </p>
+                    <div className="text-[9px] text-zinc-300 text-right flex items-center justify-end gap-1">
+                      <span>09:15 AM</span>
+                      <span className="text-sky-400 font-bold">✓✓</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 space-y-1.5">
+                    <div className="w-full py-1.5 bg-[#1f2c34] hover:bg-[#2a3942] text-sky-400 text-center text-xs font-semibold rounded-lg border border-zinc-700 flex items-center justify-center gap-1.5">
+                      <span>📄 View PDF Statement</span>
+                    </div>
+                    <div className="w-full py-1.5 bg-[#1f2c34] hover:bg-[#2a3942] text-emerald-400 text-center text-xs font-semibold rounded-lg border border-zinc-700 flex items-center justify-center gap-1.5">
+                      <span>🛍️ Open WhatsApp Catalog</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-zinc-100 mt-4">
+              <span className="text-[11px] text-[#581c87] font-semibold">Included with Scale (KSh 18,500/mo) &amp; Enterprise Retainers</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 4. Industry Use-Cases Interactive Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center space-y-2">
