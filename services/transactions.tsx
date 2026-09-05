@@ -110,3 +110,87 @@ export const adjustWalletCredits = async (
   );
   return response.data;
 };
+
+// ============================================================================
+// Module 1: Admin Financial Intelligence & M-Pesa Ledger
+// ============================================================================
+
+export interface FinancialVitals {
+  total_revenue_kes: number;
+  revenue_24h_kes: number;
+  revenue_7d_kes: number;
+  revenue_30d_kes: number;
+  total_carrier_cost_kes: number;
+  carrier_cost_24h_kes: number;
+  gross_profit_kes: number;
+  profit_margin_pct: number;
+  total_dispatched_sms: number;
+  total_tx_count: number;
+}
+
+export interface VipClientEntry {
+  business_name: string;
+  business_reference: string;
+  owner_name: string;
+  owner_email: string;
+  total_spent_kes: number;
+  topup_count: number;
+  current_wallet_balance: number;
+}
+
+export interface LedgerTransactionEntry {
+  reference: string;
+  code: string;
+  business_name: string;
+  business_reference: string;
+  mpesa_receipt_number: string;
+  amount_units: number;
+  amount_kes: number;
+  running_balance: number;
+  channel: string;
+  description: string;
+  created_at: string;
+}
+
+export interface AdminFinancialAnalyticsData {
+  vitals: FinancialVitals;
+  vip_leaderboard: VipClientEntry[];
+  recent_transactions: LedgerTransactionEntry[];
+}
+
+export interface ManualMpesaRecreditPayload {
+  business_reference: string;
+  mpesa_receipt_number: string;
+  amount_kes: number;
+  notes?: string;
+}
+
+/**
+ * Fetch platform financial intelligence, revenue vitals, VIP leaderboard, and ledger (Admin only)
+ * Endpoint: GET /api/v1/transactions/admin-financial-analytics/
+ */
+export const getAdminFinancialAnalytics = async (
+  config?: AxiosConfig
+): Promise<AdminFinancialAnalyticsData> => {
+  const response: AxiosResponse<AdminFinancialAnalyticsData> = await apiActions.get(
+    "/api/v1/transactions/admin-financial-analytics/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Manually apply an M-Pesa transaction to a business wallet (Admin only)
+ * Endpoint: POST /api/v1/transactions/manual-recredit/
+ */
+export const manualMpesaRecredit = async (
+  payload: ManualMpesaRecreditPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; transaction: WalletTransaction }> => {
+  const response = await apiActions.post(
+    "/api/v1/transactions/manual-recredit/",
+    payload,
+    config
+  );
+  return response.data;
+};

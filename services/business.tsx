@@ -375,4 +375,78 @@ export const manageAlertRecipient = async (
   return response.data;
 };
 
+// ============================================================================
+// Module 2: Admin Sender ID Approval & Telco Vetting Queue
+// ============================================================================
+
+export interface SenderIdQueueItem {
+  reference: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  owner_name: string;
+  owner_email: string;
+  sender_id: string;
+  sender_id_status: "PENDING" | "APPROVED" | "REJECTED";
+  sender_id_rejection_reason: string;
+  tax_pin: string;
+  registration_number: string;
+  registration_date: string | null;
+  registration_document_url: string | null;
+  wallet_balance: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SenderIdQueueResponse {
+  vitals: {
+    total_pending: number;
+    total_approved: number;
+    total_rejected: number;
+    total_count: number;
+  };
+  results: SenderIdQueueItem[];
+}
+
+export interface ReviewSenderIdPayload {
+  business_reference: string;
+  action: "APPROVE" | "REJECT";
+  rejection_reason?: string;
+}
+
+/**
+ * Fetch Sender ID review queue (Admin only)
+ * Endpoint: GET /api/v1/businesses/admin-sender-ids/
+ */
+export const getAdminSenderIdQueue = async (
+  statusFilter?: string,
+  config?: AxiosConfig
+): Promise<SenderIdQueueResponse> => {
+  const params = statusFilter && statusFilter !== "ALL" ? { status: statusFilter } : {};
+  const response: AxiosResponse<SenderIdQueueResponse> = await apiActions.get(
+    "/api/v1/businesses/admin-sender-ids/",
+    {
+      ...config,
+      params: { ...params, ...config?.params },
+    }
+  );
+  return response.data;
+};
+
+/**
+ * Approve or reject client business Sender ID (Admin only)
+ * Endpoint: POST /api/v1/businesses/admin-sender-ids/review/
+ */
+export const reviewAdminSenderId = async (
+  payload: ReviewSenderIdPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; sender_id_status: string }> => {
+  const response = await apiActions.post(
+    "/api/v1/businesses/admin-sender-ids/review/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
 

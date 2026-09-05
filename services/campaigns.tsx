@@ -184,3 +184,104 @@ export const createAgencyBroadcast = async (
   return response.data;
 };
 
+// ============================================================================
+// Module 3: Spam, Phishing & Anti-Fraud Compliance Shield
+// ============================================================================
+
+export interface CakHoursStatus {
+  status: "OPEN" | "RESTRICTED";
+  is_open: boolean;
+  current_eat_time: string;
+  current_eat_date: string;
+  window_start: string;
+  window_end: string;
+  notice: string;
+}
+
+export interface FlaggedCampaignItem {
+  reference: string;
+  name: string;
+  sender_id: string;
+  business_name: string;
+  business_reference: string;
+  message_snippet: string;
+  status: string;
+  is_quarantined: boolean;
+  risk_level: "CLEAN" | "MEDIUM" | "HIGH";
+  risk_score: number;
+  flagged_terms: string[];
+  has_suspicious_url: boolean;
+  summary: string;
+  recipient_count: number;
+  created_at: string;
+}
+
+export interface ComplianceOverviewData {
+  cak_status: CakHoursStatus;
+  vitals: {
+    high_risk_count: number;
+    quarantined_count: number;
+    clean_count: number;
+    scanned_count: number;
+    active_terms_count: number;
+  };
+  flagged_campaigns: FlaggedCampaignItem[];
+  banned_terms: string[];
+}
+
+export interface ComplianceActionPayload {
+  campaign_reference: string;
+  action: "QUARANTINE" | "ALLOW_OVERRIDE";
+}
+
+export interface ManageComplianceKeywordsPayload {
+  action: "add" | "remove" | "reset";
+  term?: string;
+}
+
+/**
+ * Fetch platform compliance telemetry, CAK window status, and flagged campaigns (Admin only)
+ * Endpoint: GET /api/v1/campaigns/admin-compliance/overview/
+ */
+export const getAdminComplianceOverview = async (
+  config?: AxiosConfig
+): Promise<ComplianceOverviewData> => {
+  const response: AxiosResponse<ComplianceOverviewData> = await apiActions.get(
+    "/api/v1/campaigns/admin-compliance/overview/",
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Enforce compliance action on campaign (Quarantine or Override)
+ * Endpoint: POST /api/v1/campaigns/admin-compliance/action/
+ */
+export const adminComplianceAction = async (
+  payload: ComplianceActionPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; campaign_status: string }> => {
+  const response = await apiActions.post(
+    "/api/v1/campaigns/admin-compliance/action/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Add, remove or reset anti-phishing/spam keywords
+ * Endpoint: POST /api/v1/campaigns/admin-compliance/keywords/
+ */
+export const adminManageComplianceKeywords = async (
+  payload: ManageComplianceKeywordsPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; detail: string; banned_terms: string[] }> => {
+  const response = await apiActions.post(
+    "/api/v1/campaigns/admin-compliance/keywords/",
+    payload,
+    config
+  );
+  return response.data;
+};
+

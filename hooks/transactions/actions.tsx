@@ -48,3 +48,40 @@ export const useAdjustWalletCredits = () => {
     },
   });
 };
+
+/**
+ * Hook to fetch Admin Financial Analytics vitals, VIP leaderboard, and ledger
+ */
+export const useFetchAdminFinancialAnalytics = () => {
+  return useQuery({
+    queryKey: ["admin", "financial-analytics"],
+    queryFn: async () => {
+      const config = await getFreshAuthHeaders();
+      const { getAdminFinancialAnalytics } = await import("@/services/transactions");
+      return getAdminFinancialAnalytics(config);
+    },
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+  });
+};
+
+/**
+ * Hook for manual M-Pesa re-credit by admin customer support
+ */
+export const useManualMpesaRecredit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: import("@/services/transactions").ManualMpesaRecreditPayload) => {
+      const config = await getFreshAuthHeaders();
+      const { manualMpesaRecredit } = await import("@/services/transactions");
+      return manualMpesaRecredit(payload, config);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "financial-analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business-wallets"] });
+    },
+  });
+};

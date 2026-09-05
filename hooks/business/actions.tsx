@@ -15,6 +15,9 @@ import {
   refreshCarrierBalances,
   getAlertRecipients,
   manageAlertRecipient,
+  getAdminSenderIdQueue,
+  reviewAdminSenderId,
+  ReviewSenderIdPayload,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -173,6 +176,36 @@ export function useManageAlertRecipients() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "alert-recipients"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+}
+
+/**
+ * Query hook to fetch Sender ID verification queue (Admin only)
+ */
+export function useFetchAdminSenderIdQueue(statusFilter?: string) {
+  const authConfig = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["admin", "sender-ids", statusFilter],
+    queryFn: () => getAdminSenderIdQueue(statusFilter, authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 15_000,
+  });
+}
+
+/**
+ * Mutation hook to approve or reject a Sender ID
+ */
+export function useReviewAdminSenderId() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (payload: ReviewSenderIdPayload) => reviewAdminSenderId(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "sender-ids"] });
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
     },
   });
 }

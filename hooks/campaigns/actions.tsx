@@ -13,6 +13,11 @@ import {
   createAgencyBroadcast,
   AgencyBroadcastPayload,
   AgencyBroadcastMetadata,
+  getAdminComplianceOverview,
+  adminComplianceAction,
+  adminManageComplianceKeywords,
+  ComplianceActionPayload,
+  ManageComplianceKeywordsPayload,
 } from "@/services/campaigns";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -76,6 +81,50 @@ export const useCreateAgencyBroadcast = () => {
       queryClient.invalidateQueries({ queryKey: CAMPAIGNS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ["broadcast-messages"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+};
+
+/**
+ * Hook to fetch live platform compliance overview & CAK window status
+ */
+export const useFetchAdminComplianceOverview = () => {
+  const authConfig = useAxiosAuth();
+  return useQuery({
+    queryKey: ["admin", "compliance", "overview"],
+    queryFn: () => getAdminComplianceOverview(authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+  });
+};
+
+/**
+ * Hook to enforce Quarantine or Override action on a campaign
+ */
+export const useAdminComplianceAction = () => {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+  return useMutation({
+    mutationFn: (payload: ComplianceActionPayload) => adminComplianceAction(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "compliance", "overview"] });
+      queryClient.invalidateQueries({ queryKey: CAMPAIGNS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
+    },
+  });
+};
+
+/**
+ * Hook to add, remove, or reset anti-phishing keywords
+ */
+export const useAdminManageComplianceKeywords = () => {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+  return useMutation({
+    mutationFn: (payload: ManageComplianceKeywordsPayload) => adminManageComplianceKeywords(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "compliance", "overview"] });
     },
   });
 };
