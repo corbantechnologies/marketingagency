@@ -343,6 +343,8 @@ export interface AlertRecipientsBreakdown {
   registered_admins: AlertRecipientItem[];
   env_emails: AlertRecipientItem[];
   custom_emails: AlertRecipientItem[];
+  threshold_kes?: number;
+  critical_threshold_kes?: number;
 }
 
 /**
@@ -360,13 +362,24 @@ export const getAlertRecipients = async (
 };
 
 /**
- * Manage reminder recipient emails: add, remove, or trigger test notification
+ * Manage reminder recipient emails: add, remove, test, or update thresholds
  * Endpoint: POST /api/v1/businesses/admin-observability/alert-recipients/
  */
 export const manageAlertRecipient = async (
-  payload: { action: "add" | "remove" | "test"; email?: string },
+  payload: {
+    action: "add" | "remove" | "test" | "update_thresholds";
+    email?: string;
+    threshold_kes?: number;
+    critical_threshold_kes?: number;
+  },
   config?: AxiosConfig
-): Promise<{ success: boolean; detail: string; recipients?: AlertRecipientsBreakdown }> => {
+): Promise<{
+  success: boolean;
+  detail: string;
+  recipients?: AlertRecipientsBreakdown;
+  threshold_kes?: number;
+  critical_threshold_kes?: number;
+}> => {
   const response = await apiActions.post(
     "/api/v1/businesses/admin-observability/alert-recipients/",
     payload,

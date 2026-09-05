@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -40,6 +40,42 @@ export default function AdminDashboardPage() {
   const [newRecipientEmail, setNewRecipientEmail] = useState("");
   const [isAddingRecipient, setIsAddingRecipient] = useState(false);
   const [isSendingTestAlert, setIsSendingTestAlert] = useState(false);
+
+  // Dynamic Thresholds State
+  const [lowThreshold, setLowThreshold] = useState<number>(500);
+  const [criticalThreshold, setCriticalThreshold] = useState<number>(150);
+  const [isSavingThresholds, setIsSavingThresholds] = useState(false);
+
+  useEffect(() => {
+    if (recipientsData) {
+      if (typeof recipientsData.threshold_kes === "number") {
+        setLowThreshold(recipientsData.threshold_kes);
+      }
+      if (typeof recipientsData.critical_threshold_kes === "number") {
+        setCriticalThreshold(recipientsData.critical_threshold_kes);
+      }
+    }
+  }, [recipientsData]);
+
+  const handleSaveThresholds = async () => {
+    setIsSavingThresholds(true);
+    try {
+      const res = await manageRecipientsMutation.mutateAsync({
+        action: "update_thresholds",
+        threshold_kes: lowThreshold,
+        critical_threshold_kes: criticalThreshold,
+      });
+      if (res?.success) {
+        toast.success(res.detail || "Alert thresholds updated successfully.");
+      } else {
+        toast.error(res?.detail || "Could not update thresholds.");
+      }
+    } catch {
+      toast.error("Failed to update thresholds.");
+    } finally {
+      setIsSavingThresholds(false);
+    }
+  };
 
   const handleAddRecipient = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -864,6 +900,54 @@ export default function AdminDashboardPage() {
                   Loading alert recipients...
                 </div>
               )}
+            </div>
+
+            {/* Carrier Balance Alert Thresholds Configuration */}
+            <div className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                  <span>⚙️ Carrier Balance Alert Thresholds</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleSaveThresholds}
+                  disabled={isSavingThresholds}
+                  className="px-3 py-1 bg-white border border-zinc-200 hover:bg-zinc-100 text-zinc-800 text-[11px] font-bold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingThresholds ? "Saving..." : "Save Thresholds"}
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-semibold text-zinc-600 block mb-1">
+                    ⚠️ Low Balance Warning (KES)
+                  </label>
+                  <input
+                    type="number"
+                    step="50"
+                    min="100"
+                    value={lowThreshold}
+                    onChange={(e) => setLowThreshold(parseFloat(e.target.value) || 0)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-zinc-200 rounded-lg text-xs font-bold text-zinc-900 focus:outline-none focus:border-[#581c87]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-zinc-600 block mb-1">
+                    🚨 Critical Depletion (KES)
+                  </label>
+                  <input
+                    type="number"
+                    step="25"
+                    min="50"
+                    value={criticalThreshold}
+                    onChange={(e) => setCriticalThreshold(parseFloat(e.target.value) || 0)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-zinc-200 rounded-lg text-xs font-bold text-zinc-900 focus:outline-none focus:border-[#581c87]"
+                  />
+                </div>
+              </div>
+              <p className="text-[10px] text-zinc-500">
+                Alert emails are automatically throttled to at most 1 email every 4 hours to avoid inbox spam.
+              </p>
             </div>
 
             {/* Bottom Actions */}

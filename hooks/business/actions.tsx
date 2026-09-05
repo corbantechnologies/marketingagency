@@ -171,8 +171,12 @@ export function useManageAlertRecipients() {
   const authConfig = useAxiosAuth();
 
   return useMutation({
-    mutationFn: (payload: { action: "add" | "remove" | "test"; email?: string }) =>
-      manageAlertRecipient(payload, authConfig),
+    mutationFn: (payload: {
+      action: "add" | "remove" | "test" | "update_thresholds";
+      email?: string;
+      threshold_kes?: number;
+      critical_threshold_kes?: number;
+    }) => manageAlertRecipient(payload, authConfig),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "alert-recipients"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "observability"] });
