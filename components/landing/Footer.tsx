@@ -180,6 +180,9 @@ export function Footer() {
             <Link href="/terms-of-service" className="hover:text-zinc-300 transition-colors">
               Terms of Service
             </Link>
+            <Link href="/data-deletion" className="hover:text-zinc-300 transition-colors">
+              Data Deletion
+            </Link>
           </div>
         </div>
 
