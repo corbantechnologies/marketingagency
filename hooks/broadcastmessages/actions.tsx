@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BroadcastMessage,
   BroadcastMessageStats,
@@ -10,10 +10,16 @@ import {
   getAdminMessageInspector,
   exportAdminMessageLogs,
   MessageInspectorFilterParams,
+  getWhatsAppTemplates,
+  createWhatsAppTemplate,
+  WhatsAppTemplateListResponse,
+  CreateWhatsAppTemplatePayload,
+  CreateWhatsAppTemplateResponse,
 } from "@/services/broadcastmessages";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
 export const BROADCAST_MESSAGES_QUERY_KEY = ["broadcast-messages"];
+export const WHATSAPP_TEMPLATES_QUERY_KEY = ["whatsapp-templates"];
 
 export const useFetchBroadcastMessages = (params?: BroadcastMessageFilterParams) => {
   return useQuery<BroadcastMessage[], Error>({
@@ -61,3 +67,31 @@ export const useExportAdminMessageLogs = () => {
     window.URL.revokeObjectURL(url);
   };
 };
+
+/**
+ * Hook to fetch WhatsApp templates directly from Meta Cloud API
+ */
+export const useFetchWhatsAppTemplates = (status?: string) => {
+  const authConfig = useAxiosAuth();
+  return useQuery<WhatsAppTemplateListResponse, Error>({
+    queryKey: [...WHATSAPP_TEMPLATES_QUERY_KEY, status || "all"],
+    queryFn: () => getWhatsAppTemplates(status, authConfig),
+    enabled: Boolean(authConfig.headers.Authorization),
+    staleTime: 1000 * 30,
+  });
+};
+
+/**
+ * Hook to submit a new WhatsApp template to Meta Cloud API
+ */
+export const useCreateWhatsAppTemplate = () => {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+  return useMutation<CreateWhatsAppTemplateResponse, Error, CreateWhatsAppTemplatePayload>({
+    mutationFn: (payload: CreateWhatsAppTemplatePayload) => createWhatsAppTemplate(payload, authConfig),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: WHATSAPP_TEMPLATES_QUERY_KEY });
+    },
+  });
+};
+
