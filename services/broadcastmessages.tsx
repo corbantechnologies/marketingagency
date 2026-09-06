@@ -205,3 +205,71 @@ export const exportAdminMessageLogs = async (
   );
   return response.data;
 };
+
+export interface WhatsAppTemplateItem {
+  name: string;
+  status: "APPROVED" | "PENDING" | "REJECTED";
+  category: string;
+  language: string;
+  id?: string;
+  components?: any[];
+}
+
+export interface WhatsAppTemplateListResponse {
+  count: number;
+  status_filter: string;
+  templates: WhatsAppTemplateItem[];
+}
+
+export interface CreateWhatsAppTemplatePayload {
+  name: string;
+  category: "MARKETING" | "UTILITY";
+  language: string;
+  body_text: string;
+  example_variables?: string[];
+  header_text?: string;
+  footer_text?: string;
+}
+
+export interface CreateWhatsAppTemplateResponse {
+  success: boolean;
+  id: string;
+  status: string;
+  category: string;
+  name: string;
+}
+
+/**
+ * Fetch WhatsApp templates from Meta Cloud API
+ * Endpoint: GET /api/v1/broadcast-messages/whatsapp/templates/
+ */
+export const getWhatsAppTemplates = async (
+  status?: string,
+  config?: AxiosConfig
+): Promise<WhatsAppTemplateListResponse> => {
+  const response: AxiosResponse<WhatsAppTemplateListResponse> = await apiActions.get(
+    "/api/v1/broadcast-messages/whatsapp/templates/",
+    {
+      ...config,
+      params: { status: status || "all", ...config?.params },
+    }
+  );
+  return response.data;
+};
+
+/**
+ * Submit a new WhatsApp template to Meta Cloud API
+ * Endpoint: POST /api/v1/broadcast-messages/whatsapp/templates/create/
+ */
+export const createWhatsAppTemplate = async (
+  payload: CreateWhatsAppTemplatePayload,
+  config?: AxiosConfig
+): Promise<CreateWhatsAppTemplateResponse> => {
+  const response: AxiosResponse<CreateWhatsAppTemplateResponse> = await apiActions.post(
+    "/api/v1/broadcast-messages/whatsapp/templates/create/",
+    payload,
+    config
+  );
+  return response.data;
+};
+
