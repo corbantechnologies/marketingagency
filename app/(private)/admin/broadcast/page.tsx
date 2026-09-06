@@ -36,6 +36,11 @@ export default function AdminBroadcastPage() {
     "Hello {first_name}, this is an official announcement from LJK Marketing Agency."
   );
 
+  // Template Selection in Dispatcher
+  const [selectedTemplateName, setSelectedTemplateName] = useState<string>("");
+  const [templateHeader, setTemplateHeader] = useState<string>("");
+  const [templateFooter, setTemplateFooter] = useState<string>("");
+
   // Live GSM 03.38 character and segment calculations (for SMS)
   const { charCount, segments, isUnicode } = useMemo(() => {
     return BaseSMSGateway.calculate_segments(messageBody);
@@ -142,6 +147,61 @@ export default function AdminBroadcastPage() {
   const [tplFooter, setTplFooter] = useState("Reply STOP to unsubscribe");
   const [tplVariables, setTplVariables] = useState<Record<string, string>>({});
 
+  // Filter approved and pending templates for Dispatcher selector
+  const approvedTemplates = useMemo(() => {
+    return templatesData?.templates?.filter((t) => t.status === "APPROVED") || [];
+  }, [templatesData]);
+
+  const pendingTemplates = useMemo(() => {
+    return templatesData?.templates?.filter((t) => t.status === "PENDING") || [];
+  }, [templatesData]);
+
+  const selectedTemplate = useMemo(() => {
+    if (!selectedTemplateName) return null;
+    return templatesData?.templates?.find((t) => t.name === selectedTemplateName) || null;
+  }, [templatesData, selectedTemplateName]);
+
+  const handleSelectTemplate = (name: string) => {
+    setSelectedTemplateName(name);
+    if (!name) {
+      setTemplateHeader("");
+      setTemplateFooter("");
+      return;
+    }
+    const tpl = templatesData?.templates?.find((t) => t.name === name);
+    if (!tpl) return;
+
+    setCampaignName(`WhatsApp - ${tpl.name}`);
+    let bodyText = "";
+    let headerText = "";
+    let footerText = "";
+
+    if (tpl.components && Array.isArray(tpl.components)) {
+      const bComp = tpl.components.find((c: any) => c.type === "BODY");
+      const hComp = tpl.components.find((c: any) => c.type === "HEADER");
+      const fComp = tpl.components.find((c: any) => c.type === "FOOTER");
+      if (bComp?.text) bodyText = bComp.text;
+      if (hComp?.text) headerText = hComp.text;
+      if (fComp?.text) footerText = fComp.text;
+    }
+
+    if (bodyText) {
+      setMessageBody(bodyText);
+    } else {
+      setMessageBody(`Announcement via approved template [${tpl.name}].`);
+    }
+    setTemplateHeader(headerText);
+    setTemplateFooter(footerText);
+    toast.success(`Selected approved Meta template '${tpl.name}'!`);
+  };
+
+  const handleClearTemplate = () => {
+    setSelectedTemplateName("");
+    setTemplateHeader("");
+    setTemplateFooter("");
+    setMessageBody("Hello {first_name}, this is an official announcement from LJK Marketing Agency.");
+  };
+
   // Detect {{1}}, {{2}} in template body
   const detectedVariables = useMemo(() => {
     const matches = tplBody.match(/\{\{(\d+)\}\}/g);
@@ -231,22 +291,7 @@ export default function AdminBroadcastPage() {
   const handleUseTemplateInDispatcher = (tpl: WhatsAppTemplateItem) => {
     setChannel("WHATSAPP");
     setActiveTab("DISPATCHER");
-    setCampaignName(`WhatsApp - ${tpl.name}`);
-
-    // Extract body from components if available
-    let bodyText = "";
-    if (tpl.components && Array.isArray(tpl.components)) {
-      const bodyComp = tpl.components.find((c: any) => c.type === "BODY");
-      if (bodyComp?.text) {
-        bodyText = bodyComp.text;
-      }
-    }
-    if (bodyText) {
-      setMessageBody(bodyText);
-    } else {
-      setMessageBody(`Announcement via approved template [${tpl.name}].`);
-    }
-    toast.success(`Loaded approved template '${tpl.name}' into Dispatcher!`);
+    handleSelectTemplate(tpl.name);
   };
 
   return (
@@ -362,7 +407,12 @@ export default function AdminBroadcastPage() {
                 <div className="inline-flex items-center p-1 bg-zinc-100 rounded-xl border border-zinc-200 shrink-0 self-start sm:self-center shadow-2xs">
                   <button
                     type="button"
-                    onClick={() => setChannel("SMS")}
+                    onClick={() => {
+                      setChannel("SMS");
+                      setSelectedTemplateName("");
+                      setTemplateHeader("");
+                      setTemplateFooter("");
+                    }}
                     title="Bulk SMS Gateway (1 Credit / SMS)"
                     className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                       channel === "SMS"
@@ -482,11 +532,115 @@ export default function AdminBroadcastPage() {
                   </div>
                 )}
 
+                {/* --- APPROVED META TEMPLATE PICKER (WHATSAPP ONLY) --- */}
+                {channel === "WHATSAPP" && (
+                  <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-xl p-4 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <label className="text-xs font-bold text-emerald-950 uppercase tracking-wider">
+                          Select Pre-Approved Meta Template
+                        </label>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200/80 text-emerald-900 font-mono">
+                          {approvedTemplates.length} Approved
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("TEMPLATES")}
+                        className="text-[11px] text-emerald-800 hover:text-emerald-950 font-semibold underline underline-offset-2 flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+                      >
+                        <span>Manage in Template Studio</span>
+                        <span>&rarr;</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                      <div className="sm:col-span-8">
+                        <select
+                          value={selectedTemplateName}
+                          onChange={(e) => handleSelectTemplate(e.target.value)}
+                          className="w-full px-3 py-2.5 rounded-lg border border-emerald-300 bg-white text-xs font-medium text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-2xs"
+                        >
+                          <option value="">— Custom Freeform Copy (Or Select Approved Template) —</option>
+                          {approvedTemplates.length > 0 && (
+                            <optgroup label="Approved Meta Templates (Live Ready)">
+                              {approvedTemplates.map((tpl) => (
+                                <option key={tpl.id || tpl.name} value={tpl.name}>
+                                  {tpl.name} • [{tpl.category}] ({tpl.language})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                          {pendingTemplates.length > 0 && (
+                            <optgroup label="Pending Review by Meta (In Progress)">
+                              {pendingTemplates.map((tpl) => (
+                                <option key={tpl.id || tpl.name} value={tpl.name} disabled>
+                                  {tpl.name} • [PENDING APPROVAL] ({tpl.language})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-4 flex items-center gap-2">
+                        {selectedTemplate ? (
+                          <button
+                            type="button"
+                            onClick={handleClearTemplate}
+                            className="w-full py-2.5 px-3 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold transition-colors cursor-pointer text-center"
+                          >
+                            Clear / Custom
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="w-full py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>New Template</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Active Selected Template Metadata Pill */}
+                    {selectedTemplate && (
+                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-emerald-200/60 text-[11px] text-emerald-950">
+                        <span className="font-semibold text-emerald-800">Active Template:</span>
+                        <code className="bg-emerald-100/80 px-2 py-0.5 rounded font-mono font-bold text-emerald-900">
+                          {selectedTemplate.name}
+                        </code>
+                        <span>&bull;</span>
+                        <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                          selectedTemplate.category === "UTILITY"
+                            ? "bg-sky-100 text-sky-800"
+                            : "bg-purple-100 text-purple-800"
+                        }`}>
+                          {selectedTemplate.category}
+                        </span>
+                        <span>&bull;</span>
+                        <span className="font-mono text-zinc-600">{selectedTemplate.language}</span>
+                        {selectedTemplate.id && (
+                          <>
+                            <span>&bull;</span>
+                            <span className="text-zinc-500 font-mono text-[10px]">Meta ID: {selectedTemplate.id}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Message Body & Dynamic Tags */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider">
-                      {channel === "WHATSAPP" ? "WhatsApp Message Template / Copy" : "SMS Message Body"}
+                      {channel === "WHATSAPP" ? "WhatsApp Message Body / Copy" : "SMS Message Body"}
                     </label>
                     <div className="flex items-center gap-1">
                       <span className="text-[11px] text-zinc-400">Insert tag:</span>
@@ -504,6 +658,24 @@ export default function AdminBroadcastPage() {
                       >
                         {"{name}"}
                       </button>
+                      {channel === "WHATSAPP" && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertToken("{{1}}")}
+                            className="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-mono text-[10px] transition-colors cursor-pointer font-bold border border-emerald-200/60"
+                          >
+                            {"{{1}}"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertToken("{{2}}")}
+                            className="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-mono text-[10px] transition-colors cursor-pointer font-bold border border-emerald-200/60"
+                          >
+                            {"{{2}}"}
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -513,7 +685,7 @@ export default function AdminBroadcastPage() {
                     onChange={(e) => setMessageBody(e.target.value)}
                     placeholder={channel === "WHATSAPP" ? "Type your official WhatsApp announcement..." : "Type your official SMS announcement..."}
                     maxLength={channel === "WHATSAPP" ? 1024 : undefined}
-                    className="w-full p-3.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87] leading-relaxed"
+                    className="w-full p-3.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87] leading-relaxed font-normal"
                     required
                   />
 
@@ -610,29 +782,52 @@ export default function AdminBroadcastPage() {
                 {channel === "WHATSAPP" ? (
                   <div className="bg-[#0b141a] rounded-xl overflow-hidden border border-zinc-800 shadow-md">
                     {/* WhatsApp Chat Header */}
-                    <div className="bg-[#1f2c34] px-4 py-3 flex items-center gap-3 border-b border-[#2a3942]">
-                      <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-xs">
-                        LJK
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-xs text-zinc-100 truncate">LJK Marketing Agency</span>
-                          <svg className="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
+                    <div className="bg-[#1f2c34] px-4 py-3 flex items-center justify-between border-b border-[#2a3942]">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+                          LJK
                         </div>
-                        <span className="text-[10px] text-zinc-400">Official Business Account</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-xs text-zinc-100 truncate">LJK Marketing Agency</span>
+                            <svg className="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-[10px] text-zinc-400">Official Business Account</span>
+                        </div>
                       </div>
+                      {selectedTemplateName && (
+                        <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                          HSM Active
+                        </span>
+                      )}
                     </div>
 
                     {/* WhatsApp Message Body */}
                     <div className="p-4 space-y-3 bg-[radial-gradient(#1f2c34_1px,transparent_1px)] [background-size:16px_16px] min-h-48 flex flex-col justify-between">
-                      <div className="bg-[#005c4b] text-zinc-100 rounded-xl rounded-tr-xs p-3.5 text-xs leading-relaxed shadow-sm border border-[#02735e] max-w-[90%] self-end">
-                        <div>
-                          {messageBody.replace("{first_name}", "Client").replace("{name}", "Valued Client") || (
+                      <div className="bg-[#005c4b] text-zinc-100 rounded-xl rounded-tr-xs p-3.5 text-xs leading-relaxed shadow-sm border border-[#02735e] max-w-[90%] self-end space-y-1.5">
+                        {templateHeader && (
+                          <div className="font-bold text-zinc-100 text-xs border-b border-[#02735e]/60 pb-1">
+                            {templateHeader}
+                          </div>
+                        )}
+                        <div className="whitespace-pre-wrap">
+                          {messageBody
+                            .replace(/{first_name}/g, "Client")
+                            .replace(/{name}/g, "Valued Client")
+                            .replace(/\{\{1\}\}/g, "Client")
+                            .replace(/\{\{2\}\}/g, "Exclusive Offer")
+                            .replace(/\{\{3\}\}/g, "Special Discount")
+                            .replace(/\{\{4\}\}/g, "Today") || (
                             <span className="text-zinc-300 italic">Type your WhatsApp announcement to preview...</span>
                           )}
                         </div>
+                        {templateFooter && (
+                          <div className="text-[10px] text-zinc-300/80 border-t border-[#02735e]/60 pt-1">
+                            {templateFooter}
+                          </div>
+                        )}
                         <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-zinc-300">
                           <span>Just now</span>
                           <span className="text-sky-400 font-bold">✓✓</span>
@@ -640,7 +835,7 @@ export default function AdminBroadcastPage() {
                       </div>
 
                       <div className="text-[10px] text-zinc-400 text-center font-mono pt-2">
-                        Dispatched via Meta WhatsApp Cloud API
+                        {selectedTemplateName ? `Meta HSM Template: ${selectedTemplateName}` : "Dispatched via Meta WhatsApp Cloud API"}
                       </div>
                     </div>
                   </div>
