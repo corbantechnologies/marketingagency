@@ -336,7 +336,7 @@ export default function AdminBusinessesPage() {
                         )}
                       </div>
                       <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">
-                        Exempt this business (e.g. <strong>Corban Technologies LTD</strong> or core strategic partners) from recurring subscription renewals and payment paywalls.
+                        Exempt this business from recurring subscription renewals and payment paywalls.
                       </p>
                     </div>
                   </div>
