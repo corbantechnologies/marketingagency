@@ -18,8 +18,13 @@ import {
   getAdminSenderIdQueue,
   reviewAdminSenderId,
   ReviewSenderIdPayload,
+  getBusinessEntitlements,
+  updateBusinessEntitlements,
+  BusinessEntitlementsData,
+  BusinessEntitlementsPayload,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
+
 
 /**
  * Query hook to list businesses (Admins view all; owners view only their own)
@@ -213,5 +218,38 @@ export function useReviewAdminSenderId() {
     },
   });
 }
+
+/**
+ * Query hook to fetch business entitlement details (Admin only)
+ */
+export function useFetchBusinessEntitlements(reference?: string | null) {
+  const authConfig = useAxiosAuth();
+
+  return useQuery<BusinessEntitlementsData>({
+    queryKey: ["business-entitlements", reference],
+    queryFn: () => getBusinessEntitlements(reference!, authConfig),
+    enabled: Boolean(reference && authConfig.headers.Authorization),
+    staleTime: 10_000,
+  });
+}
+
+/**
+ * Mutation hook to update business entitlements & lifetime access (Admin only)
+ */
+export function useUpdateBusinessEntitlements() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: ({ reference, payload }: { reference: string; payload: BusinessEntitlementsPayload }) =>
+      updateBusinessEntitlements(reference, payload, authConfig),
+    onSuccess: (res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business-entitlements", vars.reference] });
+      queryClient.invalidateQueries({ queryKey: ["business", vars.reference] });
+    },
+  });
+}
+
 
 

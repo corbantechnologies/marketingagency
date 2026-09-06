@@ -54,6 +54,8 @@ export interface Business {
   reference: string;
   code: string;
   is_active: boolean;
+  is_lifetime_access?: boolean;
+  feature_overrides?: Record<string, any>;
   created_at: string;
   updated_at: string;
 }
@@ -461,5 +463,54 @@ export const reviewAdminSenderId = async (
   );
   return response.data;
 };
+
+export interface BusinessEntitlementsPayload {
+  is_lifetime_access?: boolean;
+  feature_overrides?: Record<string, any>;
+  active_plan?: string | null;
+}
+
+export interface BusinessEntitlementsData {
+  business_name: string;
+  business_reference: string;
+  is_lifetime_access: boolean;
+  feature_overrides: Record<string, any>;
+  active_plan: any;
+  plan_renewal_date: string | null;
+  available_plans: any[];
+}
+
+/**
+ * Fetch business entitlement & lifetime status (Admin only)
+ * Endpoint: GET /api/v1/businesses/{reference}/entitlements/
+ */
+export const getBusinessEntitlements = async (
+  reference: string,
+  config?: AxiosConfig
+): Promise<BusinessEntitlementsData> => {
+  const response: AxiosResponse<BusinessEntitlementsData> = await apiActions.get(
+    `/api/v1/businesses/${reference}/entitlements/`,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Update business entitlement, lifetime bypass, and feature overrides (Admin only)
+ * Endpoint: PATCH /api/v1/businesses/{reference}/entitlements/
+ */
+export const updateBusinessEntitlements = async (
+  reference: string,
+  payload: BusinessEntitlementsPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; business: Business }> => {
+  const response: AxiosResponse<{ success: boolean; message: string; business: Business }> = await apiActions.patch(
+    `/api/v1/businesses/${reference}/entitlements/`,
+    payload,
+    config
+  );
+  return response.data;
+};
+
 
 
