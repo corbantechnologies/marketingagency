@@ -38,7 +38,15 @@ export default function BusinessDashboardPage() {
   }, [campaignsData]);
 
   const totalSmsSent = useMemo(() => {
-    return campaigns.reduce((acc: number, c: any) => acc + (Number(c.recipient_count) || 0), 0);
+    return campaigns
+      .filter((c: any) => c.channel !== "WHATSAPP")
+      .reduce((acc: number, c: any) => acc + (Number(c.recipient_count) || 0), 0);
+  }, [campaigns]);
+
+  const totalWhatsAppSent = useMemo(() => {
+    return campaigns
+      .filter((c: any) => c.channel === "WHATSAPP")
+      .reduce((acc: number, c: any) => acc + (Number(c.recipient_count) || 0), 0);
   }, [campaigns]);
 
   const contacts = useMemo(() => {
@@ -67,11 +75,17 @@ export default function BusinessDashboardPage() {
       {/* Welcome & Quick Action Card */}
       <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs">
         <div className="min-w-0">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-[11px] font-semibold text-[#581c87] mb-2 max-w-full truncate">
-            Workspace: {primaryBusiness ? primaryBusiness.name : "Default Workspace"}
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-[11px] font-semibold text-[#581c87]">
+              Workspace: {primaryBusiness ? primaryBusiness.name : "Default Workspace"}
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-semibold text-emerald-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+              Verified Meta Tech Provider
+            </div>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
-            SMS &amp; Customer Messaging Dashboard
+            WhatsApp &amp; SMS Customer Messaging Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-zinc-600 mt-1 break-words">
             Logged in as <span className="font-medium text-zinc-900">{session?.user?.email}</span> &bull; Account Code:{" "}
@@ -81,17 +95,26 @@ export default function BusinessDashboardPage() {
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 lg:pt-0">
           <Link
+            href="/business/broadcast"
+            className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+            <span>Launch WhatsApp Broadcast</span>
+          </Link>
+          <Link
             href="/business/sms/broadcast"
-            className="py-2.5 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+            className="py-2.5 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
-            <span>Launch Bulk SMS</span>
+            <span>Bulk SMS</span>
           </Link>
           <Link
             href="/business/billing"
-            className="py-2.5 px-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs sm:text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs sm:text-sm font-semibold rounded-lg transition-colors cursor-pointer"
           >
             Buy Credits
           </Link>
@@ -167,12 +190,12 @@ export default function BusinessDashboardPage() {
           </div>
         </div>
 
-        {/* Metric 2: Total SMS Sent */}
+        {/* Metric 2: Total Messages Sent */}
         <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs flex flex-col justify-between hover:border-purple-200 transition-colors">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                Total SMS Sent
+                Total Messages Sent
               </span>
               <Link href="/business/reports" className="text-xs text-[#581c87] hover:underline font-semibold">
                 Reports &rarr;
@@ -183,13 +206,19 @@ export default function BusinessDashboardPage() {
                 <span className="text-zinc-400 text-xl font-normal">Loading...</span>
               ) : (
                 <>
-                  {totalSmsSent.toLocaleString()} <span className="text-sm font-normal text-zinc-500">Messages</span>
+                  {(totalSmsSent + totalWhatsAppSent).toLocaleString()}{" "}
+                  <span className="text-sm font-normal text-zinc-500">Total</span>
                 </>
               )}
             </div>
           </div>
-          <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center gap-1.5">
-            <span className="text-purple-600 font-semibold">&bull; {campaigns.length}</span> campaign{campaigns.length === 1 ? "" : "s"} dispatched
+          <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center justify-between">
+            <span className="text-emerald-700 font-semibold flex items-center gap-1">
+              <span>💬</span> {totalWhatsAppSent.toLocaleString()} WhatsApp
+            </span>
+            <span className="text-purple-700 font-semibold flex items-center gap-1">
+              <span>📱</span> {totalSmsSent.toLocaleString()} SMS
+            </span>
           </div>
         </div>
 
@@ -198,18 +227,18 @@ export default function BusinessDashboardPage() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                Handset Delivery Rate
+                Delivery &amp; Read Rate
               </span>
-              <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">
-                Tier-1 Direct
+              <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold flex items-center gap-1">
+                <span className="text-sky-500 font-bold">✓✓</span> Blue Ticks
               </span>
             </div>
             <div className="text-3xl font-bold text-emerald-600 mt-2">
-              99.4%
+              98.4%
             </div>
           </div>
           <div className="text-[11px] text-zinc-500 mt-3 pt-3 border-t border-zinc-100 flex items-center gap-1.5">
-            <span className="text-emerald-600 font-semibold">~1.8s</span> average handset delivery speed
+            <span className="text-emerald-600 font-semibold">Meta Cloud API</span> &bull; Sub-2s delivery
           </div>
         </div>
 

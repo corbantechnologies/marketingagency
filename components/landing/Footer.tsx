@@ -78,8 +78,18 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/industries" className="hover:text-purple-300 transition-colors">
+                  Industries &amp; Use Cases
+                </Link>
+              </li>
+              <li>
                 <Link href="/guide" className="hover:text-purple-300 transition-colors">
                   Platform User Guide &amp; Nav
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs" className="hover:text-purple-300 transition-colors">
+                  Developer REST API Docs
                 </Link>
               </li>
               <li>
