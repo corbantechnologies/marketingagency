@@ -15,13 +15,14 @@ export function FeaturesContent() {
         </svg>
       ),
       title: "Meta WhatsApp Cloud API Engine",
-      badge: "98% Open Rate",
+      badge: "Verified Tech Provider",
       description:
-        "Official Meta Cloud API integration for Kenya and East Africa. Broadcast high-resolution promotional image flyers, PDF catalogs, and interactive CTA buttons directly to your customer's WhatsApp inbox.",
+        "Official Meta Tech Provider integration for Kenya and East Africa. Broadcast high-resolution promotional image flyers, PDF catalogs, and interactive CTA buttons directly to your customer's WhatsApp inbox with 2,000+ daily conversations.",
       highlights: [
+        "Verified Meta Tech Provider with direct carrier throughput",
         "Interactive buttons ([Buy Now], [Chat on WhatsApp])",
         "Real-time Blue Ticks delivery & read reports (READ ✓✓)",
-        "Zero telecom alphanumeric registration delay",
+        "Multi-tenant WABA provisioning & Embedded Signup",
       ],
     },
     {

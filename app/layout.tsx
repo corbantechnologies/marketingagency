@@ -33,12 +33,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ljkmarketingagency.co.ke"),
   title: {
-    default: "LJK Marketing Agency | Official Meta WhatsApp Business API & Bulk SMS Gateway Kenya",
+    default: "LJK Marketing Agency | Verified Meta Tech Provider & Bulk SMS Gateway Kenya",
     template: "%s | LJK Marketing Agency",
   },
   description:
-    "Kenya's premier WhatsApp-First marketing platform and Tier-1 Bulk SMS gateway. Launch interactive WhatsApp flyer broadcasts, one-tap CTA campaigns, and high-deliverability SMS with real-time Blue Ticks and unified wallet billing.",
+    "Kenya's premier Verified Meta Tech Provider and WhatsApp-First marketing platform. Launch interactive WhatsApp flyer broadcasts, one-tap CTA campaigns, and high-deliverability SMS with real-time Blue Ticks and unified wallet billing.",
   keywords: [
+    "Verified Meta Tech Provider",
+    "Meta Tech Provider Kenya",
     "WhatsApp Business API Kenya",
     "Meta WhatsApp Marketing Kenya",
     "Bulk WhatsApp Sender Nairobi",

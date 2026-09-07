@@ -18,7 +18,7 @@ export function Services() {
       deliverables: [
         "Rich media broadcasts (HD image flyers, PDFs & catalogs)",
         "Interactive one-tap CTA buttons ([Shop Now], [Chat on WhatsApp])",
-        "Official Meta Cloud API under verified business profile",
+        "Verified Meta Tech Provider status with 2,000+ daily conversation tiers",
         "Live Blue Ticks delivery & read status telemetry (READ ✓✓)",
       ],
       icon: (

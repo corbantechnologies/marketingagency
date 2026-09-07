@@ -40,7 +40,7 @@ export function Hero() {
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-emerald-50 border border-emerald-200 text-xs font-medium text-emerald-800 mb-6">
               <span className="w-2 h-2 rounded bg-emerald-600 inline-block animate-pulse" />
-              <span>Official Meta WhatsApp Business Cloud API & Tier-1 Bulk SMS Gateway</span>
+              <span>Verified Meta Tech Provider • Official WhatsApp Cloud API & Tier-1 Bulk SMS</span>
             </div>
 
             {/* Main H1 Headline */}
