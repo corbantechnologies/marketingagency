@@ -474,7 +474,7 @@ function BroadcastComposerForm({
                     LJK Marketing Agency
                   </span>
                   <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">
-                    Corban Tech LTD &bull; Meta Verified
+                    Meta Verified
                   </span>
                 </div>
               ) : (
