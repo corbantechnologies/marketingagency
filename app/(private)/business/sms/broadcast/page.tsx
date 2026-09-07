@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo, useRef, Suspense } from "react";
+import React, { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -65,13 +65,11 @@ function BroadcastComposerForm({
     return groups[0]?.reference || "";
   }, [preselectedGroupRef, groups]);
 
+  // Default to WhatsApp unless explicitly instructed otherwise
   const initialChannel: "SMS" | "WHATSAPP" = useMemo(() => {
-    if (preselectedChannel?.toUpperCase() === "WHATSAPP") return "WHATSAPP";
-    if (preselectedTemplateRef && waTemplates.some((t: any) => t.name === preselectedTemplateRef)) {
-      return "WHATSAPP";
-    }
-    return "SMS";
-  }, [preselectedChannel, preselectedTemplateRef, waTemplates]);
+    if (preselectedChannel?.toUpperCase() === "SMS") return "SMS";
+    return "WHATSAPP";
+  }, [preselectedChannel]);
 
   const initialMessage = useMemo(() => {
     if (preselectedTemplateRef) {
@@ -94,6 +92,28 @@ function BroadcastComposerForm({
   const [selectedGroupRef, setSelectedGroupRef] = useState<string>(initialGroupRef);
   const [manualNumbers, setManualNumbers] = useState("");
   const [message, setMessage] = useState(initialMessage);
+  const [selectedWaTemplateName, setSelectedWaTemplateName] = useState<string>("");
+
+  // Automatically preselect approved Meta template when on WhatsApp
+  useEffect(() => {
+    if (channel === "WHATSAPP" && !message && waTemplates.length > 0) {
+      const preferred =
+        waTemplates.find((t: any) => t.name === "general_business_promo" && t.status === "APPROVED") ||
+        waTemplates.find((t: any) => t.status === "APPROVED") ||
+        waTemplates[0];
+      if (preferred) {
+        setSelectedWaTemplateName(preferred.name);
+        const bodyComp = preferred.components?.find((c: any) => c.type === "BODY");
+        const text = bodyComp?.text || "";
+        if (text) {
+          setMessage(text);
+          if (!campaignName) {
+            setCampaignName(`WhatsApp - ${preferred.name}`);
+          }
+        }
+      }
+    }
+  }, [channel, waTemplates, message, campaignName]);
 
   const isWhatsApp = channel === "WHATSAPP";
 
@@ -564,8 +584,10 @@ function BroadcastComposerForm({
                         Meta Template:
                       </span>
                       <select
+                        value={selectedWaTemplateName}
                         onChange={(e) => {
                           const val = e.target.value;
+                          setSelectedWaTemplateName(val);
                           if (!val) return;
                           const tpl = waTemplates.find((t: any) => t.name === val);
                           if (tpl) {
@@ -579,7 +601,6 @@ function BroadcastComposerForm({
                           }
                         }}
                         className="py-1 px-2.5 rounded border border-emerald-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 cursor-pointer w-full sm:w-auto"
-                        defaultValue=""
                       >
                         <option value="">Choose an approved Meta template...</option>
                         {waTemplates.map((t: any) => (

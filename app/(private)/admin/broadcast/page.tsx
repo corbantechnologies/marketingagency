@@ -27,7 +27,7 @@ export default function AdminBroadcastPage() {
   const [activeTab, setActiveTab] = useState<"DISPATCHER" | "TEMPLATES">("DISPATCHER");
 
   // --- Dispatcher Channel & Form State ---
-  const [channel, setChannel] = useState<"SMS" | "WHATSAPP">("SMS");
+  const [channel, setChannel] = useState<"SMS" | "WHATSAPP">("WHATSAPP");
   const [campaignName, setCampaignName] = useState("LJK Platform Announcement");
   const [senderId, setSenderId] = useState("LJK_AGENCY");
   const [targetAudience, setTargetAudience] = useState<"ALL_BUSINESSES" | "ALL_USERS" | "MANUAL">("ALL_BUSINESSES");
@@ -201,6 +201,18 @@ export default function AdminBroadcastPage() {
     setTemplateFooter("");
     setMessageBody("Hello {first_name}, this is an official announcement from LJK Marketing Agency.");
   };
+
+  // Auto-select approved Meta template when in WhatsApp channel
+  useEffect(() => {
+    if (channel === "WHATSAPP" && !selectedTemplateName && approvedTemplates.length > 0) {
+      const defaultTpl =
+        approvedTemplates.find((t) => t.name === "general_business_promo") ||
+        approvedTemplates[0];
+      if (defaultTpl) {
+        handleSelectTemplate(defaultTpl.name);
+      }
+    }
+  }, [channel, approvedTemplates, selectedTemplateName]);
 
   // Detect {{1}}, {{2}} in template body
   const detectedVariables = useMemo(() => {
