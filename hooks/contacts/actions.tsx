@@ -100,7 +100,11 @@ export const useBulkImportContacts = () => {
 
   return useMutation({
     mutationFn: async (payload: BulkImportPayload) => {
-      const config = await getFreshAuthHeaders();
+      const customHeaders: Record<string, string> = {};
+      if (payload.business_reference) {
+        customHeaders["X-Business-Reference"] = payload.business_reference;
+      }
+      const config = await getFreshAuthHeaders(customHeaders);
       return bulkImportContacts(payload, config);
     },
     onSuccess: () => {

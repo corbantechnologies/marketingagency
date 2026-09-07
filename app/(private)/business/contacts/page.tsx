@@ -449,6 +449,7 @@ export default function BusinessContactsPage() {
 
       bulkImportMutation.mutate(
         {
+          business_reference: activeBusiness?.reference,
           default_group_reference: uploadTargetGroup || undefined,
           contacts: parsedContacts,
         },
