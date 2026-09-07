@@ -923,13 +923,16 @@ function BroadcastComposerForm({
           </form>
         </div>
 
-        {/* Right 4 cols: Live Smartphone Mockup & Best Practices */}
-        <div className="lg:col-span-4 space-y-6">
+        {/* Right 4 cols: Live Smartphone Mockup & Best Practices (Sticky on Desktop) */}
+        <div className="lg:col-span-4 lg:self-start lg:sticky lg:top-4 space-y-6 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {/* Mobile Handset Preview */}
           <div className="bg-zinc-900 text-white rounded-2xl p-5 shadow-xl border-4 border-zinc-800">
             <div className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-3 flex items-center justify-between">
               <span>{isWhatsApp ? "WhatsApp Handset Preview" : "SMS Handset Preview"}</span>
-              <span className={`w-2 h-2 rounded-full ${isWhatsApp ? "bg-emerald-400" : "bg-purple-400"} animate-pulse`} />
+              <span className="text-[9px] bg-emerald-950 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-800/60 flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${isWhatsApp ? "bg-emerald-400" : "bg-purple-400"} animate-pulse`} />
+                Live Sync
+              </span>
             </div>
 
             {isWhatsApp ? (
