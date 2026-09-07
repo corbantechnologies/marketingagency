@@ -35,10 +35,10 @@ export default function NotFound() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/business/dashboard"
+              href="/auth/login"
               className="w-full sm:w-auto py-2.5 px-5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors shadow-xs"
             >
-              Go to Dashboard
+              Sign In to Workspace
             </Link>
 
             <Link

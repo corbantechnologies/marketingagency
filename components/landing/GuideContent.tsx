@@ -44,7 +44,7 @@ export function GuideContent() {
       badge: "CA Kenya Compliance",
       summary:
         "Replace random phone numbers with your registered brand name (e.g. YOURBRAND) on recipient handsets. We handle simultaneous submission to Safaricom, Airtel, and Telkom Kenya.",
-      keyActionLink: { label: "Go to Sender IDs Portal", href: "/business/sender-ids" },
+      keyActionLink: { label: "Sign In to Register Sender ID", href: "/auth/login" },
       highlights: [
         "Header must be 1 to 11 characters (alphanumeric, no symbols).",
         "Provide your Business Certificate of Incorporation and KRA Tax PIN numbers.",
@@ -61,7 +61,7 @@ export function GuideContent() {
       badge: "Audience Management",
       summary:
         "Import thousands of customers in seconds using our 1-Click CSV/Excel upload wizard. Segment your audience into targeted buckets like VIP, Nairobi Branch, or Suppliers.",
-      keyActionLink: { label: "Manage Contacts & Groups", href: "/business/contacts" },
+      keyActionLink: { label: "Sign In to Manage Contacts", href: "/auth/login" },
       highlights: [
         "Spreadsheet Importer automatically sanitizes Kenyan phone numbers to international format (+2547XX / +2541XX).",
         "Auto-column mapping detects First Name, Last Name, Phone Number, and Email.",
@@ -78,7 +78,7 @@ export function GuideContent() {
       badge: "Instant Top-Up",
       summary:
         "Fund your dual-channel SMS and Email credit wallets anytime in KES using Safaricom Daraja M-PESA STK push. Credits activate immediately and never expire.",
-      keyActionLink: { label: "Open Billing Portal", href: "/business/billing" },
+      keyActionLink: { label: "Sign In to Top Up Credits", href: "/auth/login" },
       highlights: [
         "Enter your Safaricom phone number and amount in KES.",
         "An instant STK PIN prompt appears on your handset; enter your M-PESA PIN to complete.",
@@ -95,7 +95,7 @@ export function GuideContent() {
       badge: "Omnichannel Engine",
       summary:
         "Switch seamlessly between Meta WhatsApp Business (for rich image flyers, CTA buttons, and 98% open rates) and Tier-1 Bulk SMS (for universal mobile coverage). The unified wallet automatically deducts 2 Credits for WhatsApp and 1 Credit for SMS.",
-      keyActionLink: { label: "Open Campaign Composer", href: "/business/sms/broadcast" },
+      keyActionLink: { label: "Sign In to Launch Campaigns", href: "/auth/login" },
       highlights: [
         "Select your channel: Meta WhatsApp Business API or Tier-1 Bulk SMS.",
         "WhatsApp campaigns support rich image banners, up to 1,024 characters, and interactive CTA buttons ([Shop Now], [Chat on WhatsApp]).",
@@ -113,7 +113,7 @@ export function GuideContent() {
       badge: "Analytics & Telemetry",
       summary:
         "Track message delivery performance in real-time. For WhatsApp campaigns, see exact Read timestamps with Blue Ticks (READ ✓✓). For SMS, view telco handset delivery receipts (DLR).",
-      keyActionLink: { label: "View Delivery Reports", href: "/business/reports" },
+      keyActionLink: { label: "Sign In to View Reports", href: "/auth/login" },
       highlights: [
         "Real-time WhatsApp status updates: QUEUED → SENT → DELIVERED → READ (Blue Ticks ✓✓).",
         "Inspect telecom statuses: DELIVERED, SENT, FAILED, or UserInBlacklist (DND).",

@@ -248,10 +248,10 @@ $data = json_decode(curl_exec($ch), true);
               API Gateway v1.0 • Meta Tech Provider Verified
             </span>
             <Link
-              href="/business/developer"
+              href="/auth/login"
               className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
             >
-              <span>Get API Keys</span>
+              <span>Sign In for API Keys</span>
               <span>&rarr;</span>
             </Link>
           </div>
@@ -653,10 +653,10 @@ $data = json_decode(curl_exec($ch), true);
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <Link
-                href="/business/developer"
+                href="/auth/login"
                 className="px-5 py-2.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-bold rounded-xl transition-all shadow-md"
               >
-                Open Developer Portal &rarr;
+                Sign In to Developer Portal &rarr;
               </Link>
               <Link
                 href="/contact"
