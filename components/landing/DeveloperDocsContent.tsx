@@ -284,11 +284,10 @@ $data = json_decode(curl_exec($ch), true);
             <button
               type="button"
               onClick={() => setActiveTab("single")}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
-                activeTab === "single"
-                  ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "single"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
             >
               <span>Single Dispatch</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">POST</span>
@@ -296,11 +295,10 @@ $data = json_decode(curl_exec($ch), true);
             <button
               type="button"
               onClick={() => setActiveTab("batch")}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
-                activeTab === "batch"
-                  ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "batch"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
             >
               <span>Batch Dispatch</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">POST</span>
@@ -308,11 +306,10 @@ $data = json_decode(curl_exec($ch), true);
             <button
               type="button"
               onClick={() => setActiveTab("status")}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
-                activeTab === "status"
-                  ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "status"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
             >
               <span>Delivery &amp; Blue Ticks</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">GET</span>
@@ -320,11 +317,10 @@ $data = json_decode(curl_exec($ch), true);
             <button
               type="button"
               onClick={() => setActiveTab("balance")}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
-                activeTab === "balance"
-                  ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "balance"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
             >
               <span>Wallet Balance</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">GET</span>
@@ -336,11 +332,10 @@ $data = json_decode(curl_exec($ch), true);
             <button
               type="button"
               onClick={() => setActiveTab("billing")}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
-                activeTab === "billing"
-                  ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "billing"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
             >
               <span>Billing &amp; Auto-Refunds</span>
               <span className="text-[10px] font-mono text-amber-400">Ledger</span>
@@ -348,11 +343,10 @@ $data = json_decode(curl_exec($ch), true);
             <button
               type="button"
               onClick={() => setActiveTab("sandbox")}
-              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
-                activeTab === "sandbox"
-                  ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "sandbox"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
             >
               <span>Developer Sandbox</span>
               <span className="text-[10px] font-mono text-purple-400">Mock API</span>
@@ -384,11 +378,10 @@ $data = json_decode(curl_exec($ch), true);
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                        activeTab === "single" || activeTab === "batch"
-                          ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
-                          : "bg-blue-950 text-blue-400 border border-blue-800"
-                      }`}
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${activeTab === "single" || activeTab === "batch"
+                        ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
+                        : "bg-blue-950 text-blue-400 border border-blue-800"
+                        }`}
                     >
                       {activeTab === "single" || activeTab === "batch" ? "POST" : "GET"}
                     </span>
@@ -414,11 +407,10 @@ $data = json_decode(curl_exec($ch), true);
                       key={lang}
                       type="button"
                       onClick={() => setSelectedLang(lang)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
-                        selectedLang === lang
-                          ? "bg-purple-900/60 text-purple-200 border border-purple-700/50"
-                          : "text-zinc-400 hover:text-white"
-                      }`}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${selectedLang === lang
+                        ? "bg-purple-900/60 text-purple-200 border border-purple-700/50"
+                        : "text-zinc-400 hover:text-white"
+                        }`}
                     >
                       {lang}
                     </button>
@@ -653,7 +645,7 @@ $data = json_decode(curl_exec($ch), true);
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <Link
-                href="/auth/login"
+                href="/auth/login?callbackUrl=/business/developer"
                 className="px-5 py-2.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-bold rounded-xl transition-all shadow-md"
               >
                 Sign In to Developer Portal &rarr;

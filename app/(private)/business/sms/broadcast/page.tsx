@@ -226,12 +226,30 @@ function BroadcastComposerForm({
           router.push("/business/reports");
         },
         onError: (err: any) => {
-          const errMsg =
-            err?.response?.data?.credits ||
-            err?.response?.data?.target_group?.[0] ||
-            err?.response?.data?.sender_id?.[0] ||
-            err?.response?.data?.error ||
-            "Failed to launch campaign";
+          const data = err?.response?.data;
+          let errMsg = "Failed to launch campaign";
+          if (typeof data === "string") {
+            errMsg = data;
+          } else if (data && typeof data === "object") {
+            const firstVal =
+              data.credits ||
+              data.manual_numbers ||
+              data.target_group ||
+              data.sender_id ||
+              data.message_template ||
+              data.channel ||
+              data.name ||
+              data.error ||
+              data.detail ||
+              Object.values(data)[0];
+            if (Array.isArray(firstVal)) {
+              errMsg = firstVal[0];
+            } else if (typeof firstVal === "string") {
+              errMsg = firstVal;
+            } else if (firstVal) {
+              errMsg = JSON.stringify(firstVal);
+            }
+          }
           toast.error(errMsg);
         },
       }
@@ -555,6 +573,7 @@ function BroadcastComposerForm({
                             const text = bodyComp?.text || "";
                             if (text) {
                               setMessage(text);
+                              setCampaignName(`WhatsApp - ${tpl.name}`);
                               toast.success(`Loaded Meta template: ${tpl.name}`);
                             }
                           }

@@ -16,7 +16,7 @@ export function BusinessNavbar({
 }: BusinessNavbarProps) {
   const { data: walletsData } = useFetchBusinessWallets();
 
-  const smsBalance = useMemo(() => {
+  const creditBalance = useMemo(() => {
     if (!walletsData) return 0;
     const list = Array.isArray(walletsData)
       ? walletsData
@@ -70,28 +70,28 @@ export function BusinessNavbar({
         </Link>
       </div>
 
-      {/* Right side: Quick Action / SMS Balance */}
+      {/* Right side: Quick Action / Credit Balance */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <Link
           href="/business/billing"
           className="inline-flex items-center gap-1.5 py-1.5 px-2.5 sm:px-3 rounded-md bg-purple-50 hover:bg-purple-100 text-[#581c87] text-xs font-semibold border border-purple-200 transition-colors"
-          title="View SMS Balance & Pricing"
+          title="View Credit Balance & Top Up"
         >
           <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
           <span className="hidden xs:inline">Balance:</span>
-          <span className="font-bold">{smsBalance.toLocaleString()} SMS</span>
+          <span className="font-bold">{creditBalance.toLocaleString()} Credits</span>
         </Link>
 
         <Link
-          href="/business/sms/broadcast"
+          href="/business/broadcast"
           className="inline-flex items-center gap-1.5 py-1.5 px-2.5 sm:px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-md transition-colors shadow-xs"
         >
           <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
-          <span className="hidden sm:inline">Send SMS</span>
+          <span className="hidden sm:inline">New Broadcast</span>
         </Link>
       </div>
     </header>

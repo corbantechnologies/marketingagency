@@ -159,7 +159,7 @@ export default function BusinessDashboardPage() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                Available SMS Balance
+                Available Credits
               </span>
               <Link href="/business/billing" className="text-xs text-[#581c87] hover:underline font-semibold">
                 + Top up
