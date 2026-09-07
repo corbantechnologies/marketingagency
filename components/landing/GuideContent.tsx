@@ -136,7 +136,7 @@ export function GuideContent() {
         "Generate secure API keys from your business portal.",
         "REST endpoints for sending single transactional OTPs or large broadcast campaigns.",
         "Real-time webhook callbacks for instant delivery status updates (DLR).",
-        "Direct SMPP v3.4 interconnect available for enterprise banking and SACCOs.",
+        "Direct SMPP v3.4 interconnect available for enterprise banking and financial cooperatives.",
       ],
       tips: "Sample code snippets in Python, Node.js, PHP, and cURL are available in the Developer API tab.",
     },

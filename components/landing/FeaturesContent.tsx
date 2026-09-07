@@ -136,7 +136,7 @@ export function FeaturesContent() {
       sampleSMS: "Hi Sarah, your order #8921 from ShopKenya has been dispatched! Track delivery here: https://trk.co.ke/8921",
     },
     {
-      name: "Fintech, SACCOs & Microfinance",
+      name: "Fintech, Banking & Financial Institutions",
       icon: "💳",
       headline: "Secure, low-latency OTPs and automated loan repayment alerts.",
       points: [
