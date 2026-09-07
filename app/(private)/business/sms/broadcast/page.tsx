@@ -129,6 +129,7 @@ function BroadcastComposerForm({
   const [manualNumbers, setManualNumbers] = useState("");
   const [message, setMessage] = useState(initialMessage);
   const [selectedWaTemplateName, setSelectedWaTemplateName] = useState<string>("");
+  const [selectedSmsTemplateRef, setSelectedSmsTemplateRef] = useState<string>("");
   const [customWebsiteLink, setCustomWebsiteLink] = useState<string>(() => {
     if (activeBusiness?.website) return activeBusiness.website;
     if (activeBusiness?.phone) {
@@ -148,9 +149,9 @@ function BroadcastComposerForm({
     return "https://yourbrand.co.ke";
   }, [customWebsiteLink, activeBusiness]);
 
-  // Automatically preselect approved Meta template when on WhatsApp
+  // Automatically preselect approved Meta template when on WhatsApp (unless user explicitly chose Free-form)
   useEffect(() => {
-    if (channel === "WHATSAPP" && !message && waTemplates.length > 0) {
+    if (channel === "WHATSAPP" && !message && waTemplates.length > 0 && selectedWaTemplateName !== "FREEFORM") {
       const preferred =
         waTemplates.find((t: any) => t.name === "universal_business_promo" && t.status === "APPROVED") ||
         waTemplates.find((t: any) => t.name === "general_business_promo" && t.status === "APPROVED") ||
@@ -169,7 +170,7 @@ function BroadcastComposerForm({
         }
       }
     }
-  }, [channel, waTemplates, message, campaignName]);
+  }, [channel, waTemplates, message, campaignName, selectedWaTemplateName]);
 
   const isWhatsApp = channel === "WHATSAPP";
 
@@ -459,55 +460,40 @@ function BroadcastComposerForm({
               </div>
             </div>
 
-            {/* Campaign Title & Sender ID Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5">
-                  Campaign Title
-                </label>
-                <input
-                  type="text"
-                  value={campaignName}
-                  onChange={(e) => setCampaignName(e.target.value)}
-                  placeholder={isWhatsApp ? "e.g. VIP Customer WhatsApp Promo" : "e.g. Weekend Flash Sale Promo"}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5">
-                  {isWhatsApp ? "WhatsApp Business Identity" : "Sender ID Header"}
-                </label>
-                {isWhatsApp ? (
-                  <div className="w-full px-3.5 py-2.5 rounded-lg border border-emerald-200 bg-emerald-50/60 text-xs text-emerald-900 font-medium flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 font-semibold">
-                      <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                      </svg>
-                      LJK Marketing Agency
-                    </span>
-                    <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">
-                      Corban Tech LTD
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={senderId}
-                      onChange={(e) => setSenderId(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
-                    >
-                      {activeBusiness?.sender_id && activeBusiness.sender_id_status === "APPROVED" && (
-                        <option value={activeBusiness.sender_id}>
-                          {activeBusiness.sender_id} (Official Verified)
-                        </option>
-                      )}
-                      <option value="LJK_AGENCY">LJK_AGENCY (Tier-1 Shared Route)</option>
-                      <option value="PROMOTIONAL">PROMOTIONAL (Standard Bulk)</option>
-                    </select>
-                  </div>
-                )}
-              </div>
+            {/* Sender ID Header / WhatsApp Business Identity */}
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5">
+                {isWhatsApp ? "WhatsApp Business Identity" : "Sender ID Header"}
+              </label>
+              {isWhatsApp ? (
+                <div className="w-full px-3.5 py-2.5 rounded-lg border border-emerald-200 bg-emerald-50/60 text-xs text-emerald-900 font-medium flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 font-semibold">
+                    <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                    </svg>
+                    LJK Marketing Agency
+                  </span>
+                  <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">
+                    Corban Tech LTD &bull; Meta Verified
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <select
+                    value={senderId}
+                    onChange={(e) => setSenderId(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
+                  >
+                    {activeBusiness?.sender_id && activeBusiness.sender_id_status === "APPROVED" && (
+                      <option value={activeBusiness.sender_id}>
+                        {activeBusiness.sender_id} (Official Verified)
+                      </option>
+                    )}
+                    <option value="LJK_AGENCY">LJK_AGENCY (Tier-1 Shared Route)</option>
+                    <option value="PROMOTIONAL">PROMOTIONAL (Standard Bulk)</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Audience Targeting Selector */}
@@ -657,6 +643,25 @@ function BroadcastComposerForm({
               </p>
             </div>
 
+            {/* Campaign Title (Rearranged directly above Message Body so it is not forgotten) */}
+            <div className="p-3.5 bg-purple-50/40 border border-purple-200/90 rounded-xl space-y-1.5 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-zinc-800 uppercase tracking-wider">
+                  Campaign Title <span className="text-purple-700">*</span>
+                </label>
+                <span className="text-[11px] text-zinc-500">
+                  Visible in your reports & analytics
+                </span>
+              </div>
+              <input
+                type="text"
+                value={campaignName}
+                onChange={(e) => setCampaignName(e.target.value)}
+                placeholder={isWhatsApp ? "e.g. Weekend Flash Sale WhatsApp Promo" : "e.g. Weekend Flash Sale SMS Promo"}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] font-medium placeholder:font-normal placeholder:text-zinc-400"
+              />
+            </div>
+
             {/* Message Body & Dynamic Tag Pill Inserter */}
             <div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
@@ -709,6 +714,12 @@ function BroadcastComposerForm({
                           const val = e.target.value;
                           setSelectedWaTemplateName(val);
                           if (!val) return;
+                          if (val === "FREEFORM") {
+                            toast("Free-form mode: You can write any custom text directly in the box below.", {
+                              icon: "✏️",
+                            });
+                            return;
+                          }
                           const tpl = waTemplates.find((t: any) => t.name === val);
                           if (tpl) {
                             const bodyComp = tpl.components?.find((c: any) => c.type === "BODY");
@@ -716,14 +727,17 @@ function BroadcastComposerForm({
                             if (rawText) {
                               const formatted = formatTemplateForComposer(tpl.name, rawText);
                               setMessage(formatted);
-                              setCampaignName(`WhatsApp - ${tpl.name}`);
+                              if (!campaignName || campaignName.startsWith("WhatsApp - ")) {
+                                setCampaignName(`WhatsApp - ${tpl.name}`);
+                              }
                               toast.success(`Loaded Meta template: ${tpl.name}`);
                             }
                           }
                         }}
-                        className="py-1 px-2.5 rounded border border-emerald-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 cursor-pointer w-full sm:w-auto"
+                        className="py-1 px-2.5 rounded border border-emerald-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 cursor-pointer w-full sm:w-auto font-medium"
                       >
                         <option value="">Choose an approved Meta template...</option>
+                        <option value="FREEFORM">✏️ Custom Free-form Message (Write your own text)</option>
                         {waTemplates.map((t: any) => (
                           <option key={t.id || t.name} value={t.name}>
                             {t.name} ({t.category} &bull; {t.status})
@@ -741,42 +755,50 @@ function BroadcastComposerForm({
                   </div>
                 ) : (
                   /* Saved SMS Template Selector */
-                  templates.length > 0 && (
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 bg-purple-50/50 border border-purple-200 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-purple-900 uppercase tracking-wider">
-                          Use Saved Template:
-                        </span>
-                        <select
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            if (!val) return;
-                            const tpl = templates.find((t) => t.reference === val);
-                            if (tpl) {
-                              setMessage(tpl.body);
-                              toast.success(`Loaded template: ${tpl.name}`);
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 bg-purple-50/50 border border-purple-200 rounded-lg">
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-[11px] font-bold text-purple-900 uppercase tracking-wider shrink-0">
+                        Use Template:
+                      </span>
+                      <select
+                        value={selectedSmsTemplateRef}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setSelectedSmsTemplateRef(val);
+                          if (!val) return;
+                          if (val === "FREEFORM") {
+                            toast("Free-form mode: Write your custom message directly in the box below.", {
+                              icon: "✏️",
+                            });
+                            return;
+                          }
+                          const tpl = templates.find((t) => t.reference === val);
+                          if (tpl) {
+                            setMessage(tpl.body);
+                            if (!campaignName || campaignName.startsWith("SMS - ")) {
+                              setCampaignName(`SMS - ${tpl.name}`);
                             }
-                          }}
-                          className="py-1 px-2.5 rounded border border-purple-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
-                          defaultValue=""
-                        >
-                          <option value="">Choose a template to load...</option>
-                          {templates.map((t) => (
-                            <option key={t.reference} value={t.reference}>
-                              {t.name} ({t.category})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <Link
-                        href="/business/templates"
-                        className="text-[11px] font-bold text-[#581c87] hover:underline"
+                            toast.success(`Loaded template: ${tpl.name}`);
+                          }
+                        }}
+                        className="py-1 px-2.5 rounded border border-purple-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer w-full sm:w-auto font-medium"
                       >
-                        Manage Templates &rarr;
-                      </Link>
+                        <option value="FREEFORM">✏️ Custom Free-form Message (Write your own text)</option>
+                        {templates.map((t) => (
+                          <option key={t.reference} value={t.reference}>
+                            {t.name} ({t.category})
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  )
+
+                    <Link
+                      href="/business/templates"
+                      className="text-[11px] font-bold text-[#581c87] hover:underline shrink-0"
+                    >
+                      Manage Templates &rarr;
+                    </Link>
+                  </div>
                 )}
 
                 <div className="flex flex-wrap items-center gap-1.5 bg-zinc-50 p-2 rounded-lg border border-zinc-200">
@@ -813,7 +835,7 @@ function BroadcastComposerForm({
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={
                   isWhatsApp
-                    ? "Choose an approved Meta template above or write your WhatsApp message. Use dynamic variables like {first_name}."
+                    ? "Choose an approved Meta template above or write your custom WhatsApp message. Use dynamic variables like {first_name} and {website_url}."
                     : "Write your promotional campaign or alert message here. Use {first_name} to personalize each SMS."
                 }
                 className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87] placeholder:text-zinc-400 leading-relaxed font-sans"
