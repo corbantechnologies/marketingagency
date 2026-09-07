@@ -40,8 +40,9 @@ export function BusinessSidebar({
       ),
     },
     {
-      label: "Send Bulk SMS",
-      href: "/business/sms/broadcast",
+      label: "Campaign Broadcast",
+      href: "/business/broadcast",
+      badge: "WhatsApp & SMS",
       icon: (
         <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -168,64 +169,87 @@ export function BusinessSidebar({
                 <span className={isActive ? "text-[#581c87]" : "text-zinc-500"}>
                   {link.icon}
                 </span>
-                {!isCollapsed && <span className="truncate">{link.label}</span>}
+                {!isCollapsed && (
+                  <div className="flex items-center justify-between flex-1 min-w-0">
+                    <span className="truncate">{link.label}</span>
+                    {link.badge && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200 shrink-0">
+                        {link.badge}
+                      </span>
+                    )}
+                  </div>
+                )}
               </Link>
             );
           })}
         </div>
 
-        {/* Bottom Section: User Card & Sign Out */}
-        <div className="border-t border-zinc-200 bg-zinc-50/70 p-3">
-          {/* Expanded View on Desktop / Mobile */}
-          {!isCollapsed ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                  {userInitials}
-                </div>
-                <div className="flex-1 min-w-0 leading-tight">
-                  <div className="text-xs font-semibold text-zinc-900 truncate">
-                    {userName}
-                  </div>
-                  <div className="text-[11px] text-zinc-500 font-mono truncate">
-                    {userEmailOrCode}
-                  </div>
+        {/* Footer Section */}
+        <div className="border-t border-zinc-200 bg-zinc-50/70">
+          {!isCollapsed && (
+            <div className="px-3 pt-3">
+              <div className="px-2.5 py-2 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
+                <div className="text-[11px] font-semibold text-emerald-900 leading-tight">
+                  Verified Meta Tech Provider
+                  <span className="block text-[9px] text-emerald-700 font-normal">Official Cloud API Gateway</span>
                 </div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: "/auth/login" })}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-xs font-semibold text-zinc-700 bg-white hover:text-red-700 hover:bg-red-50 border border-zinc-200 transition-colors shadow-2xs cursor-pointer"
-              >
-                <svg className="w-4 h-4 text-zinc-500 group-hover:text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span>Sign Out</span>
-              </button>
-            </div>
-          ) : (
-            /* Collapsed Icon-Only View */
-            <div className="flex flex-col items-center gap-2">
-              <div
-                className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs"
-                title={`${userName} (${userEmailOrCode})`}
-              >
-                {userInitials}
-              </div>
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: "/auth/login" })}
-                className="p-2 rounded-md text-zinc-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
-                title="Sign Out"
-                aria-label="Sign Out"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </button>
             </div>
           )}
+          
+          <div className="p-3">
+            {/* Expanded View on Desktop / Mobile */}
+            {!isCollapsed ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                    {userInitials}
+                  </div>
+                  <div className="flex-1 min-w-0 leading-tight">
+                    <div className="text-xs font-semibold text-zinc-900 truncate">
+                      {userName}
+                    </div>
+                    <div className="text-[11px] text-zinc-500 font-mono truncate">
+                      {userEmailOrCode}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: "/auth/login" })}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-xs font-semibold text-zinc-700 bg-white hover:text-red-700 hover:bg-red-50 border border-zinc-200 transition-colors shadow-2xs cursor-pointer"
+                >
+                  <svg className="w-4 h-4 text-zinc-500 group-hover:text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              /* Collapsed Icon-Only View */
+              <div className="flex flex-col items-center gap-2">
+                <div
+                  className="w-9 h-9 rounded-full bg-[#581c87] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs"
+                  title={`${userName} (${userEmailOrCode})`}
+                >
+                  {userInitials}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: "/auth/login" })}
+                  className="p-2 rounded-md text-zinc-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 

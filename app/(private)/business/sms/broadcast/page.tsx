@@ -12,6 +12,7 @@ import { useFetchContactGroups } from "@/hooks/contactgroups/actions";
 import { useFetchContacts } from "@/hooks/contacts/actions";
 import { useFetchCampaigns, useCreateCampaign } from "@/hooks/campaigns/actions";
 import { useFetchMessageTemplates } from "@/hooks/messagetemplates/actions";
+import { useFetchWhatsAppTemplates } from "@/hooks/broadcastmessages/actions";
 
 interface ComposerFormProps {
   activeBusiness: any;
@@ -22,6 +23,7 @@ interface ComposerFormProps {
   templates: any[];
   preselectedGroupRef: string | null;
   preselectedTemplateRef: string | null;
+  preselectedChannel?: string | null;
 }
 
 function BroadcastComposerForm({
@@ -33,11 +35,19 @@ function BroadcastComposerForm({
   templates,
   preselectedGroupRef,
   preselectedTemplateRef,
+  preselectedChannel,
 }: ComposerFormProps) {
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const createCampaignMutation = useCreateCampaign();
+  const { data: waTemplatesData } = useFetchWhatsAppTemplates("all");
+
+  const waTemplates = useMemo(() => {
+    if (!waTemplatesData) return [];
+    if (Array.isArray(waTemplatesData)) return waTemplatesData;
+    return waTemplatesData.templates || (waTemplatesData as any)?.results || [];
+  }, [waTemplatesData]);
 
   const smsBalance = wallet?.sms_credit_balance ?? 0;
 
@@ -55,16 +65,29 @@ function BroadcastComposerForm({
     return groups[0]?.reference || "";
   }, [preselectedGroupRef, groups]);
 
+  const initialChannel: "SMS" | "WHATSAPP" = useMemo(() => {
+    if (preselectedChannel?.toUpperCase() === "WHATSAPP") return "WHATSAPP";
+    if (preselectedTemplateRef && waTemplates.some((t: any) => t.name === preselectedTemplateRef)) {
+      return "WHATSAPP";
+    }
+    return "SMS";
+  }, [preselectedChannel, preselectedTemplateRef, waTemplates]);
+
   const initialMessage = useMemo(() => {
     if (preselectedTemplateRef) {
-      const match = templates.find((t) => t.reference === preselectedTemplateRef);
-      if (match) return match.body;
+      const smsMatch = templates.find((t) => t.reference === preselectedTemplateRef);
+      if (smsMatch) return smsMatch.body;
+      const waMatch = waTemplates.find((t: any) => t.name === preselectedTemplateRef);
+      if (waMatch) {
+        const bodyComp = waMatch.components?.find((c: any) => c.type === "BODY");
+        if (bodyComp?.text) return bodyComp.text;
+      }
     }
     return "";
-  }, [preselectedTemplateRef, templates]);
+  }, [preselectedTemplateRef, templates, waTemplates]);
 
   // Form state
-  const [channel, setChannel] = useState<"SMS" | "WHATSAPP">("SMS");
+  const [channel, setChannel] = useState<"SMS" | "WHATSAPP">(initialChannel);
   const [campaignName, setCampaignName] = useState("");
   const [senderId, setSenderId] = useState(initialSenderId);
   const [audienceMode, setAudienceMode] = useState<"group" | "all" | "manual">("group");
@@ -225,13 +248,17 @@ function BroadcastComposerForm({
               Dashboard
             </Link>
             <span>/</span>
-            <span className="text-zinc-900 font-medium">Bulk SMS Broadcast</span>
+            <span className="text-zinc-900 font-medium">
+              {isWhatsApp ? "WhatsApp Broadcast" : "Bulk SMS Broadcast"}
+            </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
-            Compose &amp; Launch Bulk SMS
+            {isWhatsApp ? "Compose & Launch WhatsApp Broadcast" : "Compose & Launch Bulk SMS"}
           </h1>
           <p className="text-xs sm:text-sm text-zinc-600 mt-0.5">
-            Asynchronous Tier-1 carrier dispatch across Safaricom, Airtel, and partner gateway networks.
+            {isWhatsApp
+              ? "Official Meta WhatsApp Business Cloud API broadcast with rich cards and real-time Blue Ticks."
+              : "Asynchronous Tier-1 carrier dispatch across Safaricom, Airtel, and partner gateway networks."}
           </p>
         </div>
 
@@ -476,53 +503,69 @@ function BroadcastComposerForm({
             <div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                 <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider">
-                  SMS Message Body
+                  {isWhatsApp ? "WhatsApp Message Body" : "SMS Message Body"}
                 </label>
 
                 {/* Character & Segment Telemetry */}
                 <div className="flex items-center gap-2 text-xs font-mono">
                   <span className="text-zinc-500 font-semibold">{charCount} chars</span>
                   <span className="text-zinc-300">&bull;</span>
-                  <span className="text-zinc-500">
-                    {charsRemaining} left in part
-                  </span>
-                  <span className="text-zinc-300">&bull;</span>
-                  <span className={`font-bold ${segments > 1 ? "text-purple-700" : "text-emerald-600"}`}>
-                    {segments} {segments === 1 ? "SMS part" : "SMS parts"}
-                  </span>
-                  {isUnicode && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
-                      Unicode
+                  {isWhatsApp ? (
+                    <span className="font-bold text-emerald-600">
+                      2 Credits / Recipient
                     </span>
+                  ) : (
+                    <>
+                      <span className="text-zinc-500">
+                        {charsRemaining} left in part
+                      </span>
+                      <span className="text-zinc-300">&bull;</span>
+                      <span className={`font-bold ${segments > 1 ? "text-purple-700" : "text-emerald-600"}`}>
+                        {segments} {segments === 1 ? "SMS part" : "SMS parts"}
+                      </span>
+                      {isUnicode && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                          Unicode
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
 
               {/* Template Selector & Dynamic Tag Inserter Toolbar */}
               <div className="space-y-2 mb-2">
-                {templates.length > 0 && (
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 bg-purple-50/50 border border-purple-200 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold text-purple-900 uppercase tracking-wider">
-                        Use Saved Template:
+                {isWhatsApp ? (
+                  /* WhatsApp Meta Template Selector */
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-emerald-50/80 border border-emerald-200 rounded-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                      <span className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                        <svg className="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                        Meta Template:
                       </span>
                       <select
                         onChange={(e) => {
                           const val = e.target.value;
                           if (!val) return;
-                          const tpl = templates.find((t) => t.reference === val);
+                          const tpl = waTemplates.find((t: any) => t.name === val);
                           if (tpl) {
-                            setMessage(tpl.body);
-                            toast.success(`Loaded template: ${tpl.name}`);
+                            const bodyComp = tpl.components?.find((c: any) => c.type === "BODY");
+                            const text = bodyComp?.text || "";
+                            if (text) {
+                              setMessage(text);
+                              toast.success(`Loaded Meta template: ${tpl.name}`);
+                            }
                           }
                         }}
-                        className="py-1 px-2.5 rounded border border-purple-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
+                        className="py-1 px-2.5 rounded border border-emerald-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600 cursor-pointer w-full sm:w-auto"
                         defaultValue=""
                       >
-                        <option value="">Choose a template to load...</option>
-                        {templates.map((t) => (
-                          <option key={t.reference} value={t.reference}>
-                            {t.name} ({t.category})
+                        <option value="">Choose an approved Meta template...</option>
+                        {waTemplates.map((t: any) => (
+                          <option key={t.id || t.name} value={t.name}>
+                            {t.name} ({t.category} &bull; {t.status})
                           </option>
                         ))}
                       </select>
@@ -530,11 +573,49 @@ function BroadcastComposerForm({
 
                     <Link
                       href="/business/templates"
-                      className="text-[11px] font-bold text-[#581c87] hover:underline"
+                      className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 hover:underline shrink-0"
                     >
-                      Manage Templates &rarr;
+                      Browse Templates &rarr;
                     </Link>
                   </div>
+                ) : (
+                  /* Saved SMS Template Selector */
+                  templates.length > 0 && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 bg-purple-50/50 border border-purple-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-purple-900 uppercase tracking-wider">
+                          Use Saved Template:
+                        </span>
+                        <select
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (!val) return;
+                            const tpl = templates.find((t) => t.reference === val);
+                            if (tpl) {
+                              setMessage(tpl.body);
+                              toast.success(`Loaded template: ${tpl.name}`);
+                            }
+                          }}
+                          className="py-1 px-2.5 rounded border border-purple-300 text-xs text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#581c87] cursor-pointer"
+                          defaultValue=""
+                        >
+                          <option value="">Choose a template to load...</option>
+                          {templates.map((t) => (
+                            <option key={t.reference} value={t.reference}>
+                              {t.name} ({t.category})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <Link
+                        href="/business/templates"
+                        className="text-[11px] font-bold text-[#581c87] hover:underline"
+                      >
+                        Manage Templates &rarr;
+                      </Link>
+                    </div>
+                  )
                 )}
 
                 <div className="flex flex-wrap items-center gap-1.5 bg-zinc-50 p-2 rounded-lg border border-zinc-200">
@@ -568,7 +649,11 @@ function BroadcastComposerForm({
                 rows={5}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Write your promotional campaign or alert message here. Use {first_name} to personalize each SMS."
+                placeholder={
+                  isWhatsApp
+                    ? "Choose an approved Meta template above or write your WhatsApp message. Use dynamic variables like {first_name}."
+                    : "Write your promotional campaign or alert message here. Use {first_name} to personalize each SMS."
+                }
                 className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87] placeholder:text-zinc-400 leading-relaxed font-sans"
               />
 
@@ -794,6 +879,7 @@ function BroadcastContent() {
   const searchParams = useSearchParams();
   const preselectedGroupRef = searchParams.get("group");
   const preselectedTemplateRef = searchParams.get("template");
+  const preselectedChannel = searchParams.get("channel");
 
   const { data: businessesData } = useFetchBusinesses();
   const { data: walletsData } = useFetchBusinessWallets();
@@ -840,7 +926,7 @@ function BroadcastContent() {
 
   return (
     <BroadcastComposerForm
-      key={`${activeBusiness?.reference || "biz"}-${preselectedGroupRef || "none"}-${preselectedTemplateRef || "notpl"}-${groups.length}-${templates.length}`}
+      key={`${activeBusiness?.reference || "biz"}-${preselectedGroupRef || "none"}-${preselectedTemplateRef || "notpl"}-${preselectedChannel || "nochn"}-${groups.length}-${templates.length}`}
       activeBusiness={activeBusiness}
       wallet={wallet}
       groups={groups}
@@ -849,6 +935,7 @@ function BroadcastContent() {
       templates={templates}
       preselectedGroupRef={preselectedGroupRef}
       preselectedTemplateRef={preselectedTemplateRef}
+      preselectedChannel={preselectedChannel}
     />
   );
 }
