@@ -36,7 +36,7 @@ export default function BillingPage() {
   const simulateCallbackMutation = useSimulateMpesaCallback();
 
   // Live polling for STK PIN prompt completion
-  const { data: pollData } = usePollMpesaStatus(
+  const { data: pollData, refetch: refetchPoll } = usePollMpesaStatus(
     activeCheckoutId,
     Boolean(activeCheckoutId && isModalOpen)
   );
@@ -681,10 +681,30 @@ export default function BillingPage() {
                   </p>
                 </div>
 
-                {/* Animated Waiting Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 text-zinc-700 text-xs font-mono">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Awaiting PIN Entry ({countdown}s)</span>
+                {/* Animated Waiting Badge & Immediate Verification Action */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 text-zinc-700 text-xs font-mono">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Awaiting PIN Entry ({countdown}s)</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      toast.loading("Verifying with Safaricom...", { id: "verify-stk", duration: 3000 });
+                      const res = await refetchPoll();
+                      if (res.data?.status === "SUCCESS") {
+                        toast.success("Payment verified and credited!", { id: "verify-stk" });
+                      } else if (res.data?.status === "FAILED") {
+                        toast.error(res.data.message || "Payment not completed.", { id: "verify-stk" });
+                      } else {
+                        toast.dismiss("verify-stk");
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-[#581c87] border border-purple-200 text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <span>⚡ Entered PIN? Click to Verify Now</span>
+                  </button>
                 </div>
 
                 <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-lg text-[11px] text-zinc-500 text-left space-y-1">
