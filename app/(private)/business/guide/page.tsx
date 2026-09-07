@@ -114,7 +114,7 @@ export default function BusinessOnboardingGuidePage() {
         "1-Click CSV/Excel Importer: Auto-maps First Name, Last Name, Phone, and Custom Attributes.",
         "Kenyan E.164 Normalizer: Cleans 07XX, 01XX, and 254 numbers into standard international format.",
         "Target Groups: Segment contacts into groups (e.g. VIP, Suppliers, Retail Customers).",
-        "1-Click Blast: Click 'Send SMS to Group' to jump straight into the composer with group pre-selected.",
+        "1-Click Blast: Click 'Send Broadcast to Group' to jump straight into the composer with group pre-selected.",
       ],
       actionText: "Manage Contacts & Groups",
     },

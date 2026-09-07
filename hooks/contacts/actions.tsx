@@ -44,7 +44,11 @@ export const useCreateContact = () => {
 
   return useMutation({
     mutationFn: async (payload: CreateContactPayload) => {
-      const config = await getFreshAuthHeaders();
+      const customHeaders: Record<string, string> = {};
+      if (payload.business_reference) {
+        customHeaders["X-Business-Reference"] = payload.business_reference;
+      }
+      const config = await getFreshAuthHeaders(customHeaders);
       return createContact(payload, config);
     },
     onSuccess: () => {

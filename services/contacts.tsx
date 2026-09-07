@@ -41,6 +41,7 @@ export interface CreateContactPayload {
   custom_attributes?: Record<string, any>;
   is_subscribed?: boolean;
   business?: string;
+  business_reference?: string;
 }
 
 export interface UpdateContactPayload {

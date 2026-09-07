@@ -68,7 +68,7 @@ export function GuideContent() {
         "Create unlimited Contact Groups for targeted promotional blasts.",
         "Add custom attributes (e.g. {balance}, {due_date}) for hyper-personalized messaging.",
       ],
-      tips: "Click 'Send SMS to Group' on any contact group to deep-link directly into the campaign composer with that group pre-selected.",
+      tips: "Click 'Send Broadcast to Group' on any contact group to deep-link directly into the campaign composer with that group pre-selected.",
     },
     {
       id: "sec-4",

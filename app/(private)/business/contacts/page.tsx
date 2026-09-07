@@ -188,6 +188,8 @@ export default function BusinessContactsPage() {
       groups: contactForm.groups,
       custom_attributes: customAttrObj,
       is_subscribed: contactForm.is_subscribed,
+      business: activeBusiness?.name,
+      business_reference: activeBusiness?.reference,
     };
 
     if (editingContact) {
@@ -199,7 +201,26 @@ export default function BusinessContactsPage() {
             setIsContactModalOpen(false);
           },
           onError: (err: any) => {
-            toast.error(err?.response?.data?.phone_number?.[0] || err?.response?.data?.detail || "Failed to update contact");
+            const data = err?.response?.data;
+            let errMsg = "Failed to update contact";
+            if (typeof data === "string") {
+              errMsg = data;
+            } else if (data && typeof data === "object") {
+              const firstVal =
+                data.phone_number ||
+                data.business ||
+                data.email ||
+                data.detail ||
+                data.error ||
+                data.message ||
+                Object.values(data)[0];
+              if (Array.isArray(firstVal)) {
+                errMsg = firstVal[0];
+              } else if (typeof firstVal === "string") {
+                errMsg = firstVal;
+              }
+            }
+            toast.error(errMsg);
           },
         }
       );
@@ -210,7 +231,26 @@ export default function BusinessContactsPage() {
           setIsContactModalOpen(false);
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.phone_number?.[0] || err?.response?.data?.detail || "Failed to create contact");
+          const data = err?.response?.data;
+          let errMsg = "Failed to create contact";
+          if (typeof data === "string") {
+            errMsg = data;
+          } else if (data && typeof data === "object") {
+            const firstVal =
+              data.phone_number ||
+              data.business ||
+              data.email ||
+              data.detail ||
+              data.error ||
+              data.message ||
+              Object.values(data)[0];
+            if (Array.isArray(firstVal)) {
+              errMsg = firstVal[0];
+            } else if (typeof firstVal === "string") {
+              errMsg = firstVal;
+            }
+          }
+          toast.error(errMsg);
         },
       });
     }
@@ -750,7 +790,7 @@ export default function BusinessContactsPage() {
                       href={`/business/sms/broadcast?group=${group.reference}`}
                       className="text-xs font-semibold text-[#581c87] hover:underline"
                     >
-                      Send SMS to Group &rarr;
+                      Send Broadcast to Group &rarr;
                     </Link>
 
                     <div className="inline-flex items-center gap-1">
