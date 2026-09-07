@@ -21,7 +21,7 @@ export function Navbar() {
     { label: "Industries", href: "/industries" },
     { label: "Pricing", href: "/pricing" },
     { label: "User Guide", href: "/guide" },
-    { label: "Services", href: "/#services" },
+    { label: "Developers", href: "/docs" },
     { label: "Contact", href: "/contact" },
   ];
 

@@ -88,6 +88,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/docs" className="hover:text-purple-300 transition-colors">
+                  Developer REST API Docs
+                </Link>
+              </li>
+              <li>
                 <Link href="/auth/login" className="hover:text-purple-300 transition-colors">
                   Platform Login
                 </Link>
