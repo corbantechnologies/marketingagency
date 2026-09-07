@@ -26,6 +26,42 @@ interface ComposerFormProps {
   preselectedChannel?: string | null;
 }
 
+function renderPreviewWithLinks(text: string) {
+  if (!text) return null;
+  const regex = /(https?:\/\/[^\s]+|wa\.me\/[^\s]+|www\.[^\s]+)/gi;
+  const parts = text.split(regex);
+  return parts.map((part, i) => {
+    if (part && part.match(/^(https?:\/\/|wa\.me\/|www\.)/i)) {
+      return (
+        <span key={i} className="text-sky-300 underline font-medium break-all">
+          {part}
+        </span>
+      );
+    }
+    return part;
+  });
+}
+
+function formatTemplateForComposer(tName: string, rawText: string) {
+  if (tName === "universal_business_promo") {
+    return "Hello {first_name}, {business_name} has a special update for you: 50% discount on all services.\n\nVisit or shop at {website_url} to enjoy exclusive rates! Reply STOP to opt out.";
+  }
+  if (tName === "general_business_promo") {
+    return "Hello {first_name}, {business_name} is excited to bring you an exclusive offer: 50% offer.\n\nVisit us today or shop online at {website_url} before 20th September to enjoy special rates! Reply STOP to opt out.";
+  }
+  if (tName === "order_status_update") {
+    return "Hello {first_name}, your order #ORD-10023 has been confirmed and is now being prepared for dispatch. Thank you for your business!";
+  }
+  if (tName === "customer_order_dispatch") {
+    return "Hello {first_name}, your order #ORD-10023 has been confirmed and dispatched. Track your delivery here: {website_url}";
+  }
+  return rawText
+    .replace(/\{\{1\}\}/g, "{first_name}")
+    .replace(/\{\{2\}\}/g, "{business_name}")
+    .replace(/\{\{3\}\}/g, "Special Promotional Offer")
+    .replace(/\{\{4\}\}/g, "{website_url}");
+}
+
 function BroadcastComposerForm({
   activeBusiness,
   wallet,
@@ -93,20 +129,40 @@ function BroadcastComposerForm({
   const [manualNumbers, setManualNumbers] = useState("");
   const [message, setMessage] = useState(initialMessage);
   const [selectedWaTemplateName, setSelectedWaTemplateName] = useState<string>("");
+  const [customWebsiteLink, setCustomWebsiteLink] = useState<string>(() => {
+    if (activeBusiness?.website) return activeBusiness.website;
+    if (activeBusiness?.phone) {
+      const digits = activeBusiness.phone.replace(/\D/g, "");
+      if (digits) return `https://wa.me/${digits}`;
+    }
+    return "";
+  });
+
+  const businessWebsiteFallback = useMemo(() => {
+    if (customWebsiteLink.trim()) return customWebsiteLink.trim();
+    if (activeBusiness?.website) return activeBusiness.website;
+    if (activeBusiness?.phone) {
+      const digits = activeBusiness.phone.replace(/\D/g, "");
+      if (digits) return `https://wa.me/${digits}`;
+    }
+    return "https://yourbrand.co.ke";
+  }, [customWebsiteLink, activeBusiness]);
 
   // Automatically preselect approved Meta template when on WhatsApp
   useEffect(() => {
     if (channel === "WHATSAPP" && !message && waTemplates.length > 0) {
       const preferred =
+        waTemplates.find((t: any) => t.name === "universal_business_promo" && t.status === "APPROVED") ||
         waTemplates.find((t: any) => t.name === "general_business_promo" && t.status === "APPROVED") ||
         waTemplates.find((t: any) => t.status === "APPROVED") ||
         waTemplates[0];
       if (preferred) {
         setSelectedWaTemplateName(preferred.name);
         const bodyComp = preferred.components?.find((c: any) => c.type === "BODY");
-        const text = bodyComp?.text || "";
-        if (text) {
-          setMessage(text);
+        const rawText = bodyComp?.text || "";
+        if (rawText) {
+          const formatted = formatTemplateForComposer(preferred.name, rawText);
+          setMessage(formatted);
           if (!campaignName) {
             setCampaignName(`WhatsApp - ${preferred.name}`);
           }
@@ -183,8 +239,11 @@ function BroadcastComposerForm({
       .replace(/\{email\}/g, "sarah@gmail.com")
       .replace(/\{business_name\}/g, activeBusiness?.name || "Your Brand")
       .replace(/\{business_phone\}/g, activeBusiness?.phone || "+254 7XX XXX XXX")
-      .replace(/\{business_email\}/g, activeBusiness?.email || "info@brand.co.ke");
-  }, [message, isWhatsApp, activeBusiness]);
+      .replace(/\{business_email\}/g, activeBusiness?.email || "info@brand.co.ke")
+      .replace(/\{business_website\}/g, businessWebsiteFallback)
+      .replace(/\{website_url\}/g, businessWebsiteFallback)
+      .replace(/\{link\}/g, businessWebsiteFallback);
+  }, [message, isWhatsApp, activeBusiness, businessWebsiteFallback]);
 
   // Tag Inserter into textarea cursor position
   const handleInsertTag = (tag: string) => {
@@ -225,11 +284,19 @@ function BroadcastComposerForm({
       return;
     }
 
+    let finalMessage = message;
+    if (customWebsiteLink.trim()) {
+      finalMessage = finalMessage
+        .replace(/\{website_url\}/g, customWebsiteLink.trim())
+        .replace(/\{business_website\}/g, customWebsiteLink.trim())
+        .replace(/\{link\}/g, customWebsiteLink.trim());
+    }
+
     createCampaignMutation.mutate(
       {
         name: campaignName.trim(),
         sender_id: isWhatsApp ? "WHATSAPP" : senderId,
-        message_template: message,
+        message_template: finalMessage,
         channel: channel,
         target_group_reference: audienceMode === "group" ? selectedGroupRef : undefined,
         send_to_all_contacts: audienceMode === "all",
@@ -537,6 +604,59 @@ function BroadcastComposerForm({
               )}
             </div>
 
+            {/* Store Website & Call-to-Action Link Card */}
+            <div className="p-3.5 bg-sky-50/70 border border-sky-200 rounded-xl space-y-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <label className="text-xs font-bold text-sky-950 uppercase tracking-wider flex items-center gap-1.5">
+                  <svg className="w-4 h-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  Store Website / Call-to-Action Link
+                </label>
+                <span className="text-[11px] text-sky-700 font-medium">
+                  {isWhatsApp ? "Direct clickable link in WhatsApp chat" : "Target URL in SMS"}
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <input
+                  type="text"
+                  value={customWebsiteLink}
+                  onChange={(e) => setCustomWebsiteLink(e.target.value)}
+                  placeholder="e.g. https://yourbusiness.co.ke or https://wa.me/254712345678"
+                  className="flex-1 px-3 py-2 rounded-lg border border-sky-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
+                />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleInsertTag("{website_url}")}
+                    className="px-3 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-semibold shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>+ Insert Tag</span>
+                  </button>
+                  {activeBusiness?.phone && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const digits = activeBusiness.phone.replace(/\D/g, "");
+                        const link = `https://wa.me/${digits}`;
+                        setCustomWebsiteLink(link);
+                        toast.success("Loaded direct WhatsApp chat link!");
+                      }}
+                      className="px-2.5 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+                      title="Generate direct wa.me link from business phone"
+                    >
+                      <span>💬 Use wa.me</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-[11px] text-sky-900/80 leading-relaxed">
+                💡 <strong>Direct WhatsApp Link:</strong> WhatsApp automatically renders links in your message body (e.g. <code className="text-[10px] bg-sky-100 px-1 py-0.5 rounded text-sky-900">&#123;website_url&#125;</code>) as a clickable blue hyperlink with rich previews. Customers tapping it open your website directly with zero third-party redirects.
+              </p>
+            </div>
+
             {/* Message Body & Dynamic Tag Pill Inserter */}
             <div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
@@ -592,9 +712,10 @@ function BroadcastComposerForm({
                           const tpl = waTemplates.find((t: any) => t.name === val);
                           if (tpl) {
                             const bodyComp = tpl.components?.find((c: any) => c.type === "BODY");
-                            const text = bodyComp?.text || "";
-                            if (text) {
-                              setMessage(text);
+                            const rawText = bodyComp?.text || "";
+                            if (rawText) {
+                              const formatted = formatTemplateForComposer(tpl.name, rawText);
+                              setMessage(formatted);
                               setCampaignName(`WhatsApp - ${tpl.name}`);
                               toast.success(`Loaded Meta template: ${tpl.name}`);
                             }
@@ -668,6 +789,7 @@ function BroadcastComposerForm({
                     { tag: "{name}", label: "Full Name" },
                     { tag: "{business_name}", label: "Business Name" },
                     { tag: "{business_phone}", label: "Business Phone" },
+                    { tag: "{website_url}", label: "Website Link" },
                     { tag: "{phone_number}", label: "Recipient Phone" },
                     { tag: "{email}", label: "Email" },
                   ].map((item) => (
@@ -810,8 +932,8 @@ function BroadcastComposerForm({
                 {/* WhatsApp Chat Body */}
                 <div className="p-3.5 space-y-2 bg-[radial-gradient(#1f2c34_1px,transparent_1px)] [background-size:12px_12px] min-h-[140px] flex flex-col justify-end">
                   <div className="ml-auto max-w-[90%] bg-[#005c4b] text-zinc-100 rounded-lg rounded-tr-xs p-2.5 shadow-sm space-y-1.5 border border-[#025142]">
-                    <p className="text-xs leading-relaxed break-words font-sans">
-                      {samplePreviewText}
+                    <p className="text-xs leading-relaxed break-words font-sans whitespace-pre-wrap">
+                      {renderPreviewWithLinks(samplePreviewText)}
                     </p>
                     <div className="flex items-center justify-end gap-1 text-[9px] text-emerald-200/80 pt-0.5">
                       <span>10:45 AM</span>
@@ -821,16 +943,26 @@ function BroadcastComposerForm({
                   </div>
 
                   {/* Interactive Button CTA Previews */}
-                  <div className="ml-auto max-w-[90%] w-full space-y-1 pt-1">
-                    <div className="py-1.5 px-3 bg-[#1f2c34] hover:bg-[#2a3942] rounded text-[11px] text-sky-400 font-semibold text-center border border-[#2a3942] transition-colors cursor-pointer flex items-center justify-center gap-1.5">
-                      <span>🌐</span>
-                      <span>Visit Website</span>
+                  {selectedWaTemplateName === "general_business_promo" ? (
+                    <div className="ml-auto max-w-[90%] w-full space-y-1.5 pt-1">
+                      <div className="py-2 px-3 bg-[#1f2c34] rounded text-[11px] text-sky-400 font-semibold text-center border border-[#2a3942] flex items-center justify-center gap-1.5 shadow-sm">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span>Shop Online</span>
+                      </div>
+                      <p className="text-[10px] text-zinc-400 leading-normal text-center px-1">
+                        Notice: Button routes via Meta catalog. For direct visits to your site, your website link is included in the message text.
+                      </p>
                     </div>
-                    <div className="py-1.5 px-3 bg-[#1f2c34] hover:bg-[#2a3942] rounded text-[11px] text-sky-400 font-semibold text-center border border-[#2a3942] transition-colors cursor-pointer flex items-center justify-center gap-1.5">
-                      <span>💬</span>
-                      <span>Reply on WhatsApp</span>
+                  ) : (
+                    <div className="ml-auto max-w-[90%] w-full pt-1">
+                      <div className="py-1.5 px-3 bg-emerald-950/50 rounded text-[10px] text-emerald-300 font-medium text-center border border-emerald-800/40 flex items-center justify-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>Direct Clickable Link in Chat &bull; 0 Third-Party Redirects</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             ) : (
