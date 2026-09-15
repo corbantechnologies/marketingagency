@@ -48,6 +48,16 @@ export interface Business {
   registration_number?: string | null;
   registration_date?: string | null;
   registration_document?: string | null;
+  whatsapp_business_account_id?: string | null;
+  whatsapp_phone_number_id?: string | null;
+  whatsapp_display_phone_number?: string | null;
+  whatsapp_verified_name?: string | null;
+  whatsapp_onboarding_status?: "NOT_CONNECTED" | "CONNECTED" | "PENDING" | "RESTRICTED";
+  whatsapp_quality_rating?: "GREEN" | "YELLOW" | "RED" | "UNKNOWN";
+  whatsapp_onboarding_mode?: "SHARED" | "DEDICATED";
+  whatsapp_connected_at?: string | null;
+  has_dedicated_whatsapp?: boolean;
+  active_whatsapp_phone_number_id?: string;
   wallet?: BusinessWallet | null;
   total_contacts?: number;
   total_contact_groups?: number;
@@ -59,6 +69,21 @@ export interface Business {
   created_at: string;
   updated_at: string;
 }
+
+export interface ConnectWhatsAppPayload {
+  code?: string;
+  waba_id?: string;
+  phone_number_id?: string;
+  display_phone_number?: string;
+  verified_name?: string;
+}
+
+export interface WhatsAppConnectResponse {
+  success: boolean;
+  message: string;
+  business: Business;
+}
+
 
 export interface CreateBusinessPayload {
   name: string;
@@ -507,6 +532,71 @@ export const updateBusinessEntitlements = async (
   const response: AxiosResponse<{ success: boolean; message: string; business: Business }> = await apiActions.patch(
     `/api/v1/businesses/${reference}/entitlements/`,
     payload,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Connect business WABA / phone number via Meta Embedded Signup code or payload
+ * Endpoint: POST /api/v1/businesses/{reference}/whatsapp-connect/
+ */
+export const connectBusinessWhatsApp = async (
+  reference: string,
+  payload: ConnectWhatsAppPayload,
+  config?: AxiosConfig
+): Promise<WhatsAppConnectResponse> => {
+  const response: AxiosResponse<WhatsAppConnectResponse> = await apiActions.post(
+    `/api/v1/businesses/${reference}/whatsapp-connect/`,
+    payload,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Disconnect business WABA from LJK platform
+ * Endpoint: DELETE /api/v1/businesses/{reference}/whatsapp-connect/
+ */
+export const disconnectBusinessWhatsApp = async (
+  reference: string,
+  config?: AxiosConfig
+): Promise<WhatsAppConnectResponse> => {
+  const response: AxiosResponse<WhatsAppConnectResponse> = await apiActions.delete(
+    `/api/v1/businesses/${reference}/whatsapp-connect/`,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Toggle WhatsApp broadcast route mode between SHARED and DEDICATED
+ * Endpoint: PATCH /api/v1/businesses/{reference}/whatsapp-connect/
+ */
+export const toggleBusinessWhatsAppMode = async (
+  reference: string,
+  mode: "SHARED" | "DEDICATED",
+  config?: AxiosConfig
+): Promise<WhatsAppConnectResponse> => {
+  const response: AxiosResponse<WhatsAppConnectResponse> = await apiActions.patch(
+    `/api/v1/businesses/${reference}/whatsapp-connect/`,
+    { mode },
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Live refresh WhatsApp business account and phone number status from Meta Cloud API
+ * Endpoint: POST /api/v1/businesses/{reference}/whatsapp-refresh/
+ */
+export const refreshBusinessWhatsAppStatus = async (
+  reference: string,
+  config?: AxiosConfig
+): Promise<WhatsAppConnectResponse> => {
+  const response: AxiosResponse<WhatsAppConnectResponse> = await apiActions.post(
+    `/api/v1/businesses/${reference}/whatsapp-refresh/`,
+    {},
     config
   );
   return response.data;

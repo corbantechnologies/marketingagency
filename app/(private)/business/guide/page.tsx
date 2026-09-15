@@ -32,14 +32,16 @@ export default function BusinessOnboardingGuidePage() {
 
   // Real-time Checklist Completion Checks
   const isProfileComplete = Boolean(primaryBusiness?.name && primaryBusiness?.email);
+  const isWhatsAppConnected = primaryBusiness?.whatsapp_onboarding_status === "CONNECTED";
   const isSenderIdRequested = Boolean(primaryBusiness?.sender_id);
   const isSenderIdApproved = primaryBusiness?.sender_id_status === "APPROVED";
+  const isChannelConfigured = isWhatsAppConnected || isSenderIdApproved;
   const hasContacts = contactsList.length > 0;
   const hasCredits = (activeWallet?.sms_credit_balance || 0) > 0;
 
   const completedStepsCount = [
     isProfileComplete,
-    isSenderIdRequested,
+    isChannelConfigured,
     hasContacts,
     hasCredits,
   ].filter(Boolean).length;
@@ -135,18 +137,18 @@ export default function BusinessOnboardingGuidePage() {
     },
     {
       id: "nav-sender-ids",
-      title: "Sender IDs & Whitelisting",
+      title: "Channels & Sender IDs Hub",
       href: "/business/sender-ids",
-      badge: "Brand Identity",
+      badge: "WhatsApp & SMS",
       description:
-        "Register your official 11-character alphanumeric company name to appear on recipient phones.",
+        "Connect your dedicated WhatsApp Business number via Meta Embedded Signup and whitelist SMS Sender IDs.",
       keyFeatures: [
+        "Meta WhatsApp Signup: Log in with Facebook to link your dedicated business WhatsApp number in ~60 seconds.",
+        "Dual-Route Switching: Seamlessly toggle between LJK's verified agency route (+254 740 964 423) and your dedicated number.",
         "Brand Visibility: Replace random phone numbers with your company name (e.g. YOURBRAND).",
-        "Fast-Track Review: Submit KRA PIN and Certificate of Incorporation for 12-24hr approval.",
-        "Shared Route: Use the verified default route (LJK_AGENCY) while your custom header is reviewed.",
-        "Carrier Whitelisting: Approved across Safaricom, Airtel, and Telkom networks simultaneously.",
+        "Carrier Whitelisting: Approved across Safaricom, Airtel, and Telkom networks.",
       ],
-      actionText: "Register Sender ID",
+      actionText: "Manage Channels & Sender IDs",
     },
     {
       id: "nav-reports",
@@ -416,7 +418,7 @@ export default function BusinessOnboardingGuidePage() {
             <Link
               href="/business/sender-ids"
               className={`p-5 rounded-xl border transition-all flex flex-col justify-between group ${
-                isSenderIdApproved
+                isChannelConfigured
                   ? "bg-emerald-50/40 border-emerald-200 hover:border-emerald-300"
                   : isSenderIdRequested
                   ? "bg-amber-50/40 border-amber-200 hover:border-amber-300"
@@ -428,27 +430,31 @@ export default function BusinessOnboardingGuidePage() {
                   <span className="text-xs font-bold text-zinc-400 group-hover:text-[#581c87] transition-colors uppercase tracking-wider">
                     Step 2
                   </span>
-                  {isSenderIdApproved ? (
+                  {isWhatsAppConnected ? (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                      ✓ Approved &amp; Live
+                      ✓ WhatsApp Linked
+                    </span>
+                  ) : isSenderIdApproved ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      ✓ Sender ID Live
                     </span>
                   ) : isSenderIdRequested ? (
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
                       Telco Review Pending
                     </span>
                   ) : (
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-700">
-                      Not Requested
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#581c87]">
+                      Connect Channel
                     </span>
                   )}
                 </div>
-                <h3 className="font-bold text-sm text-zinc-900">Request Alphanumeric Sender ID</h3>
+                <h3 className="font-bold text-sm text-zinc-900">Connect Channels &amp; Sender IDs</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
-                  Whitelist your 11-character brand header with Safaricom and Airtel Kenya.
+                  Connect your branded WhatsApp number via Meta Embedded Signup or whitelist your 11-character SMS brand name.
                 </p>
               </div>
               <div className="pt-4 mt-2 text-xs font-semibold text-[#581c87] group-hover:underline inline-flex items-center gap-1">
-                <span>Manage Sender IDs &rarr;</span>
+                <span>Manage Channels &amp; Sender IDs &rarr;</span>
               </div>
             </Link>
 

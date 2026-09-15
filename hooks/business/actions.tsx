@@ -22,6 +22,11 @@ import {
   updateBusinessEntitlements,
   BusinessEntitlementsData,
   BusinessEntitlementsPayload,
+  connectBusinessWhatsApp,
+  disconnectBusinessWhatsApp,
+  toggleBusinessWhatsAppMode,
+  refreshBusinessWhatsAppStatus,
+  ConnectWhatsAppPayload,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 
@@ -250,6 +255,73 @@ export function useUpdateBusinessEntitlements() {
     },
   });
 }
+
+/**
+ * Mutation hook to connect business WABA via Meta Embedded Signup
+ */
+export function useConnectWhatsApp() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: ({ reference, payload }: { reference: string; payload: ConnectWhatsAppPayload }) =>
+      connectBusinessWhatsApp(reference, payload, authConfig),
+    onSuccess: (res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business", vars.reference] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to disconnect business WABA
+ */
+export function useDisconnectWhatsApp() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (reference: string) => disconnectBusinessWhatsApp(reference, authConfig),
+    onSuccess: (res, reference) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business", reference] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to toggle between SHARED and DEDICATED routing mode
+ */
+export function useToggleWhatsAppMode() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: ({ reference, mode }: { reference: string; mode: "SHARED" | "DEDICATED" }) =>
+      toggleBusinessWhatsAppMode(reference, mode, authConfig),
+    onSuccess: (res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business", vars.reference] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to refresh live WABA status & phone number health from Meta Graph API
+ */
+export function useRefreshWhatsAppStatus() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: (reference: string) => refreshBusinessWhatsAppStatus(reference, authConfig),
+    onSuccess: (res, reference) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business", reference] });
+    },
+  });
+}
+
 
 
 

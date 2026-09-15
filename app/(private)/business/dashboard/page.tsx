@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useFetchBusinesses } from "@/hooks/business/actions";
@@ -69,6 +69,73 @@ export default function BusinessDashboardPage() {
       return isoString;
     }
   };
+
+  const [isOnboardingCollapsed, setIsOnboardingCollapsed] = useState(false);
+
+  const step1Done = Boolean(primaryBusiness?.name);
+  const step2Done = Boolean(
+    primaryBusiness?.whatsapp_onboarding_status === "CONNECTED" ||
+    (primaryBusiness?.sender_id && primaryBusiness?.sender_id_status === "APPROVED")
+  );
+  const step3Done = totalContacts > 0;
+  const step4Done = smsBalance > 0;
+  const step5Done = campaigns.length > 0;
+
+  const onboardingSteps = [
+    {
+      id: 1,
+      number: "1",
+      title: "Workspace Profile",
+      desc: primaryBusiness?.name ? `Active: ${primaryBusiness.name}` : "Set up your business name and details",
+      completed: step1Done,
+      href: "/business/sender-ids",
+      actionText: "View Profile",
+    },
+    {
+      id: 2,
+      number: "2",
+      title: "Branded Channels",
+      desc: primaryBusiness?.whatsapp_onboarding_status === "CONNECTED"
+        ? `Dedicated WhatsApp: ${primaryBusiness.whatsapp_display_phone_number || "Active"}`
+        : primaryBusiness?.sender_id && primaryBusiness.sender_id_status === "APPROVED"
+        ? `Sender ID: ${primaryBusiness.sender_id}`
+        : "Connect branded WhatsApp or register SMS Sender ID",
+      completed: step2Done,
+      href: "/business/sender-ids",
+      actionText: primaryBusiness?.whatsapp_onboarding_status === "CONNECTED" ? "Manage Channels" : "Connect Channel",
+    },
+    {
+      id: 3,
+      number: "3",
+      title: "Import Contacts",
+      desc: totalContacts > 0 ? `${totalContacts.toLocaleString()} Customer Contacts Saved` : "Upload customer phone numbers via CSV",
+      completed: step3Done,
+      href: "/business/contacts",
+      actionText: totalContacts > 0 ? "View Contacts" : "Import Audience",
+    },
+    {
+      id: 4,
+      number: "4",
+      title: "Prepaid Top-Up",
+      desc: smsBalance > 0 ? `${smsBalance.toLocaleString()} Credits Available` : "Top up marketing credits via Daraja M-Pesa",
+      completed: step4Done,
+      href: "/business/billing",
+      actionText: smsBalance > 0 ? "View Wallet" : "Top Up via M-PESA",
+    },
+    {
+      id: 5,
+      number: "5",
+      title: "First Live Broadcast",
+      desc: campaigns.length > 0 ? `${campaigns.length} Campaign(s) Dispatched` : "Launch your first WhatsApp or SMS broadcast",
+      completed: step5Done,
+      href: "/business/broadcast",
+      actionText: campaigns.length > 0 ? "Campaigns" : "Launch Broadcast",
+    },
+  ];
+
+  const completedStepsCount = onboardingSteps.filter((s) => s.completed).length;
+  const onboardingProgress = Math.round((completedStepsCount / onboardingSteps.length) * 100);
+
 
   return (
     <div className="space-y-6 w-full max-w-none">
@@ -267,6 +334,110 @@ export default function BusinessDashboardPage() {
             <span className="text-zinc-600 font-medium">Ready for broadcast targeting</span>
           </div>
         </div>
+      </div>
+
+      {/* Guided Self-Serve Onboarding Roadmap */}
+      <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-zinc-900 tracking-tight">
+                Getting Started: Self-Serve Onboarding Roadmap
+              </h2>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                onboardingProgress === 100
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                  : "bg-purple-100 text-purple-900 border-purple-200"
+              }`}>
+                {completedStepsCount} of {onboardingSteps.length} Complete ({onboardingProgress}%)
+              </span>
+            </div>
+            <p className="text-xs text-zinc-500">
+              Complete these 5 milestones to unlock verified WhatsApp broadcasting, customer lists, and automated delivery.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsOnboardingCollapsed(!isOnboardingCollapsed)}
+            className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 flex items-center gap-1 self-start sm:self-center cursor-pointer"
+          >
+            <span>{isOnboardingCollapsed ? "Show Checklist" : "Hide Checklist"}</span>
+            <svg className={`w-3.5 h-3.5 transform transition-transform ${isOnboardingCollapsed ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
+          <div
+            className="bg-gradient-to-r from-[#581c87] via-purple-600 to-emerald-500 h-full rounded-full transition-all duration-500"
+            style={{ width: `${onboardingProgress}%` }}
+          />
+        </div>
+
+        {/* Step Cards */}
+        {!isOnboardingCollapsed && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+            {onboardingSteps.map((step) => (
+              <div
+                key={step.id}
+                className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
+                  step.completed
+                    ? "bg-emerald-50/40 border-emerald-200/80"
+                    : "bg-zinc-50/70 border-zinc-200 hover:border-purple-300 hover:bg-white"
+                }`}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                        step.completed
+                          ? "bg-emerald-600 text-white"
+                          : "bg-zinc-200 text-zinc-700"
+                      }`}
+                    >
+                      {step.completed ? "✓" : step.number}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                        step.completed
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-zinc-200/70 text-zinc-600"
+                      }`}
+                    >
+                      {step.completed ? "Done" : "Pending"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xs font-bold text-zinc-900 leading-tight">
+                      {step.title}
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 mt-1 leading-snug">
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2.5 border-t border-zinc-200/60">
+                  <Link
+                    href={step.href}
+                    className={`inline-flex items-center gap-1 text-[11px] font-semibold transition-colors ${
+                      step.completed
+                        ? "text-emerald-700 hover:text-emerald-800"
+                        : "text-[#581c87] hover:text-[#4a1572]"
+                    }`}
+                  >
+                    <span>{step.actionText}</span>
+                    <span aria-hidden="true">&rarr;</span>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Main Two Column Layout */}
