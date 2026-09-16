@@ -144,7 +144,7 @@ export default function BusinessOnboardingGuidePage() {
         "Connect your dedicated WhatsApp Business number via Meta Embedded Signup and whitelist SMS Sender IDs.",
       keyFeatures: [
         "Meta WhatsApp Signup: Log in with Facebook to link your dedicated business WhatsApp number in ~60 seconds.",
-        "Dual-Route Switching: Seamlessly toggle between LJK's verified agency route (+254 740 964 423) and your dedicated number.",
+        "Dedicated Brand Routing: Broadcasts use LJK Marketing Agency's verified route by default, or your own dedicated business number once connected.",
         "Brand Visibility: Replace random phone numbers with your company name (e.g. YOURBRAND).",
         "Carrier Whitelisting: Approved across Safaricom, Airtel, and Telkom networks.",
       ],
