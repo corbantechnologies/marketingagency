@@ -16,7 +16,7 @@ export interface MetaSignupResult {
   phone_number_id?: string;
 }
 
-const META_APP_ID = process.env.NEXT_PUBLIC_META_APP_ID || "1538356980456108";
+const META_APP_ID = process.env.NEXT_PUBLIC_META_APP_ID || "28124165710618776";
 const META_CONFIG_ID = process.env.NEXT_PUBLIC_META_CONFIG_ID || "";
 
 let sdkLoadingPromise: Promise<void> | null = null;
@@ -122,17 +122,21 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
     const loginOptions: Record<string, any> = {
       response_type: "code",
       override_default_response_type: true,
-      extras: {
-        feature: "whatsapp_embedded_signup",
-        version: 2,
-      },
+      return_scopes: true,
     };
 
     if (META_CONFIG_ID) {
       loginOptions.config_id = META_CONFIG_ID;
+      loginOptions.extras = {
+        feature: "whatsapp_embedded_signup",
+        version: 2,
+      };
     } else {
-      // Fallback permissions if config_id is not preset
       loginOptions.scope = "whatsapp_business_management,whatsapp_business_messaging";
+      loginOptions.extras = {
+        feature: "whatsapp_embedded_signup",
+        version: 2,
+      };
     }
 
     try {
