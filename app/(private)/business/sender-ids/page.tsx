@@ -488,6 +488,19 @@ export default function ChannelsAndSenderIdsPage() {
                       Connect via Phone Number ID
                     </button>
                   </div>
+
+                  <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200/90 text-[11px] text-amber-900 leading-relaxed space-y-1">
+                    <div className="font-bold flex items-center gap-1.5 text-amber-950">
+                      <span>💡</span>
+                      <span>Requirement for connecting your own number:</span>
+                    </div>
+                    <p>
+                      Meta requires that any phone number connected to the official Cloud API cannot be active on the standard WhatsApp mobile phone app at the same time. We recommend using a dedicated secondary business SIM card.
+                    </p>
+                    <p className="text-amber-900/90 pt-0.5">
+                      <strong>Don&apos;t have a second SIM?</strong> You don&apos;t need one! You can broadcast immediately through LJK&apos;s verified sender &mdash; your business name is featured in the message header, and you can include a direct <em>&ldquo;Chat with us&rdquo;</em> link to receive customer replies on your regular WhatsApp.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
