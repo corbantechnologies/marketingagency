@@ -22,6 +22,7 @@ export default function BusinessSignupPage() {
     password_confirmation: "",
   });
 
+  const [honeypot, setHoneypot] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -36,6 +37,15 @@ export default function BusinessSignupPage() {
     e.preventDefault();
     setErrorMessage("");
 
+    // Anti-bot honeypot check: If filled, fake success and abort immediately
+    if (honeypot.trim().length > 0) {
+      toast.success("Account created successfully! Logging you in...");
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 1200);
+      return;
+    }
+
     // Client validation
     if (!formData.first_name.trim() || !formData.last_name.trim()) {
       setErrorMessage("Please enter both your first and last name.");
@@ -45,6 +55,22 @@ export default function BusinessSignupPage() {
       setErrorMessage("Please enter your business email address.");
       return;
     }
+
+    // Client disposable email domain check
+    const emailParts = formData.email.trim().split("@");
+    const domain = emailParts.length > 1 ? emailParts[1].toLowerCase() : "";
+    const commonDisposable = [
+      "mailinator.com", "tempmail.com", "temp-mail.org", "guerrillamail.com",
+      "10minutemail.com", "yopmail.com", "trashmail.com", "throwawaymail.com",
+      "burnermail.io", "nada.ltd", "sharklasers.com", "grr.la", "dispostable.com",
+      "inboxkitten.com", "emailfake.com", "generator.email", "fakemailgenerator.com",
+      "dropmail.me", "tempmailo.com", "tempail.com", "fakeinbox.com", "mohmal.com"
+    ];
+    if (domain && commonDisposable.includes(domain)) {
+      setErrorMessage("Disposable or temporary email addresses are not allowed. Please use a valid business email.");
+      return;
+    }
+
     if (!formData.phone.trim()) {
       setErrorMessage("Please enter your phone number.");
       return;
@@ -65,6 +91,7 @@ export default function BusinessSignupPage() {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         country: formData.country,
+        company_website: honeypot,
         password: formData.password,
         password_confirmation: formData.password_confirmation,
       },
@@ -147,6 +174,24 @@ export default function BusinessSignupPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Anti-Bot Honeypot Trap - Invisible to humans, automated bots fill it out */}
+        <div
+          className="opacity-0 absolute -top-[9999px] -left-[9999px] h-0 w-0 -z-50 pointer-events-none select-none overflow-hidden"
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <label htmlFor="company_website">Company Website</label>
+          <input
+            id="company_website"
+            type="text"
+            name="company_website"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">

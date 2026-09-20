@@ -58,6 +58,7 @@ export interface createBusinessUser {
   password: string;
   phone: string;
   country?: string;
+  company_website?: string; // Decoy honeypot
   password_confirmation?: string; // Optional client-side verification
 }
 
@@ -72,6 +73,7 @@ export interface createAdminUser {
   password: string;
   phone: string;
   country?: string;
+  company_website?: string; // Decoy honeypot
   password_confirmation?: string; // Optional client-side verification
 }
 
@@ -227,6 +229,7 @@ export const createBusiness = async (
       password: data.password,
       phone: data.phone,
       ...(data.country ? { country: data.country } : {}),
+      ...(data.company_website !== undefined ? { company_website: data.company_website } : {}),
     }
   );
   return response.data;
@@ -249,6 +252,7 @@ export const createAdmin = async (
       password: data.password,
       phone: data.phone,
       ...(data.country ? { country: data.country } : {}),
+      ...(data.company_website !== undefined ? { company_website: data.company_website } : {}),
     },
     config
   );
