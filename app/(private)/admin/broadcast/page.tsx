@@ -40,6 +40,8 @@ export default function AdminBroadcastPage() {
   const [selectedTemplateName, setSelectedTemplateName] = useState<string>("");
   const [templateHeader, setTemplateHeader] = useState<string>("");
   const [templateFooter, setTemplateFooter] = useState<string>("");
+  const [isFreeformMode, setIsFreeformMode] = useState<boolean>(false);
+  const [hasInitializedDefault, setHasInitializedDefault] = useState<boolean>(false);
 
   // Live GSM 03.38 character and segment calculations (for SMS)
   const { charCount, segments, isUnicode } = useMemo(() => {
@@ -162,12 +164,17 @@ export default function AdminBroadcastPage() {
   }, [templatesData, selectedTemplateName]);
 
   const handleSelectTemplate = (name: string) => {
-    setSelectedTemplateName(name);
     if (!name) {
+      setIsFreeformMode(true);
+      setSelectedTemplateName("");
       setTemplateHeader("");
       setTemplateFooter("");
+      toast.success("Switched to custom freeform copy mode.");
       return;
     }
+
+    setIsFreeformMode(false);
+    setSelectedTemplateName(name);
     const tpl = templatesData?.templates?.find((t) => t.name === name);
     if (!tpl) return;
 
@@ -196,15 +203,17 @@ export default function AdminBroadcastPage() {
   };
 
   const handleClearTemplate = () => {
+    setIsFreeformMode(true);
     setSelectedTemplateName("");
     setTemplateHeader("");
     setTemplateFooter("");
-    setMessageBody("Hello {first_name}, this is an official announcement from LJK Marketing Agency.");
+    toast.success("Cleared template. You can now type custom freeform copy.");
   };
 
-  // Auto-select approved Meta template when in WhatsApp channel
+  // Auto-select approved Meta template when in WhatsApp channel ONLY on initial load
   useEffect(() => {
-    if (channel === "WHATSAPP" && !selectedTemplateName && approvedTemplates.length > 0) {
+    if (channel === "WHATSAPP" && !hasInitializedDefault && !isFreeformMode && approvedTemplates.length > 0) {
+      setHasInitializedDefault(true);
       const defaultTpl =
         approvedTemplates.find((t) => t.name === "general_business_promo") ||
         approvedTemplates[0];
@@ -212,7 +221,7 @@ export default function AdminBroadcastPage() {
         handleSelectTemplate(defaultTpl.name);
       }
     }
-  }, [channel, approvedTemplates, selectedTemplateName]);
+  }, [channel, approvedTemplates, hasInitializedDefault, isFreeformMode]);
 
   // Detect {{1}}, {{2}} in template body
   const detectedVariables = useMemo(() => {
@@ -405,9 +414,9 @@ export default function AdminBroadcastPage() {
       {/* --- TAB 1: BROADCAST DISPATCHER --- */}
       {activeTab === "DISPATCHER" && (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column (7 cols): Broadcast Composer */}
-            <div className="lg:col-span-7 bg-white border border-zinc-200 rounded-xl p-5 sm:p-7 shadow-xs space-y-5">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+            {/* Left Column (7 cols XL, 8 cols 2XL): Broadcast Composer */}
+            <div className="xl:col-span-7 2xl:col-span-8 bg-white border border-zinc-200 rounded-xl p-5 sm:p-7 shadow-xs space-y-5 min-w-0">
               {/* Channel Switcher Tabs */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4">
                 <div>
@@ -567,14 +576,14 @@ export default function AdminBroadcastPage() {
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
-                      <div className="sm:col-span-8">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <div className="flex-1 min-w-0">
                         <select
                           value={selectedTemplateName}
                           onChange={(e) => handleSelectTemplate(e.target.value)}
                           className="w-full px-3 py-2.5 rounded-lg border border-emerald-300 bg-white text-xs font-medium text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-2xs"
                         >
-                          <option value="">— Custom Freeform Copy (Or Select Approved Template) —</option>
+                          <option value="">— Custom Freeform Copy (Type custom message) —</option>
                           {approvedTemplates.length > 0 && (
                             <optgroup label="Approved Meta Templates (Live Ready)">
                               {approvedTemplates.map((tpl) => (
@@ -596,20 +605,20 @@ export default function AdminBroadcastPage() {
                         </select>
                       </div>
 
-                      <div className="sm:col-span-4 flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         {selectedTemplate ? (
                           <button
                             type="button"
                             onClick={handleClearTemplate}
-                            className="w-full py-2.5 px-3 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold transition-colors cursor-pointer text-center"
+                            className="py-2.5 px-3.5 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold transition-colors cursor-pointer text-center whitespace-nowrap"
                           >
-                            Clear / Custom
+                            Clear / Custom Freeform
                           </button>
                         ) : (
                           <button
                             type="button"
                             onClick={() => setIsCreateModalOpen(true)}
-                            className="w-full py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                            className="py-2.5 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -620,8 +629,8 @@ export default function AdminBroadcastPage() {
                       </div>
                     </div>
 
-                    {/* Active Selected Template Metadata Pill */}
-                    {selectedTemplate && (
+                    {/* Active Selected Template or Freeform Banner */}
+                    {selectedTemplate ? (
                       <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-emerald-200/60 text-[11px] text-emerald-950">
                         <span className="font-semibold text-emerald-800">Active Template:</span>
                         <code className="bg-emerald-100/80 px-2 py-0.5 rounded font-mono font-bold text-emerald-900">
@@ -642,6 +651,23 @@ export default function AdminBroadcastPage() {
                             <span>&bull;</span>
                             <span className="text-zinc-500 font-mono text-[10px]">Meta ID: {selectedTemplate.id}</span>
                           </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-amber-50/90 border border-amber-300/80 text-[11px] text-amber-950">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                          <span className="font-bold">Custom Freeform Copy Active:</span>
+                          <span>You can type any custom announcement in the text box below.</span>
+                        </div>
+                        {approvedTemplates.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleSelectTemplate(approvedTemplates[0].name)}
+                            className="text-amber-900 font-bold underline hover:text-amber-950 cursor-pointer shrink-0 self-start sm:self-auto"
+                          >
+                            Pick a Meta Template
+                          </button>
                         )}
                       </div>
                     )}
@@ -777,10 +803,10 @@ export default function AdminBroadcastPage() {
               </form>
             </div>
 
-            {/* Right Column (5 cols): Dynamic Handset Mockup & Guidance */}
-            <div className="lg:col-span-5 space-y-6">
+            {/* Right Column (5 cols XL, 4 cols 2XL): Dynamic Handset Mockup & Guidance */}
+            <div className="xl:col-span-5 2xl:col-span-4 space-y-6 min-w-0 w-full">
               {/* Dynamic Handset Preview Card */}
-              <div className="bg-zinc-900 text-white rounded-2xl p-5 shadow-lg border border-zinc-800 space-y-4">
+              <div className="bg-zinc-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-zinc-800 space-y-4 overflow-hidden break-words w-full">
                 <div className="flex items-center justify-between text-xs text-zinc-400 border-b border-zinc-800 pb-3">
                   <span className="font-semibold uppercase tracking-wider text-[10px]">
                     {channel === "WHATSAPP" ? "Live WhatsApp Chat Preview" : "Live SMS Handset Preview"}
@@ -818,7 +844,7 @@ export default function AdminBroadcastPage() {
 
                     {/* WhatsApp Message Body */}
                     <div className="p-4 space-y-3 bg-[radial-gradient(#1f2c34_1px,transparent_1px)] [background-size:16px_16px] min-h-48 flex flex-col justify-between">
-                      <div className="bg-[#005c4b] text-zinc-100 rounded-xl rounded-tr-xs p-3.5 text-xs leading-relaxed shadow-sm border border-[#02735e] max-w-[90%] self-end space-y-1.5">
+                      <div className="bg-[#005c4b] text-zinc-100 rounded-xl rounded-tr-xs p-3.5 text-xs leading-relaxed shadow-sm border border-[#02735e] max-w-[95%] self-end space-y-1.5 break-words overflow-hidden">
                         {templateHeader && (
                           <div className="font-bold text-zinc-100 text-xs border-b border-[#02735e]/60 pb-1">
                             {templateHeader}

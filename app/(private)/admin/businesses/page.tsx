@@ -120,6 +120,30 @@ export default function AdminBusinessesPage() {
     toast.success("Reset entitlements to default settings.");
   };
 
+  const handleToggleLifetimeDirect = (biz: Business) => {
+    const newStatus = !biz.is_lifetime_access;
+    updateEntitlementsMutation.mutate(
+      {
+        reference: biz.reference,
+        payload: {
+          is_lifetime_access: newStatus,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success(
+            newStatus
+              ? `Granted Lifetime VIP Access to ${biz.name}!`
+              : `Revoked Lifetime Access from ${biz.name}.`
+          );
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.detail || "Failed to update lifetime status.");
+        },
+      }
+    );
+  };
+
   return (
     <div className="space-y-6 w-full max-w-none">
       {/* 1. Header Ribbon */}
@@ -172,8 +196,8 @@ export default function AdminBusinessesPage() {
         {isLoading ? (
           <div className="py-16 text-center text-xs text-zinc-500">Loading business directory...</div>
         ) : filteredBusinesses.length > 0 ? (
-          <div className="divide-y divide-zinc-100 overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="divide-y divide-zinc-100 overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full text-left text-xs min-w-[780px]">
               <thead>
                 <tr className="text-zinc-400 font-bold uppercase tracking-wider border-b border-zinc-200 pb-2">
                   <th className="py-3 px-2">Business Name &amp; Code</th>
@@ -240,8 +264,21 @@ export default function AdminBusinessesPage() {
                               API
                             </span>
                           )}
+
+                          {overrides.has_smpp_access && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200" title="SMPP Protocol Active">
+                              SMPP
+                            </span>
+                          )}
+
+                          {overrides.has_autoresponders && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-teal-50 text-teal-700 border border-teal-200" title="Autoresponders Enabled">
+                              AUTO
+                            </span>
+                          )}
+
                           {overrides.sender_id_bypass && (
-                            <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200" title="Sender ID Bypass Active">
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-300" title="CA Regulatory Verification Waived">
                               Bypass
                             </span>
                           )}
@@ -255,7 +292,21 @@ export default function AdminBusinessesPage() {
                         </span>
                       </td>
                       <td className="py-3.5 px-2 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+                          <button
+                            type="button"
+                            disabled={updateEntitlementsMutation.isPending}
+                            onClick={() => handleToggleLifetimeDirect(biz)}
+                            title={biz.is_lifetime_access ? "Revoke Lifetime VIP Access" : "Grant Lifetime VIP Access"}
+                            className={`py-1 px-2 rounded text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1 border shadow-2xs ${
+                              biz.is_lifetime_access
+                                ? "bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-300"
+                                : "bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border-zinc-200"
+                            }`}
+                          >
+                            <span>👑</span>
+                            <span>{biz.is_lifetime_access ? "Lifetime VIP" : "Make Lifetime"}</span>
+                          </button>
                           <button
                             type="button"
                             onClick={() => handleOpenEntitlements(biz)}
@@ -291,10 +342,10 @@ export default function AdminBusinessesPage() {
 
       {/* 3. Entitlements & Lifetime Access Modal */}
       {selectedBiz && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-2xl w-full border border-zinc-200 shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full border border-zinc-200 shadow-2xl overflow-hidden my-4 sm:my-8 max-h-[92vh] flex flex-col animate-in fade-in zoom-in duration-150">
             {/* Modal Header */}
-            <div className="bg-zinc-900 text-white px-6 py-4 flex items-center justify-between">
+            <div className="bg-zinc-900 text-white px-6 py-4 flex items-center justify-between shrink-0">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/20 text-amber-200 border border-amber-400/30">
@@ -316,7 +367,7 @@ export default function AdminBusinessesPage() {
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSaveEntitlements} className="p-6 space-y-5">
+            <form onSubmit={handleSaveEntitlements} className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1">
               {/* Lifetime VIP Card */}
               <div className={`p-4 rounded-xl border transition-all ${
                 isLifetime
