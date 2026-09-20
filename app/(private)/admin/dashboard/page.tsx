@@ -32,6 +32,7 @@ export default function AdminDashboardPage() {
   const refreshCarrierBalancesMutation = useRefreshCarrierBalances();
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [selectedCarrierForTopUp, setSelectedCarrierForTopUp] = useState<"AT" | "ADVANTA">("AT");
+  const [isLowBalanceDismissed, setIsLowBalanceDismissed] = useState(false);
 
   // Popover Actions State
   const [isActionsPopoverOpen, setIsActionsPopoverOpen] = useState(false);
@@ -473,12 +474,25 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Low Balance Warning Banner */}
-        {carrierBalances?.overall_status === "CRITICAL" && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex items-start gap-2.5">
-            <span className="text-base leading-none">🚨</span>
-            <div>
-              <span className="font-bold">Urgent Action Required:</span> Active telecom carrier balance is below KES {carrierBalances.critical_threshold_kes}. Client SMS campaigns are at risk of failing. Please top up the carrier float immediately.
+        {carrierBalances?.overall_status === "CRITICAL" && !isLowBalanceDismissed && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex items-start justify-between gap-2.5">
+            <div className="flex items-start gap-2.5">
+              <span className="text-base leading-none">🚨</span>
+              <div>
+                <span className="font-bold">Urgent Action Required:</span> Active telecom carrier balance is below KES {carrierBalances.critical_threshold_kes}. Client SMS campaigns are at risk of failing. Please top up the carrier float immediately.
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setIsLowBalanceDismissed(true)}
+              className="p-1 rounded text-red-700/70 hover:text-red-950 hover:bg-red-100 transition-colors shrink-0 cursor-pointer"
+              title="Dismiss warning"
+              aria-label="Dismiss warning"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
 

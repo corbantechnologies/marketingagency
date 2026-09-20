@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import {
   useFetchAdminSenderIdQueue,
@@ -16,6 +16,26 @@ export default function AdminSenderIdsPage() {
   const [selectedItemForReject, setSelectedItemForReject] = useState<SenderIdQueueItem | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [isSopBannerDismissed, setIsSopBannerDismissed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (localStorage.getItem("dismissed_admin_senderid_sop") === "true") {
+          setIsSopBannerDismissed(true);
+        }
+      } catch {}
+    }
+  }, []);
+
+  const handleDismissSopBanner = () => {
+    setIsSopBannerDismissed(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("dismissed_admin_senderid_sop", "true");
+      } catch {}
+    }
+  };
 
   // Document preview modal state
   const [previewDocUrl, setPreviewDocUrl] = useState<string | null>(null);
@@ -116,26 +136,41 @@ export default function AdminSenderIdsPage() {
       </div>
 
       {/* Telco Vetting SOP Quick Reference Banner */}
-      <div className="p-4 bg-purple-50/70 rounded-xl border border-purple-200 text-xs text-purple-950 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 mt-0.5">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <div>
-            <div className="font-bold text-purple-900 text-sm">
-              Safaricom & CAK Alphanumeric Vetting Guidelines
+      {!isSopBannerDismissed && (
+        <div className="p-4 bg-purple-50/70 rounded-xl border border-purple-200 text-xs text-purple-950 flex flex-col md:flex-row md:items-center justify-between gap-4 relative transition-all duration-200">
+          <div className="flex items-start gap-3 pr-8 md:pr-0">
+            <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
             </div>
-            <p className="text-purple-800/90 mt-0.5 leading-relaxed">
-              1. Maximum 11 characters &bull; 2. No special symbols (underscores permitted) &bull; 3. Header must clearly correlate with business name &bull; 4. Registration Certificate & KRA PIN must be valid and legible.
-            </p>
+            <div>
+              <div className="font-bold text-purple-900 text-sm">
+                Safaricom & CAK Alphanumeric Vetting Guidelines
+              </div>
+              <p className="text-purple-800/90 mt-0.5 leading-relaxed">
+                1. Maximum 11 characters &bull; 2. No special symbols (underscores permitted) &bull; 3. Header must clearly correlate with business name &bull; 4. Registration Certificate & KRA PIN must be valid and legible.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 shrink-0 self-start md:self-auto">
+            <div className="text-[11px] font-semibold text-purple-700 bg-white/80 px-3 py-1.5 rounded-lg border border-purple-200">
+              Automated Client Emails Active
+            </div>
+            <button
+              type="button"
+              onClick={handleDismissSopBanner}
+              className="p-1 rounded-md text-purple-700/60 hover:text-purple-950 hover:bg-purple-200/50 transition-colors cursor-pointer"
+              title="Dismiss banner"
+              aria-label="Dismiss banner"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
-        <div className="text-[11px] font-semibold text-purple-700 bg-white/80 px-3 py-1.5 rounded-lg border border-purple-200 shrink-0 self-start md:self-auto">
-          Automated Client Emails Active
-        </div>
-      </div>
+      )}
 
       {/* Filter Tabs */}
       <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200 pb-2">

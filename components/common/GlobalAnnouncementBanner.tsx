@@ -11,9 +11,11 @@ export function GlobalAnnouncementBanner() {
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
-    if (announcement?.id) {
+    if (announcement?.id && typeof window !== "undefined") {
       const dismissedKey = `dismissed_ann_${announcement.id}`;
-      const wasDismissed = sessionStorage.getItem(dismissedKey);
+      const wasDismissed =
+        localStorage.getItem(dismissedKey) === "true" ||
+        sessionStorage.getItem(dismissedKey) === "true";
       if (wasDismissed) {
         setIsDismissed(true);
       } else {
@@ -28,8 +30,11 @@ export function GlobalAnnouncementBanner() {
 
   const handleDismiss = () => {
     setIsDismissed(true);
-    if (announcement.id) {
-      sessionStorage.setItem(`dismissed_ann_${announcement.id}`, "true");
+    if (announcement?.id && typeof window !== "undefined") {
+      try {
+        localStorage.setItem(`dismissed_ann_${announcement.id}`, "true");
+        sessionStorage.setItem(`dismissed_ann_${announcement.id}`, "true");
+      } catch {}
     }
   };
 

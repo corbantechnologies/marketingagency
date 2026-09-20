@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useFetchBusinesses } from "@/hooks/business/actions";
@@ -71,6 +71,64 @@ export default function BusinessDashboardPage() {
   };
 
   const [isOnboardingCollapsed, setIsOnboardingCollapsed] = useState(false);
+  const [isLifetimeBannerDismissed, setIsLifetimeBannerDismissed] = useState(false);
+  const [isPrepaidBannerDismissed, setIsPrepaidBannerDismissed] = useState(false);
+  const [isOnboardingRoadmapDismissed, setIsOnboardingRoadmapDismissed] = useState(false);
+
+  const bizKey = primaryBusiness?.reference || primaryBusiness?.id || "default";
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (localStorage.getItem(`dismissed_lifetime_banner_${bizKey}`) === "true") {
+          setIsLifetimeBannerDismissed(true);
+        }
+        if (localStorage.getItem(`dismissed_prepaid_banner_${bizKey}`) === "true") {
+          setIsPrepaidBannerDismissed(true);
+        }
+        if (localStorage.getItem(`dismissed_onboarding_roadmap_${bizKey}`) === "true") {
+          setIsOnboardingRoadmapDismissed(true);
+        }
+      } catch (e) {
+        console.error("Failed to read dismissal state", e);
+      }
+    }
+  }, [bizKey]);
+
+  const handleDismissLifetimeBanner = () => {
+    setIsLifetimeBannerDismissed(true);
+    try {
+      localStorage.setItem(`dismissed_lifetime_banner_${bizKey}`, "true");
+    } catch {}
+  };
+
+  const handleRestoreLifetimeBanner = () => {
+    setIsLifetimeBannerDismissed(false);
+    try {
+      localStorage.removeItem(`dismissed_lifetime_banner_${bizKey}`);
+    } catch {}
+  };
+
+  const handleDismissPrepaidBanner = () => {
+    setIsPrepaidBannerDismissed(true);
+    try {
+      localStorage.setItem(`dismissed_prepaid_banner_${bizKey}`, "true");
+    } catch {}
+  };
+
+  const handleDismissOnboardingRoadmap = () => {
+    setIsOnboardingRoadmapDismissed(true);
+    try {
+      localStorage.setItem(`dismissed_onboarding_roadmap_${bizKey}`, "true");
+    } catch {}
+  };
+
+  const handleRestoreOnboardingRoadmap = () => {
+    setIsOnboardingRoadmapDismissed(false);
+    try {
+      localStorage.removeItem(`dismissed_onboarding_roadmap_${bizKey}`);
+    } catch {}
+  };
 
   const step1Done = Boolean(primaryBusiness?.name);
   const step2Done = Boolean(
@@ -147,10 +205,15 @@ export default function BusinessDashboardPage() {
               Workspace: {primaryBusiness ? primaryBusiness.name : "Default Workspace"}
             </div>
             {primaryBusiness?.is_lifetime_access && (
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-100 border border-amber-300 text-[11px] font-bold text-amber-950 shadow-xs">
+              <button
+                type="button"
+                onClick={handleRestoreLifetimeBanner}
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-100 border border-amber-300 text-[11px] font-bold text-amber-950 shadow-xs hover:bg-amber-200 transition-colors cursor-pointer"
+                title={isLifetimeBannerDismissed ? "Click to show VIP Partner Details Banner" : "Lifetime Partner VIP Active"}
+              >
                 <span>👑</span>
                 <span>Lifetime Partner VIP</span>
-              </div>
+              </button>
             )}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-semibold text-emerald-800">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
@@ -195,9 +258,9 @@ export default function BusinessDashboardPage() {
       </div>
 
       {/* Lifetime VIP Partner Privilege Banner (Shown for Lifetime Accounts) */}
-      {primaryBusiness?.is_lifetime_access ? (
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50/60 border border-amber-300/80 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-          <div className="flex items-start sm:items-center gap-3">
+      {primaryBusiness?.is_lifetime_access && !isLifetimeBannerDismissed ? (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50/60 border border-amber-300/80 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs relative transition-all duration-200">
+          <div className="flex items-start sm:items-center gap-3 pr-8 sm:pr-0">
             <div className="w-10 h-10 rounded-xl bg-amber-200/80 border border-amber-300 flex items-center justify-center shrink-0 text-amber-950 text-xl shadow-2xs">
               👑
             </div>
@@ -230,13 +293,24 @@ export default function BusinessDashboardPage() {
             >
               <span>View Entitlements</span> &rarr;
             </Link>
+            <button
+              type="button"
+              onClick={handleDismissLifetimeBanner}
+              className="p-1.5 rounded-lg text-amber-800/70 hover:text-amber-950 hover:bg-amber-200/60 transition-colors cursor-pointer"
+              title="Dismiss banner"
+              aria-label="Dismiss banner"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       ) : (
         /* Standard Zero Complimentary Policy Banner — Shown only for standard accounts when balance is 0 */
-        !isWalletsLoading && smsBalance === 0 && (
-          <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-            <div className="flex items-start sm:items-center gap-3">
+        !primaryBusiness?.is_lifetime_access && !isWalletsLoading && smsBalance === 0 && !isPrepaidBannerDismissed && (
+          <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs relative transition-all duration-200">
+            <div className="flex items-start sm:items-center gap-3 pr-8 sm:pr-0">
               <div className="w-9 h-9 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0 text-amber-800 text-lg">
                 💳
               </div>
@@ -254,13 +328,26 @@ export default function BusinessDashboardPage() {
                 </p>
               </div>
             </div>
-            <Link
-              href="/business/billing"
-              className="py-2 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 text-center shadow-xs flex items-center justify-center gap-1.5"
-            >
-              <span>Top Up via M-PESA</span>
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/business/billing"
+                className="py-2 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 text-center shadow-xs flex items-center justify-center gap-1.5"
+              >
+                <span>Top Up via M-PESA</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+              <button
+                type="button"
+                onClick={handleDismissPrepaidBanner}
+                className="p-1.5 rounded-lg text-amber-800/70 hover:text-amber-950 hover:bg-amber-200/60 transition-colors cursor-pointer"
+                title="Dismiss warning banner"
+                aria-label="Dismiss warning banner"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
         )
       )}
@@ -383,108 +470,137 @@ export default function BusinessDashboardPage() {
       </div>
 
       {/* Guided Self-Serve Onboarding Roadmap */}
-      <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-zinc-900 tracking-tight">
-                Getting Started: Self-Serve Onboarding Roadmap
-              </h2>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                onboardingProgress === 100
-                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                  : "bg-purple-100 text-purple-900 border-purple-200"
-              }`}>
-                {completedStepsCount} of {onboardingSteps.length} Complete ({onboardingProgress}%)
-              </span>
+      {!isOnboardingRoadmapDismissed ? (
+        <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4 relative transition-all duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-zinc-900 tracking-tight">
+                  Getting Started: Self-Serve Onboarding Roadmap
+                </h2>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                  onboardingProgress === 100
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    : "bg-purple-100 text-purple-900 border-purple-200"
+                }`}>
+                  {completedStepsCount} of {onboardingSteps.length} Complete ({onboardingProgress}%)
+                </span>
+              </div>
+              <p className="text-xs text-zinc-500">
+                Complete these 5 milestones to unlock verified WhatsApp broadcasting, customer lists, and automated delivery.
+              </p>
             </div>
-            <p className="text-xs text-zinc-500">
-              Complete these 5 milestones to unlock verified WhatsApp broadcasting, customer lists, and automated delivery.
-            </p>
+
+            <div className="flex items-center gap-2.5 self-start sm:self-center">
+              <button
+                type="button"
+                onClick={() => setIsOnboardingCollapsed(!isOnboardingCollapsed)}
+                className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 flex items-center gap-1 cursor-pointer"
+              >
+                <span>{isOnboardingCollapsed ? "Show Checklist" : "Hide Checklist"}</span>
+                <svg className={`w-3.5 h-3.5 transform transition-transform ${isOnboardingCollapsed ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={handleDismissOnboardingRoadmap}
+                className="p-1 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+                title="Dismiss Onboarding Checklist"
+                aria-label="Dismiss Onboarding Checklist"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
 
+          {/* Progress Bar */}
+          <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-[#581c87] via-purple-600 to-emerald-500 h-full rounded-full transition-all duration-500"
+              style={{ width: `${onboardingProgress}%` }}
+            />
+          </div>
+
+          {/* Step Cards */}
+          {!isOnboardingCollapsed && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+              {onboardingSteps.map((step) => (
+                <div
+                  key={step.id}
+                  className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
+                    step.completed
+                      ? "bg-emerald-50/40 border-emerald-200/80"
+                      : "bg-zinc-50/70 border-zinc-200 hover:border-purple-300 hover:bg-white"
+                  }`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                          step.completed
+                            ? "bg-emerald-600 text-white"
+                            : "bg-zinc-200 text-zinc-700"
+                        }`}
+                      >
+                        {step.completed ? "✓" : step.number}
+                      </span>
+                      <span
+                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                          step.completed
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-zinc-200/70 text-zinc-600"
+                        }`}
+                      >
+                        {step.completed ? "Done" : "Pending"}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xs font-bold text-zinc-900 leading-tight">
+                        {step.title}
+                      </h3>
+                      <p className="text-[11px] text-zinc-500 mt-1 leading-snug">
+                        {step.desc}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-2.5 border-t border-zinc-200/60">
+                    <Link
+                      href={step.href}
+                      className={`inline-flex items-center gap-1 text-[11px] font-semibold transition-colors ${
+                        step.completed
+                          ? "text-emerald-700 hover:text-emerald-800"
+                          : "text-[#581c87] hover:text-[#4a1572]"
+                      }`}
+                    >
+                      <span>{step.actionText}</span>
+                      <span aria-hidden="true">&rarr;</span>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center justify-between px-4 py-2 bg-zinc-50 border border-dashed border-zinc-200 rounded-xl text-xs text-zinc-500">
+          <div className="flex items-center gap-2">
+            <span>📋</span>
+            <span>Getting Started Onboarding Roadmap is hidden.</span>
+          </div>
           <button
             type="button"
-            onClick={() => setIsOnboardingCollapsed(!isOnboardingCollapsed)}
-            className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 flex items-center gap-1 self-start sm:self-center cursor-pointer"
+            onClick={handleRestoreOnboardingRoadmap}
+            className="text-xs font-semibold text-[#581c87] hover:underline cursor-pointer"
           >
-            <span>{isOnboardingCollapsed ? "Show Checklist" : "Hide Checklist"}</span>
-            <svg className={`w-3.5 h-3.5 transform transition-transform ${isOnboardingCollapsed ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            Show Roadmap &rarr;
           </button>
         </div>
-
-        {/* Progress Bar */}
-        <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-[#581c87] via-purple-600 to-emerald-500 h-full rounded-full transition-all duration-500"
-            style={{ width: `${onboardingProgress}%` }}
-          />
-        </div>
-
-        {/* Step Cards */}
-        {!isOnboardingCollapsed && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
-            {onboardingSteps.map((step) => (
-              <div
-                key={step.id}
-                className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
-                  step.completed
-                    ? "bg-emerald-50/40 border-emerald-200/80"
-                    : "bg-zinc-50/70 border-zinc-200 hover:border-purple-300 hover:bg-white"
-                }`}
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
-                        step.completed
-                          ? "bg-emerald-600 text-white"
-                          : "bg-zinc-200 text-zinc-700"
-                      }`}
-                    >
-                      {step.completed ? "✓" : step.number}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                        step.completed
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-zinc-200/70 text-zinc-600"
-                      }`}
-                    >
-                      {step.completed ? "Done" : "Pending"}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xs font-bold text-zinc-900 leading-tight">
-                      {step.title}
-                    </h3>
-                    <p className="text-[11px] text-zinc-500 mt-1 leading-snug">
-                      {step.desc}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-3 pt-2.5 border-t border-zinc-200/60">
-                  <Link
-                    href={step.href}
-                    className={`inline-flex items-center gap-1 text-[11px] font-semibold transition-colors ${
-                      step.completed
-                        ? "text-emerald-700 hover:text-emerald-800"
-                        : "text-[#581c87] hover:text-[#4a1572]"
-                    }`}
-                  >
-                    <span>{step.actionText}</span>
-                    <span aria-hidden="true">&rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Main Two Column Layout */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">

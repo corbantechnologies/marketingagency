@@ -227,9 +227,10 @@ function BroadcastComposerForm({
   const hasInsufficientCredits = !isCreditBypass && (isWhatsApp ? recipientCount * 2 : recipientCount * segments) > smsBalance;
 
   // Variable-Length Inflation Detection (only for 160-char SMS)
+  const [isInflationWarningDismissed, setIsInflationWarningDismissed] = useState(false);
   const hasDynamicTags = /\{(first_name|last_name|name|phone_number|email)\}/.test(message);
   const isNearBoundary = !isUnicode ? charCount >= 148 && charCount <= 160 : charCount >= 62 && charCount <= 70;
-  const showInflationWarning = !isWhatsApp && hasDynamicTags && isNearBoundary;
+  const showInflationWarning = !isWhatsApp && hasDynamicTags && isNearBoundary && !isInflationWarningDismissed;
 
   // Handset preview interpolation
   const samplePreviewText = useMemo(() => {
@@ -849,11 +850,24 @@ function BroadcastComposerForm({
 
               {/* Variable Length Inflation Safeguard Banner */}
               {showInflationWarning && (
-                <div className="mt-2.5 p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-start gap-2.5 leading-relaxed">
-                  <span className="text-amber-600 font-bold shrink-0 mt-0.5">⚠️</span>
-                  <div>
-                    <strong>Variable Length Notice:</strong> Your message template is close to the single-SMS threshold ({charCount}/{maxSingle} chars). For recipients with longer names (e.g. 15+ characters), personalized tags like <code>{`{first_name}`}</code> may push the rendered text past 160 characters, turning those messages into 2-part SMS.
+                <div className="mt-2.5 p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-start justify-between gap-2.5 leading-relaxed">
+                  <div className="flex items-start gap-2.5">
+                    <span className="text-amber-600 font-bold shrink-0 mt-0.5">⚠️</span>
+                    <div>
+                      <strong>Variable Length Notice:</strong> Your message template is close to the single-SMS threshold ({charCount}/{maxSingle} chars). For recipients with longer names (e.g. 15+ characters), personalized tags like <code>{`{first_name}`}</code> may push the rendered text past 160 characters, turning those messages into 2-part SMS.
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsInflationWarningDismissed(true)}
+                    className="p-1 rounded text-amber-800/60 hover:text-amber-950 hover:bg-amber-200/50 transition-colors shrink-0 cursor-pointer"
+                    title="Dismiss warning"
+                    aria-label="Dismiss warning"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               )}
 

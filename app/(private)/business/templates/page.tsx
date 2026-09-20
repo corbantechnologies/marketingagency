@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -34,6 +34,26 @@ export default function MessageTemplatesPage() {
   // WhatsApp Tab State
   const [waSearchTerm, setWaSearchTerm] = useState("");
   const [waStatusFilter, setWaStatusFilter] = useState<string>("all");
+  const [isMetaBannerDismissed, setIsMetaBannerDismissed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (localStorage.getItem("dismissed_meta_provider_templates_banner") === "true") {
+          setIsMetaBannerDismissed(true);
+        }
+      } catch {}
+    }
+  }, []);
+
+  const handleDismissMetaBanner = () => {
+    setIsMetaBannerDismissed(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("dismissed_meta_provider_templates_banner", "true");
+      } catch {}
+    }
+  };
 
   // Queries & Mutations
   const { data: templatesData, isLoading: isSmsLoading } = useFetchMessageTemplates({
@@ -395,44 +415,57 @@ export default function MessageTemplatesPage() {
       {activeTab === "WHATSAPP" && (
         <div className="space-y-6">
           {/* Official Meta Tech Provider Authority Banner */}
-          <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-zinc-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-emerald-800/60 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  Verified Meta Tech Provider (Corban Technologies LTD)
-                </span>
-                <span className="text-zinc-300 text-xs font-mono">
-                  WABA: 2660518117713455 &bull; 2,000+ Tier-1 Limit
-                </span>
+          {!isMetaBannerDismissed && (
+            <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-zinc-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-emerald-800/60 flex flex-col md:flex-row md:items-center justify-between gap-6 relative transition-all duration-200">
+              <div className="space-y-2 pr-8 md:pr-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Verified Meta Tech Provider (Corban Technologies LTD)
+                  </span>
+                  <span className="text-zinc-300 text-xs font-mono">
+                    WABA: 2660518117713455 &bull; 2,000+ Tier-1 Limit
+                  </span>
+                </div>
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                  Official Meta WhatsApp Cloud API Template Studio
+                </h2>
+                <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
+                  All templates below are verified directly with Meta Cloud API v19.0. Approved templates guarantee instant message dispatch directly to WhatsApp chats with blue-tick read receipts and zero telecom carrier blocking.
+                </p>
               </div>
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                Official Meta WhatsApp Cloud API Template Studio
-              </h2>
-              <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
-                All templates below are verified directly with Meta Cloud API v19.0. Approved templates guarantee instant message dispatch directly to WhatsApp chats with blue-tick read receipts and zero telecom carrier blocking.
-              </p>
-            </div>
 
-            <div className="flex items-center gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={() => refetchWa()}
-                disabled={isWaFetching}
-                className="py-2 px-3.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                <svg
-                  className={`w-3.5 h-3.5 ${isWaFetching ? "animate-spin" : ""}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => refetchWa()}
+                  disabled={isWaFetching}
+                  className="py-2 px-3.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span>{isWaFetching ? "Syncing..." : "Sync from Meta"}</span>
-              </button>
+                  <svg
+                    className={`w-3.5 h-3.5 ${isWaFetching ? "animate-spin" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>{isWaFetching ? "Syncing..." : "Sync from Meta"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDismissMetaBanner}
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Dismiss banner"
+                  aria-label="Dismiss banner"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Sub-Filter Bar */}
           <div className="bg-white border border-zinc-200 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">

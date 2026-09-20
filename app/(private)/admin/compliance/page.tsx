@@ -16,6 +16,7 @@ export default function AdminCompliancePage() {
   const [newKeyword, setNewKeyword] = useState("");
   const [isAddingKeyword, setIsAddingKeyword] = useState(false);
   const [isProcessingAction, setIsProcessingAction] = useState(false);
+  const [isCakBannerDismissed, setIsCakBannerDismissed] = useState(false);
 
   const cakStatus = data?.cak_status;
   const vitals = data?.vitals;
@@ -143,50 +144,69 @@ export default function AdminCompliancePage() {
       </div>
 
       {/* CAK Operating Hours Banner */}
-      <div
-        className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-          cakStatus?.is_open
-            ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
-            : "bg-amber-50/80 border-amber-200 text-amber-950"
-        }`}
-      >
-        <div className="flex items-start gap-3">
-          <div
-            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-              cakStatus?.is_open
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-amber-100 text-amber-700"
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm">
-                Communications Authority of Kenya (CAK) Commercial SMS Window:
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold uppercase ${
-                  cakStatus?.is_open
-                    ? "bg-emerald-200 text-emerald-900"
-                    : "bg-amber-200 text-amber-900"
-                }`}
-              >
-                {cakStatus?.status || "OPEN"}
-              </span>
+      {!isCakBannerDismissed && (
+        <div
+          className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 relative transition-all duration-200 ${
+            cakStatus?.is_open
+              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+              : "bg-amber-50/80 border-amber-200 text-amber-950"
+          }`}
+        >
+          <div className="flex items-start gap-3 pr-8 md:pr-0">
+            <div
+              className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                cakStatus?.is_open
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-amber-100 text-amber-700"
+              }`}
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-            <p className="text-xs opacity-90 mt-0.5">
-              {cakStatus?.notice} (Current Local Clock: <strong>{cakStatus?.current_eat_time || "—"}</strong>)
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm">
+                  Communications Authority of Kenya (CAK) Commercial SMS Window:
+                </span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold uppercase ${
+                    cakStatus?.is_open
+                      ? "bg-emerald-200 text-emerald-900"
+                      : "bg-amber-200 text-amber-900"
+                  }`}
+                >
+                  {cakStatus?.status || "OPEN"}
+                </span>
+              </div>
+              <p className="text-xs opacity-90 mt-0.5">
+                {cakStatus?.notice} (Current Local Clock: <strong>{cakStatus?.current_eat_time || "—"}</strong>)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 self-start md:self-auto">
+            <div className="text-xs font-semibold px-3 py-1.5 bg-white/80 rounded-lg border border-zinc-200 text-zinc-700">
+              Legal Envelope: 07:00 AM &ndash; 07:00 PM EAT
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsCakBannerDismissed(true)}
+              className={`p-1 rounded-md transition-colors cursor-pointer ${
+                cakStatus?.is_open
+                  ? "text-emerald-700/60 hover:text-emerald-950 hover:bg-emerald-200/50"
+                  : "text-amber-700/60 hover:text-amber-950 hover:bg-amber-200/50"
+              }`}
+              title="Dismiss banner"
+              aria-label="Dismiss banner"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
-
-        <div className="text-xs font-semibold px-3 py-1.5 bg-white/80 rounded-lg border border-zinc-200 shrink-0 self-start md:self-auto text-zinc-700">
-          Legal Envelope: 07:00 AM &ndash; 07:00 PM EAT
-        </div>
-      </div>
+      )}
 
       {/* Compliance Vitals KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

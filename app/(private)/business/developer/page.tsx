@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -15,8 +15,7 @@ import { ApiKeyItem } from "@/services/integrations";
 type CodeLanguage = "curl" | "javascript" | "python";
 type EndpointTab = "whatsapp" | "sms" | "transactional" | "balance";
 
-export default function DeveloperAPIPage() {
-  // Queries & Mutations
+export default function BusinessDeveloperPage() {
   const { data: apiKeys, isLoading } = useFetchApiKeys();
   const createMutation = useCreateApiKey();
   const revokeMutation = useRevokeApiKey();
@@ -27,6 +26,26 @@ export default function DeveloperAPIPage() {
   const [allowSms, setAllowSms] = useState(true);
   const [allowWhatsApp, setAllowWhatsApp] = useState(true);
   const [isTestKey, setIsTestKey] = useState(false);
+  const [isGatewayBannerDismissed, setIsGatewayBannerDismissed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (localStorage.getItem("dismissed_dev_gateway_banner") === "true") {
+          setIsGatewayBannerDismissed(true);
+        }
+      } catch {}
+    }
+  }, []);
+
+  const handleDismissGatewayBanner = () => {
+    setIsGatewayBannerDismissed(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("dismissed_dev_gateway_banner", "true");
+      } catch {}
+    }
+  };
 
   // Reveal Modal
   const [revealedKey, setRevealedKey] = useState<string | null>(null);
@@ -320,31 +339,44 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
       </div>
 
       {/* 2. Official Meta Tech Provider Authority Banner */}
-      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-zinc-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-emerald-800/60 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Verified Meta Tech Provider (Corban Technologies LTD)
-            </span>
-            <span className="text-zinc-300 text-xs font-mono">
-              Cloud API v19.0 &bull; Live WABA 2660518117713455
-            </span>
+      {!isGatewayBannerDismissed && (
+        <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-zinc-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-emerald-800/60 flex flex-col md:flex-row md:items-center justify-between gap-6 relative transition-all duration-200">
+          <div className="space-y-2 pr-8 md:pr-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Verified Meta Tech Provider (Corban Technologies LTD)
+              </span>
+              <span className="text-zinc-300 text-xs font-mono">
+                Cloud API v19.0 &bull; Live WABA 2660518117713455
+              </span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              High-Throughput Omnichannel API Gateway
+            </h2>
+            <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
+              All dispatches via this API route through official Meta WhatsApp Cloud API endpoints with blue-tick read telemetry, and Tier-1 telco carrier aggregates across Safaricom &amp; Airtel with automatic failover.
+            </p>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            High-Throughput Omnichannel API Gateway
-          </h2>
-          <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
-            All dispatches via this API route through official Meta WhatsApp Cloud API endpoints with blue-tick read telemetry, and Tier-1 telco carrier aggregates across Safaricom &amp; Airtel with automatic failover.
-          </p>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono text-zinc-200">
-            Base Endpoint: <strong className="text-white">https://api.ljkmarketingagency.co.ke</strong>
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono text-zinc-200">
+              Base Endpoint: <strong className="text-white">https://api.ljkmarketingagency.co.ke</strong>
+            </div>
+            <button
+              type="button"
+              onClick={handleDismissGatewayBanner}
+              className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              title="Dismiss banner"
+              aria-label="Dismiss banner"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 3. API Keys Section */}
       <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
