@@ -252,23 +252,35 @@ export default function BillingPage() {
         </div>
 
         {/* Commercial Active Plan */}
-        <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs flex flex-col justify-between hover:border-purple-300 transition-colors">
+        <div className={`bg-white border rounded-xl p-5 shadow-xs flex flex-col justify-between transition-colors ${
+          activeBusiness?.is_lifetime_access ? "border-amber-300 bg-amber-50/30" : "border-zinc-200 hover:border-purple-300"
+        }`}>
           <div>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Active Plan</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-[#581c87] border border-purple-200">
-                {activeBusiness?.plan_detail?.category || "PAYG"}
-              </span>
+              {activeBusiness?.is_lifetime_access ? (
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300 flex items-center gap-1">
+                  <span>👑</span> Lifetime VIP
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-[#581c87] border border-purple-200">
+                  {activeBusiness?.plan_detail?.category || "PAYG"}
+                </span>
+              )}
             </div>
-            <div className="text-lg font-bold text-zinc-900 mt-2 truncate">
-              {isLoadingBusiness ? "Loading..." : activeBusiness?.plan_detail?.name || "PAYG Starter Plan"}
+            <div className="text-lg font-bold text-zinc-900 mt-2 truncate flex items-center gap-1.5">
+              <span>{isLoadingBusiness ? "Loading..." : activeBusiness?.plan_detail?.name || "PAYG Starter Plan"}</span>
             </div>
             <div className="text-xs text-zinc-500 mt-0.5">
-              Base: <strong>KES {smsUnitRate.toFixed(2)}</strong> / SMS
+              {activeBusiness?.is_lifetime_access ? (
+                <span className="text-amber-800 font-semibold">SaaS Fees: Permanently Waived</span>
+              ) : (
+                <>Base: <strong>KES {smsUnitRate.toFixed(2)}</strong> / SMS</>
+              )}
             </div>
           </div>
           <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 mt-3">
-            <span>Prepaid: 0 Free Credits</span>
+            <span>{activeBusiness?.is_lifetime_access ? "Perpetual License" : "Prepaid: 0 Free Credits"}</span>
             <Link href="/pricing" className="text-[#581c87] hover:underline font-semibold">
               Compare &rarr;
             </Link>

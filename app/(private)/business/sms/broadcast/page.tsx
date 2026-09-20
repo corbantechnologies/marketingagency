@@ -216,9 +216,15 @@ function BroadcastComposerForm({
     }
   }, [charCount, isUnicode]);
 
+  // Lifetime VIP partner credit bypass check
+  const isCreditBypass = Boolean(
+    activeBusiness?.is_lifetime_access &&
+    (activeBusiness?.feature_overrides?.credit_bypass || activeBusiness?.feature_overrides?.bypass_credit_check)
+  );
+
   // Total credits calculation (WhatsApp: flat 2 credits/msg, SMS: segments)
-  const totalCostCredits = isWhatsApp ? recipientCount * 2 : recipientCount * segments;
-  const hasInsufficientCredits = totalCostCredits > smsBalance;
+  const totalCostCredits = isCreditBypass ? 0 : (isWhatsApp ? recipientCount * 2 : recipientCount * segments);
+  const hasInsufficientCredits = !isCreditBypass && (isWhatsApp ? recipientCount * 2 : recipientCount * segments) > smsBalance;
 
   // Variable-Length Inflation Detection (only for 160-char SMS)
   const hasDynamicTags = /\{(first_name|last_name|name|phone_number|email)\}/.test(message);
@@ -280,7 +286,7 @@ function BroadcastComposerForm({
       toast.error("Please compose an SMS message body");
       return;
     }
-    if (hasInsufficientCredits) {
+    if (!isCreditBypass && hasInsufficientCredits) {
       toast.error(`Insufficient SMS credits (${totalCostCredits} needed, ${smsBalance} available). Please top up.`);
       return;
     }
@@ -860,18 +866,26 @@ function BroadcastComposerForm({
             {/* Quota & Cost Summary Bar */}
             <div className="pt-5 border-t border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="text-xs text-zinc-600">
-                  Estimated Total Cost:{" "}
-                  <span className={`font-extrabold text-base font-mono ${isWhatsApp ? "text-emerald-700" : "text-[#581c87]"}`}>
-                    {totalCostCredits.toLocaleString()} Credits
-                  </span>{" "}
-                  <span className="text-zinc-400">
-                    {isWhatsApp ? (
-                      `(${recipientCount.toLocaleString()} recipients × 2 Credits/msg)`
-                    ) : (
-                      `(${recipientCount.toLocaleString()} recipients × ${segments} ${segments === 1 ? "part" : "parts"})`
-                    )}
-                  </span>
+                <div className="text-xs text-zinc-600 flex items-center gap-2 flex-wrap">
+                  <span>Estimated Total Cost:</span>{" "}
+                  {isCreditBypass ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-xs bg-emerald-100 text-emerald-900 border border-emerald-300">
+                      <span>👑</span> 0.00 Credits (Lifetime VIP Bypass Active)
+                    </span>
+                  ) : (
+                    <>
+                      <span className={`font-extrabold text-base font-mono ${isWhatsApp ? "text-emerald-700" : "text-[#581c87]"}`}>
+                        {totalCostCredits.toLocaleString()} Credits
+                      </span>{" "}
+                      <span className="text-zinc-400">
+                        {isWhatsApp ? (
+                          `(${recipientCount.toLocaleString()} recipients × 2 Credits/msg)`
+                        ) : (
+                          `(${recipientCount.toLocaleString()} recipients × ${segments} ${segments === 1 ? "part" : "parts"})`
+                        )}
+                      </span>
+                    </>
+                  )}
                 </div>
                 {hasInsufficientCredits && (
                   <div className="text-xs text-red-600 font-medium mt-0.5">

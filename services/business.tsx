@@ -537,6 +537,29 @@ export const updateBusinessEntitlements = async (
   return response.data;
 };
 
+export interface GrantBusinessCreditsPayload {
+  amount_units: number;
+  channel?: "SMS" | "WHATSAPP" | "EMAIL";
+  description?: string;
+}
+
+/**
+ * Grant complimentary messaging credits to a business wallet (Admin only)
+ * Endpoint: POST /api/v1/businesses/{reference}/grant-credits/
+ */
+export const grantBusinessCredits = async (
+  reference: string,
+  payload: GrantBusinessCreditsPayload,
+  config?: AxiosConfig
+): Promise<{ success: boolean; message: string; new_balance: number; business: Business }> => {
+  const response: AxiosResponse<{ success: boolean; message: string; new_balance: number; business: Business }> = await apiActions.post(
+    `/api/v1/businesses/${reference}/grant-credits/`,
+    payload,
+    config
+  );
+  return response.data;
+};
+
 /**
  * Connect business WABA / phone number via Meta Embedded Signup code or payload
  * Endpoint: POST /api/v1/businesses/{reference}/whatsapp-connect/

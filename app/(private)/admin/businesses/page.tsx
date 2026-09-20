@@ -9,6 +9,7 @@ import {
   useDeactivateBusiness,
   useReactivateBusiness,
   useUpdateBusinessEntitlements,
+  useGrantBusinessCredits,
 } from "@/hooks/business/actions";
 import { useFetchPlans } from "@/hooks/plans/actions";
 import { Business } from "@/services/business";
@@ -20,6 +21,7 @@ export default function AdminBusinessesPage() {
   const deactivateMutation = useDeactivateBusiness();
   const reactivateMutation = useReactivateBusiness();
   const updateEntitlementsMutation = useUpdateBusinessEntitlements();
+  const grantCreditsMutation = useGrantBusinessCredits();
 
   // Entitlements Modal State
   const [selectedBiz, setSelectedBiz] = useState<Business | null>(null);
@@ -32,8 +34,15 @@ export default function AdminBusinessesPage() {
     has_smpp_access: false,
     has_autoresponders: false,
     sender_id_bypass: false,
+    credit_bypass: false,
   });
   const [customSmsRate, setCustomSmsRate] = useState("");
+
+  // Grant Credits Modal State
+  const [creditBiz, setCreditBiz] = useState<Business | null>(null);
+  const [creditAmount, setCreditAmount] = useState<number>(500);
+  const [creditReason, setCreditReason] = useState<string>("Complimentary Lifetime VIP credit allocation");
+  const [creditChannel, setCreditChannel] = useState<"SMS" | "WHATSAPP">("SMS");
 
   const businesses: Business[] = Array.isArray(businessesData)
     ? businessesData
@@ -75,6 +84,7 @@ export default function AdminBusinessesPage() {
       has_smpp_access: Boolean(overrides.has_smpp_access),
       has_autoresponders: Boolean(overrides.has_autoresponders),
       sender_id_bypass: Boolean(overrides.sender_id_bypass),
+      credit_bypass: Boolean(overrides.credit_bypass || overrides.bypass_credit_check),
     });
     setCustomSmsRate(overrides.custom_sms_rate ? String(overrides.custom_sms_rate) : "");
   };
@@ -115,9 +125,39 @@ export default function AdminBusinessesPage() {
       has_smpp_access: false,
       has_autoresponders: false,
       sender_id_bypass: false,
+      credit_bypass: false,
     });
     setCustomSmsRate("");
     toast.success("Reset entitlements to default settings.");
+  };
+
+  const handleGrantCreditsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!creditBiz || creditAmount <= 0) {
+      toast.error("Please specify a valid credit amount");
+      return;
+    }
+
+    grantCreditsMutation.mutate(
+      {
+        reference: creditBiz.reference,
+        payload: {
+          amount_units: creditAmount,
+          channel: creditChannel,
+          description: creditReason.trim(),
+        },
+      },
+      {
+        onSuccess: (data) => {
+          toast.success(`Granted ${creditAmount.toLocaleString()} credits to ${creditBiz.name}! New balance: ${data.new_balance}`);
+          setCreditBiz(null);
+          setCreditAmount(500);
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.detail || "Failed to grant credits.");
+        },
+      }
+    );
   };
 
   const handleToggleLifetimeDirect = (biz: Business) => {
@@ -309,6 +349,18 @@ export default function AdminBusinessesPage() {
                           </button>
                           <button
                             type="button"
+                            onClick={() => {
+                              setCreditBiz(biz);
+                              setCreditAmount(500);
+                              setCreditReason("Complimentary VIP credit allocation");
+                            }}
+                            title="Grant complimentary credits to wallet"
+                            className="py-1 px-2.5 rounded text-[11px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+                          >
+                            <span>💰 + Credits</span>
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => handleOpenEntitlements(biz)}
                             className="py-1 px-2.5 rounded text-[11px] font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors cursor-pointer flex items-center gap-1"
                           >
@@ -489,6 +541,27 @@ export default function AdminBusinessesPage() {
                     </div>
                   </label>
 
+                  {/* Lifetime VIP Credit Bypass (Free Dispatch) */}
+                  <label className="flex items-start gap-3 p-3 rounded-lg border border-amber-300 bg-amber-50/70 hover:bg-amber-50 cursor-pointer transition-colors sm:col-span-2">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(featureFlags.credit_bypass)}
+                      onChange={(e) => setFeatureFlags({ ...featureFlags, credit_bypass: e.target.checked })}
+                      className="mt-0.5 rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-amber-950 flex items-center gap-2">
+                        <span>👑 Lifetime VIP Credit Bypass (Zero-Cost Dispatch)</span>
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-200 text-amber-900 uppercase">
+                          Free Sends
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-amber-800/90 mt-0.5">
+                        Allow this business to dispatch WhatsApp and SMS campaigns with 0 credit deduction and zero paywall blocks (recommended for internal/sister entities like Corban Technologies).
+                      </div>
+                    </div>
+                  </label>
+
                   {/* SMPP Gateway */}
                   <label className="flex items-start gap-3 p-3 rounded-lg border border-zinc-200 bg-zinc-50/50 hover:bg-zinc-50 cursor-pointer transition-colors">
                     <input
@@ -563,6 +636,129 @@ export default function AdminBusinessesPage() {
                     {updateEntitlementsMutation.isPending ? "Saving..." : "Save Entitlements"}
                   </button>
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Grant Complimentary Credits Modal */}
+      {creditBiz && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-zinc-200 shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="p-5 sm:p-6 bg-gradient-to-r from-emerald-900 to-zinc-900 text-white flex items-center justify-between">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 mb-1">
+                  <span>💰 Instant Admin Top-Up</span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold">Grant Credits to Wallet</h3>
+                <p className="text-xs text-zinc-300 mt-0.5">
+                  Allocate complimentary messaging units directly to <strong>{creditBiz.name}</strong>.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCreditBiz(null)}
+                className="text-zinc-400 hover:text-white p-1 rounded-lg text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleGrantCreditsSubmit} className="p-5 sm:p-6 space-y-4">
+              {/* Current Balance Display */}
+              <div className="p-3 rounded-lg bg-zinc-50 border border-zinc-200 flex items-center justify-between text-xs">
+                <span className="text-zinc-500 font-medium">Current Available Float:</span>
+                <span className="font-mono font-bold text-emerald-700 text-sm">
+                  {creditBiz.wallet?.sms_credit_balance ?? 0} Credits
+                </span>
+              </div>
+
+              {/* Quick Preset Buttons */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">
+                  Select Credit Bundle
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[100, 500, 1000, 5000].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setCreditAmount(preset)}
+                      className={`py-2 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
+                        creditAmount === preset
+                          ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                          : "bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50"
+                      }`}
+                    >
+                      +{preset.toLocaleString()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Credit Amount Input */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
+                  Custom Credit Units
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                  value={creditAmount}
+                  onChange={(e) => setCreditAmount(parseInt(e.target.value) || 0)}
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-sm text-zinc-900 font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                />
+              </div>
+
+              {/* Channel Selector */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
+                  Target Balance
+                </label>
+                <select
+                  value={creditChannel}
+                  onChange={(e) => setCreditChannel(e.target.value as any)}
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                >
+                  <option value="SMS">SMS / WhatsApp Shared Float (Universal Credits)</option>
+                  <option value="EMAIL">Email Units</option>
+                </select>
+              </div>
+
+              {/* Reason / Memo */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
+                  Allocation Reason / Audit Memo
+                </label>
+                <input
+                  type="text"
+                  value={creditReason}
+                  onChange={(e) => setCreditReason(e.target.value)}
+                  placeholder="e.g. VIP Partner complimentary welcome allocation"
+                  className="w-full px-3.5 py-2 rounded-lg border border-zinc-300 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                />
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setCreditBiz(null)}
+                  className="px-4 py-2 text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={grantCreditsMutation.isPending || creditAmount <= 0}
+                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {grantCreditsMutation.isPending ? "Allocating..." : `Confirm & Grant ${creditAmount.toLocaleString()} Credits`}
+                </button>
               </div>
             </form>
           </div>

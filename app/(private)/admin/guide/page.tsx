@@ -9,6 +9,8 @@ export default function AdminGuidancePage() {
   const [activeTab, setActiveTab] = useState<
     | "carriers"
     | "finance"
+    | "tenants"
+    | "security"
     | "sender_ids"
     | "compliance"
     | "inspector"
@@ -35,7 +37,7 @@ export default function AdminGuidancePage() {
             Agency Administrator Guidance &amp; SOP
           </h1>
           <p className="text-sm sm:text-base text-purple-100/90 mt-2 leading-relaxed">
-            Comprehensive operational playbooks for carrier liquidity management, M-Pesa Daraja audits, CAK compliance, forensic message inspection, telecom rate modeling, and broadcast governance.
+            Comprehensive operational playbooks for carrier liquidity management, M-Pesa Daraja audits, tenant governance, Lifetime VIP partner entitlements, anti-bot defenses, CAK compliance, and broadcast governance.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-2.5 text-xs font-medium">
@@ -44,6 +46,12 @@ export default function AdminGuidancePage() {
               className="px-3.5 py-1.5 bg-white text-[#581c87] font-bold rounded-lg hover:bg-purple-50 transition-colors shadow-xs"
             >
               &larr; Admin Dashboard
+            </Link>
+            <Link
+              href="/admin/businesses"
+              className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
+            >
+              🏢 Tenant Workspaces
             </Link>
             <Link
               href="/admin/finance"
@@ -79,7 +87,7 @@ export default function AdminGuidancePage() {
               href="/admin/announcements"
               className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors border border-white/20"
             >
-              📢 System Announcements
+              📢 Announcements
             </Link>
           </div>
         </div>
@@ -112,6 +120,36 @@ export default function AdminGuidancePage() {
           }`}
         >
           <span>💰 Finance &amp; M-Pesa Ledger</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("tenants")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "tenants"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>🏢 Tenant Governance &amp; Lifetime VIP</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-bold">
+            👑 VIP
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("security")}
+          className={`pb-3 px-3.5 whitespace-nowrap border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "security"
+              ? "border-[#581c87] text-[#581c87]"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
+          }`}
+        >
+          <span>🛡️ Anti-Bot &amp; Abuse Defense</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold">
+            Live
+          </span>
         </button>
 
         <button
@@ -171,7 +209,7 @@ export default function AdminGuidancePage() {
               : "border-transparent text-zinc-500 hover:text-zinc-800 hover:border-zinc-300"
           }`}
         >
-          <span>📢 System Announcements</span>
+          <span>📢 Announcements</span>
         </button>
 
         <button
@@ -731,6 +769,252 @@ export default function AdminGuidancePage() {
         </div>
       )}
 
+      {/* TAB 3: TENANT GOVERNANCE & LIFETIME VIP PARTNERS */}
+      {activeTab === "tenants" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                    Tenant Governance, Commercial Plans &amp; Lifetime VIP Partners
+                  </h2>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                    👑 Enterprise VIP
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Standard operating procedures for tenant provisioning, lifetime partner access, complimentary credit grants, and zero-cost credit bypasses.
+                </p>
+              </div>
+              <Link
+                href="/admin/businesses"
+                className="py-1.5 px-3 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs shrink-0 self-start sm:self-auto"
+              >
+                Open Businesses Directory &rarr;
+              </Link>
+            </div>
+
+            {/* Architecture Principle Card */}
+            <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/50 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">⚖️</span>
+                <span className="font-bold text-sm text-amber-950">
+                  Core Architecture Principle: SaaS License Waiver vs. Carrier Messaging Float
+                </span>
+              </div>
+              <p className="text-xs text-amber-900 leading-relaxed">
+                When onboarding sister companies (e.g. <strong>Corban Technologies LTD</strong>), enterprise partners, or board entities, LJK Marketing can permanently grant <strong>Lifetime Access</strong>. However, administrators must distinguish between <strong>Software Licensing</strong> and <strong>Downstream Telecom Liquidity</strong>:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
+                <div className="p-3 rounded-lg bg-white border border-amber-200 space-y-1">
+                  <div className="font-bold text-amber-950 flex items-center gap-1.5">
+                    <span>✅ 1. Software Subscription License</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold">KES 0</span>
+                  </div>
+                  <p className="text-zinc-600 leading-relaxed">
+                    Lifetime VIP partners pay <strong>KES 0 in SaaS recurring fees</strong>. They enjoy perpetual access to the platform, unlimited team member seats, unlimited contact groups, dedicated API keys, and priority SLA.
+                  </p>
+                </div>
+                <div className="p-3 rounded-lg bg-white border border-amber-200 space-y-1">
+                  <div className="font-bold text-amber-950 flex items-center gap-1.5">
+                    <span>📡 2. Carrier Telecom Float</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-100 text-purple-800 font-bold">Wholesale Cost</span>
+                  </div>
+                  <p className="text-zinc-600 leading-relaxed">
+                    Safaricom, Airtel, Telkom, and Meta Cloud API bill LJK wholesale cash for every message dispatched. To accommodate Lifetime Partners, administrators have two distinct mechanisms: <strong>Admin Credit Grants</strong> or <strong>Credit Bypass</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Two VIP Operational Mechanisms */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Mechanism A */}
+              <div className="p-5 rounded-xl border border-zinc-200 bg-zinc-50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-zinc-900">
+                    Option A: Manual Credit Grants (<code>💰 + Credits</code>)
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">
+                    Recommended for Partners
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Best for external strategic partners or VIP clients receiving complimentary trial or marketing allowances.
+                </p>
+                <div className="space-y-2 text-xs text-zinc-700 bg-white p-3 rounded-lg border border-zinc-200">
+                  <div className="font-semibold text-zinc-900">How to Allocate Credits:</div>
+                  <ol className="list-decimal pl-4 space-y-1 text-zinc-600">
+                    <li>Navigate to <code>/admin/businesses</code>.</li>
+                    <li>Locate the business and click the <strong>💰 + Credits</strong> button.</li>
+                    <li>Select a quick preset (<strong>+100</strong>, <strong>+500</strong>, <strong>+1,000</strong>, or <strong>+5,000</strong> credits) or type a custom amount.</li>
+                    <li>Provide a mandatory audit reason (e.g. <em>&quot;Q3 Strategic Partner Promotion Float&quot;</em>).</li>
+                    <li>Confirm the grant. Credits reflect immediately in the client&apos;s wallet, logged with an immutable audit memo.</li>
+                  </ol>
+                </div>
+              </div>
+
+              {/* Mechanism B */}
+              <div className="p-5 rounded-xl border border-zinc-200 bg-zinc-50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-zinc-900">
+                    Option B: Lifetime VIP Credit Bypass (<code>credit_bypass</code>)
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                    Internal Sister Companies
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Engineered specifically for in-house companies like <strong>Corban Technologies LTD</strong> or agency management entities.
+                </p>
+                <div className="space-y-2 text-xs text-zinc-700 bg-white p-3 rounded-lg border border-zinc-200">
+                  <div className="font-semibold text-zinc-900">How to Enable Credit Bypass:</div>
+                  <ol className="list-decimal pl-4 space-y-1 text-zinc-600">
+                    <li>Navigate to <code>/admin/businesses</code>.</li>
+                    <li>Click the <strong>⚙️ Entitlements</strong> button on the business row.</li>
+                    <li>Check the <strong>👑 Lifetime VIP Credit Bypass</strong> checkbox under Feature Flags.</li>
+                    <li>Click <strong>Save Entitlements</strong>.</li>
+                  </ol>
+                  <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] leading-relaxed mt-2">
+                    <strong>Result:</strong> Campaigns dispatched by this business bypass credit verification completely, deduct <strong>0.00 credits</strong>, and broadcast with zero paywall prompts.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Portal Branding & Lookups */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">
+                  👑 VIP Portal Branding &amp; Banner Replacement
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  When a business is granted Lifetime Access, their business portal transforms automatically:
+                </p>
+                <ul className="list-disc pl-5 text-xs text-zinc-600 space-y-1">
+                  <li><strong>Header Ribbon:</strong> Displays a permanent <code>👑 Lifetime Partner VIP</code> badge next to their workspace name.</li>
+                  <li><strong>Banner Replacement:</strong> The alarming <em>&quot;100% Prepaid Account · Top-Up Required&quot;</em> banner is removed and replaced with an affirmative <em>&quot;👑 Lifetime VIP Privilege: Subscription fees permanently waived&quot;</em> status card.</li>
+                  <li><strong>Billing Page:</strong> Shows perpetual license status with active fee waiver confirmation.</li>
+                </ul>
+              </div>
+
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="font-bold text-sm text-zinc-900">
+                  🔍 Resilient Plan &amp; Business Lookups
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  The backend API incorporates resilient lookup matching across all business endpoints:
+                </p>
+                <ul className="list-disc pl-5 text-xs text-zinc-600 space-y-1">
+                  <li><strong>Plans:</strong> Matches by UUID, human reference code (<code>REF-PLN-...</code>), plan code (<code>pro</code>, <code>starter</code>, <code>enterprise</code>), name, or slug.</li>
+                  <li><strong>Businesses:</strong> Matches by UUID or tenant reference code (<code>REF-BIZ-...</code>).</li>
+                  <li>Prevents 404 or 400 Bad Request errors when admin modals submit human-readable codes instead of raw UUID strings.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: ANTI-BOT & ABUSE DEFENSE SYSTEM */}
+      {activeTab === "security" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+                    Tri-Layer Anti-Bot, Honeypot &amp; Abuse Defense Architecture
+                  </h2>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Active on Public Signup
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-500 mt-1">
+                  How LJK Marketing automatically detects and thwarts automated spambots, credential stuffers, and disposable email registrations without friction for real customers.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Shields Active (100% Automated)
+                </span>
+              </div>
+            </div>
+
+            {/* Defense Layers Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Layer 1 */}
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-zinc-900">Layer 1: Decoy Honeypot</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">
+                    0ms Interception
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  A hidden input field named <code>website_url</code> is rendered in the public registration form with CSS styles that render it invisible to human eyes (<code>opacity: 0; position: absolute; pointer-events: none</code>).
+                </p>
+                <div className="p-2.5 rounded-lg bg-white border border-zinc-200 text-[11px] text-zinc-700 space-y-1">
+                  <div className="font-semibold text-purple-900">Bot Behavior:</div>
+                  <p>Automated scrapers fill all available inputs. If <code>website_url</code> has any content, the API immediately intercepts the request, logs a honeypot alert, and responds with a simulated <strong>201 Created</strong> without creating any database records.</p>
+                </div>
+              </div>
+
+              {/* Layer 2 */}
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-zinc-900">Layer 2: IP Rate Throttling</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
+                    5 / Hour / IP
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Django REST Framework enforces a strict IP-based throttle policy on the registration endpoint (<code>/api/v1/auth/register/</code>) scoped to <strong>5 signups per hour per IP</strong>.
+                </p>
+                <div className="p-2.5 rounded-lg bg-white border border-zinc-200 text-[11px] text-zinc-700 space-y-1">
+                  <div className="font-semibold text-blue-900">Brute Force Prevention:</div>
+                  <p>Rapid bot swarms attempting to create dozens of fake tenant accounts or test stolen credit card details are throttled with standard <strong>HTTP 429 Too Many Requests</strong> responses.</p>
+                </div>
+              </div>
+
+              {/* Layer 3 */}
+              <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-zinc-900">Layer 3: Disposable Email Filter</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-800">
+                    100+ Domains Blocked
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  The registration serializer inspects the user&apos;s email domain against an active dictionary of 100+ known disposable, throwaway, and burner mailbox providers.
+                </p>
+                <div className="p-2.5 rounded-lg bg-white border border-zinc-200 text-[11px] text-zinc-700 space-y-1">
+                  <div className="font-semibold text-rose-900">Blocked Examples:</div>
+                  <p className="font-mono text-[10px] text-zinc-600">mailinator.com, guerrillamail.com, tempmail.com, 10minutemail.com, yopmail.com, throwawaymail.com, dispostable.com</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Admin Audit & Maintenance SOP */}
+            <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-xs text-zinc-700 space-y-2">
+              <div className="font-bold text-sm text-zinc-900">
+                🔍 Administrator Verification &amp; Account Cleanup Playbook
+              </div>
+              <p className="leading-relaxed">
+                If suspicious accounts are identified, administrators can quickly review and suspend them:
+              </p>
+              <ul className="list-disc pl-5 space-y-1 text-zinc-600">
+                <li>Check <code>/admin/businesses</code> for businesses with random string names, unverified phone formats, or suspicious registration dates.</li>
+                <li>To suspend a fraudulent account, toggle their status to <strong>Deactivated</strong> (disables user login and blocks any outbound API requests).</li>
+                <li>Alternatively, open the Django Admin console at <code>/admin/businesses/business/</code> to permanently purge spam records.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TAB 8: AGENCY BROADCAST HUB */}
       {activeTab === "broadcast" && (
         <div className="space-y-6">
@@ -773,8 +1057,37 @@ export default function AdminGuidancePage() {
               </div>
             </div>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 text-xs text-purple-900 space-y-2">
-              <div className="font-bold text-sm text-purple-950">
+            {/* Custom Freeform Copy Mode vs Pre-Approved Meta Templates */}
+            <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/60 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="font-bold text-sm text-purple-950 flex items-center gap-2">
+                  <span>✍️ Custom Freeform Copy Mode vs. Pre-Approved Templates</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-200 text-purple-900">
+                    Bypass Meta Delay
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-purple-900 leading-relaxed">
+                Administrators can toggle between <strong>Custom Freeform Copy</strong> and <strong>Pre-Approved Meta Templates</strong> in the Agency Broadcast Hub:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-lg bg-white border border-purple-200 space-y-1">
+                  <div className="font-bold text-purple-950">Freeform Custom Copy Mode:</div>
+                  <p className="text-zinc-600 leading-relaxed">
+                    Allows composing arbitrary custom announcements without waiting for Meta WhatsApp template approval. For SMS broadcasts, dispatches directly via Advanta Africa / Africa&apos;s Talking with 0 delay. For WhatsApp broadcasts, dispatches through LJK&apos;s verified business route.
+                  </p>
+                </div>
+                <div className="p-3 rounded-lg bg-white border border-purple-200 space-y-1">
+                  <div className="font-bold text-purple-950">Pre-Approved Meta Template Mode:</div>
+                  <p className="text-zinc-600 leading-relaxed">
+                    Utilizes verified WhatsApp Cloud API templates (e.g. <code>marketing_agency_promo_v1</code>) with rich flyer images, interactive CTA buttons ([Shop Now], [Chat on WhatsApp]), and blue-tick telemetry.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-xs text-zinc-700 space-y-2">
+              <div className="font-bold text-sm text-zinc-900">
                 ✨ Dynamic Multi-Admin &amp; Resilient Fallback
               </div>
               <p>

@@ -146,6 +146,12 @@ export default function BusinessDashboardPage() {
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-[11px] font-semibold text-[#581c87]">
               Workspace: {primaryBusiness ? primaryBusiness.name : "Default Workspace"}
             </div>
+            {primaryBusiness?.is_lifetime_access && (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-100 border border-amber-300 text-[11px] font-bold text-amber-950 shadow-xs">
+                <span>👑</span>
+                <span>Lifetime Partner VIP</span>
+              </div>
+            )}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-semibold text-emerald-800">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
               Verified Meta Tech Provider
@@ -172,7 +178,7 @@ export default function BusinessDashboardPage() {
           </Link>
           <Link
             href="/business/sms/broadcast"
-            className="py-2.5 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+            className="py-2.5 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -181,42 +187,82 @@ export default function BusinessDashboardPage() {
           </Link>
           <Link
             href="/business/billing"
-            className="py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs sm:text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="py-2.5 px-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs sm:text-sm font-semibold rounded-lg transition-colors shadow-xs"
           >
             Buy Credits
           </Link>
         </div>
       </div>
 
-      {/* Zero Complimentary Policy Banner — Shown when balance is 0 */}
-      {!isWalletsLoading && smsBalance === 0 && (
-        <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+      {/* Lifetime VIP Partner Privilege Banner (Shown for Lifetime Accounts) */}
+      {primaryBusiness?.is_lifetime_access ? (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50/60 border border-amber-300/80 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div className="flex items-start sm:items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0 text-amber-800 text-lg">
-              💳
+            <div className="w-10 h-10 rounded-xl bg-amber-200/80 border border-amber-300 flex items-center justify-center shrink-0 text-amber-950 text-xl shadow-2xs">
+              👑
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-amber-950 text-xs sm:text-sm">
-                  100% Prepaid Account &bull; Zero Complimentary Credits
+                  Lifetime Partner VIP Workspace Active
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200/70 text-amber-900 border border-amber-300 uppercase tracking-wider">
-                  Top-Up Required
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 border border-amber-300 uppercase tracking-wider">
+                  Perpetual SaaS Access
                 </span>
+                {Boolean(primaryBusiness?.feature_overrides?.credit_bypass || primaryBusiness?.feature_overrides?.bypass_credit_check) && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase tracking-wider">
+                    ✓ Zero-Cost Sending Bypass Active
+                  </span>
+                )}
               </div>
-              <p className="text-xs text-amber-800/90 mt-0.5 leading-relaxed">
-                LJK operates strictly on wholesale carrier infrastructure with <strong>zero complimentary or free trial credits</strong>. Top up your wallet via M-PESA (from KSh 100) to activate dispatch capabilities.
+              <p className="text-xs text-amber-900/85 mt-0.5 leading-relaxed">
+                Platform subscription paywalls and recurring renewal fees are permanently waived for <strong>{primaryBusiness.name}</strong>.
+                {Boolean(primaryBusiness?.feature_overrides?.credit_bypass || primaryBusiness?.feature_overrides?.bypass_credit_check)
+                  ? " Outbound campaigns bypass wallet balance requirements."
+                  : " Carrier delivery float uses your assigned wallet credits."}
               </p>
             </div>
           </div>
-          <Link
-            href="/business/billing"
-            className="py-2 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 text-center shadow-xs flex items-center justify-center gap-1.5"
-          >
-            <span>Top Up via M-PESA</span>
-            <span aria-hidden="true">&rarr;</span>
-          </Link>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/business/billing"
+              className="py-2 px-3.5 bg-amber-200/70 hover:bg-amber-200 text-amber-950 text-xs font-semibold rounded-lg border border-amber-300 transition-colors shrink-0 text-center shadow-2xs flex items-center gap-1.5"
+            >
+              <span>View Entitlements</span> &rarr;
+            </Link>
+          </div>
         </div>
+      ) : (
+        /* Standard Zero Complimentary Policy Banner — Shown only for standard accounts when balance is 0 */
+        !isWalletsLoading && smsBalance === 0 && (
+          <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0 text-amber-800 text-lg">
+                💳
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-amber-950 text-xs sm:text-sm">
+                    100% Prepaid Account &bull; Zero Complimentary Credits
+                  </span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200/70 text-amber-900 border border-amber-300 uppercase tracking-wider">
+                    Top-Up Required
+                  </span>
+                </div>
+                <p className="text-xs text-amber-800/90 mt-0.5 leading-relaxed">
+                  LJK operates strictly on wholesale carrier infrastructure with <strong>zero complimentary or free trial credits</strong>. Top up your wallet via M-PESA (from KSh 100) to activate dispatch capabilities.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/business/billing"
+              className="py-2 px-4 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 text-center shadow-xs flex items-center justify-center gap-1.5"
+            >
+              <span>Top Up via M-PESA</span>
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+        )
       )}
 
       {/* 4 Core Business Metrics Grid */}

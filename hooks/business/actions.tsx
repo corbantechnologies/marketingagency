@@ -22,6 +22,8 @@ import {
   updateBusinessEntitlements,
   BusinessEntitlementsData,
   BusinessEntitlementsPayload,
+  grantBusinessCredits,
+  GrantBusinessCreditsPayload,
   connectBusinessWhatsApp,
   disconnectBusinessWhatsApp,
   toggleBusinessWhatsAppMode,
@@ -252,6 +254,25 @@ export function useUpdateBusinessEntitlements() {
       queryClient.invalidateQueries({ queryKey: ["businesses"] });
       queryClient.invalidateQueries({ queryKey: ["business-entitlements", vars.reference] });
       queryClient.invalidateQueries({ queryKey: ["business", vars.reference] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to grant complimentary credits to a business wallet (Admin only)
+ */
+export function useGrantBusinessCredits() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
+
+  return useMutation({
+    mutationFn: ({ reference, payload }: { reference: string; payload: GrantBusinessCreditsPayload }) =>
+      grantBusinessCredits(reference, payload, authConfig),
+    onSuccess: (res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business-wallets"] });
+      queryClient.invalidateQueries({ queryKey: ["business", vars.reference] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
     },
   });
 }

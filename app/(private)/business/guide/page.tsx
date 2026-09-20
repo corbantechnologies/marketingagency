@@ -9,7 +9,7 @@ import { useFetchBusinessWallets } from "@/hooks/businesswallets/actions";
 import { Business } from "@/services/business";
 
 export default function BusinessOnboardingGuidePage() {
-  const [activeTab, setActiveTab] = useState<"tour" | "checklist" | "templates" | "compliance">("tour");
+  const [activeTab, setActiveTab] = useState<"tour" | "checklist" | "templates" | "compliance" | "security">("tour");
   const [copiedTemplateIdx, setCopiedTemplateIdx] = useState<number | null>(null);
 
   const { data: businessesData } = useFetchBusinesses();
@@ -96,7 +96,9 @@ export default function BusinessOnboardingGuidePage() {
       description:
         "Compose high-converting Meta WhatsApp Business broadcasts or Tier-1 Bulk SMS blasts from a single unified composer.",
       keyFeatures: [
-        "Channel Switcher: Toggle between Meta WhatsApp Business (2 credits) and Tier-1 Bulk SMS (1 credit).",
+        "Custom Freeform Copy & Templates: Dispatch custom messages or pre-approved Meta Cloud API templates.",
+        "Channel Switcher: Toggle between Meta WhatsApp Business (2 credits) and Tier-1 Bulk SMS (1 credit/part).",
+        "Lifetime VIP Credit Bypass: Approved Lifetime Partner accounts send with 0 credit deduction and zero paywall limits.",
         "WhatsApp Rich Format: Dispatch up to 1,024 characters with interactive CTA buttons ([Shop Now], [Chat on WhatsApp]).",
         "Dynamic Tag Pills: Click `+ {first_name}` to personalize each recipient's broadcast automatically.",
         "GSM 03.38 Segment Meter: Live counter shows single (160) vs concatenated (153/part) SMS usage.",
@@ -124,13 +126,14 @@ export default function BusinessOnboardingGuidePage() {
       id: "nav-billing",
       title: "Top Up Credits & Billing",
       href: "/business/billing",
-      badge: "Wallets & Payments",
+      badge: "Wallets & VIP Status",
       description:
-        "Manage your SMS and Email credit wallets, purchase packages, and top up instantly via M-PESA.",
+        "Manage your SMS and Email credit wallets, purchase packages via M-PESA, or view your Lifetime VIP status.",
       keyFeatures: [
-        "Real-Time Balances: Live display of remaining SMS and Email credit balances.",
+        "👑 Lifetime Partner VIP: Perpetual commercial license with software subscription fees permanently waived.",
         "M-PESA STK Express: Enter your phone number and KES amount for an instant phone PIN prompt.",
-        "No Expiry: Units purchased never expire and remain secure in your business wallet.",
+        "Complimentary Grants: Direct allocations granted by agency administrators reflect instantly.",
+        "No Expiry: Units purchased or granted never expire and remain secure in your business wallet.",
         "Immutable Audit Ledger: Complete history with M-Pesa receipts, units added/deducted, and running balances.",
       ],
       actionText: "Open Billing Portal",
@@ -291,6 +294,17 @@ export default function BusinessOnboardingGuidePage() {
           }`}
         >
           ⚖️ CA Telecom Regulations
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("security")}
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+            activeTab === "security"
+              ? "bg-[#581c87] text-white shadow-xs"
+              : "bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50"
+          }`}
+        >
+          🛡️ Security &amp; VIP Entitlements
         </button>
       </div>
 
@@ -516,13 +530,13 @@ export default function BusinessOnboardingGuidePage() {
                     </span>
                   )}
                 </div>
-                <h3 className="font-bold text-sm text-zinc-900">Top Up SMS Credit Wallet</h3>
+                <h3 className="font-bold text-sm text-zinc-900">Wallet Float &amp; VIP Commercial Status</h3>
                 <p className="text-xs text-zinc-600 leading-relaxed">
-                  Accounts start with 0 credits (no complimentary test credits). Purchase wholesale SMS units via instant Safaricom M-PESA Daraja STK push from KSh 100.
+                  Accounts operate on a transparent prepaid float. Standard accounts purchase wholesale SMS/WhatsApp units via instant Safaricom M-PESA STK push from KSh 100. Accounts with <strong>👑 Lifetime Partner VIP</strong> privilege enjoy permanently waived subscription fees, perpetual licensing, and can top up float or receive direct admin credit grants.
                 </p>
               </div>
               <div className="pt-4 mt-2 text-xs font-semibold text-[#581c87] group-hover:underline inline-flex items-center gap-1">
-                <span>Top Up in Billing &rarr;</span>
+                <span>Open Billing &amp; Wallet &rarr;</span>
               </div>
             </Link>
           </div>
@@ -560,13 +574,13 @@ export default function BusinessOnboardingGuidePage() {
                   <button
                     type="button"
                     onClick={() => handleCopyTemplate(tpl.text, idx)}
-                    className="py-1.5 px-3 rounded-lg text-xs font-semibold bg-purple-50 text-[#581c87] hover:bg-purple-100 transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                    className="text-xs font-bold text-[#581c87] hover:text-[#4a1572] cursor-pointer"
                   >
-                    <span>{copiedTemplateIdx === idx ? "✓ Copied!" : "Copy Template"}</span>
+                    {copiedTemplateIdx === idx ? "✓ Copied to Clipboard" : "Copy Template"}
                   </button>
                   <Link
                     href="/business/sms/broadcast"
-                    className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 hover:underline"
+                    className="text-xs text-zinc-400 hover:text-zinc-600"
                   >
                     Use in Composer &rarr;
                   </Link>
@@ -627,6 +641,62 @@ export default function BusinessOnboardingGuidePage() {
               </div>
               <p className="text-zinc-600 leading-relaxed text-xs">
                 Ensure all phone numbers in your customer directory were obtained with user consent. Do not purchase third-party lead lists as carriers block unverified broadcasts.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: Account Security & VIP Entitlements */}
+      {activeTab === "security" && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-zinc-900">
+              Enterprise Security, Anti-Abuse Defenses &amp; VIP Privileges
+            </h2>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              How LJK Marketing secures your workspace, audience directories, and API credentials.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="p-5 bg-white rounded-xl border border-zinc-200 space-y-2">
+              <div className="text-emerald-700 font-bold text-sm flex items-center gap-2">
+                <span>🔒</span>
+                <span>Cryptographic Tenant Isolation</span>
+              </div>
+              <p className="text-zinc-600 leading-relaxed">
+                Your contact lists, custom attribute tokens, dispatch telemetry, and credit ledger are isolated in strict multi-tenant boundaries. No other organization can view or export your audience.
+              </p>
+            </div>
+
+            <div className="p-5 bg-white rounded-xl border border-zinc-200 space-y-2">
+              <div className="text-purple-700 font-bold text-sm flex items-center gap-2">
+                <span>🛡️</span>
+                <span>Tri-Layer Anti-Bot &amp; Abuse Shield</span>
+              </div>
+              <p className="text-zinc-600 leading-relaxed">
+                The platform protects system integrity using invisible decoy honeypots, disposable email firewalls, and IP signup throttles to keep telco routing reputations clean and spam-free.
+              </p>
+            </div>
+
+            <div className="p-5 bg-white rounded-xl border border-zinc-200 space-y-2">
+              <div className="text-amber-700 font-bold text-sm flex items-center gap-2">
+                <span>👑</span>
+                <span>Lifetime Partner VIP Privileges</span>
+              </div>
+              <p className="text-zinc-600 leading-relaxed">
+                Sister corporations, enterprise co-founders, and strategic partner organizations hold <strong>Lifetime Partner VIP</strong> status with perpetual software license waivers, dedicated API tiers, and direct float grants.
+              </p>
+            </div>
+
+            <div className="p-5 bg-white rounded-xl border border-zinc-200 space-y-2">
+              <div className="text-blue-700 font-bold text-sm flex items-center gap-2">
+                <span>🔑</span>
+                <span>Secure API Keys &amp; Instant Revocation</span>
+              </div>
+              <p className="text-zinc-600 leading-relaxed">
+                Developer API keys (<code>ljk_live_...</code>) are salted with SHA-256 hashes and never stored in plaintext. In the event of credential exposure, keys can be revoked in one click.
               </p>
             </div>
           </div>
