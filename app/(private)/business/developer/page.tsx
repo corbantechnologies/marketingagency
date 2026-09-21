@@ -26,6 +26,8 @@ export default function BusinessDeveloperPage() {
   const [allowSms, setAllowSms] = useState(true);
   const [allowWhatsApp, setAllowWhatsApp] = useState(true);
   const [isTestKey, setIsTestKey] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookSecret, setWebhookSecret] = useState("");
   const [isGatewayBannerDismissed, setIsGatewayBannerDismissed] = useState(false);
 
   useEffect(() => {
@@ -76,6 +78,8 @@ export default function BusinessDeveloperPage() {
     setAllowSms(true);
     setAllowWhatsApp(true);
     setIsTestKey(false);
+    setWebhookUrl("");
+    setWebhookSecret("");
     setIsCreateModalOpen(true);
   };
 
@@ -100,6 +104,8 @@ export default function BusinessDeveloperPage() {
         name: keyName.trim(),
         allowed_channels: channels,
         is_test: isTestKey,
+        webhook_url: webhookUrl.trim() || undefined,
+        webhook_secret: webhookSecret.trim() || undefined,
       },
       {
         onSuccess: (res) => {
@@ -430,7 +436,22 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                 {apiKeys.map((key) => (
                   <tr key={key.id || key.reference} className="hover:bg-zinc-50/60 transition-colors">
                     <td className="py-3 px-3 font-semibold text-zinc-900">
-                      {key.name}
+                      <div className="flex items-center gap-1.5">
+                        <span>{key.name}</span>
+                        {key.key_prefix.startsWith("ljk_test_") && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                            SANDBOX
+                          </span>
+                        )}
+                        {key.webhook_url && (
+                          <span
+                            title={`Webhook active: ${key.webhook_url}`}
+                            className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200"
+                          >
+                            WEBHOOK
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3 px-3 font-mono text-zinc-700">
                       <span className="px-2 py-1 rounded bg-zinc-100 border border-zinc-200 text-[11px]">
@@ -703,6 +724,42 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                 </div>
               </div>
 
+              <div className="space-y-3 pt-2 border-t border-zinc-100">
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
+                    Webhook Callback URL <span className="text-zinc-400 font-normal lowercase">(optional)</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    placeholder="https://yourdomain.com/api/v1/webhooks/delivery/"
+                    className="w-full px-3.5 py-2 rounded-lg border border-zinc-300 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                  />
+                  <p className="text-[11px] text-zinc-500 mt-1">
+                    Receive real-time push events for message delivery and Blue Ticks (<code className="font-mono">READ ✓✓</code>).
+                  </p>
+                </div>
+
+                {webhookUrl.trim() && (
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
+                      Webhook HMAC Signing Secret <span className="text-zinc-400 font-normal lowercase">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={webhookSecret}
+                      onChange={(e) => setWebhookSecret(e.target.value)}
+                      placeholder="e.g. whsec_a8f92b4c1e..."
+                      className="w-full px-3.5 py-2 rounded-lg border border-zinc-300 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                    />
+                    <p className="text-[11px] text-zinc-500 mt-1">
+                      Used to compute the <code className="font-mono">X-LJK-Signature</code> header for payload verification.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <div className="pt-2 border-t border-zinc-100">
                 <label className="flex items-center gap-2 cursor-pointer text-xs">
                   <input
@@ -711,7 +768,10 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                     onChange={(e) => setIsTestKey(e.target.checked)}
                     className="rounded text-zinc-600 focus:ring-zinc-500 w-4 h-4"
                   />
-                  <span className="text-zinc-600">Sandbox Test Key (<code className="font-mono">ljk_test_...</code>)</span>
+                  <div>
+                    <span className="text-zinc-800 font-medium">Sandbox Test Key (<code className="font-mono">ljk_test_...</code>)</span>
+                    <p className="text-[11px] text-zinc-500">100% Free simulator mode. Zero wallet credits deducted.</p>
+                  </div>
                 </label>
               </div>
 

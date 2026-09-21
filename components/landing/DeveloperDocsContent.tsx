@@ -11,7 +11,7 @@ interface CodeSnippet {
 
 export function DeveloperDocsContent() {
   const [selectedLang, setSelectedLang] = useState<"curl" | "python" | "javascript" | "php">("curl");
-  const [activeTab, setActiveTab] = useState<"single" | "batch" | "status" | "balance" | "sandbox" | "billing">("single");
+  const [activeTab, setActiveTab] = useState<"single" | "batch" | "status" | "balance" | "webhooks" | "sandbox" | "billing">("single");
   const [copied, setCopied] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
@@ -326,6 +326,18 @@ $data = json_decode(curl_exec($ch), true);
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">GET</span>
             </button>
 
+            <button
+              type="button"
+              onClick={() => setActiveTab("webhooks")}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${activeTab === "webhooks"
+                ? "bg-purple-900/50 text-purple-300 border border-purple-700/50"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                }`}
+            >
+              <span>Outbound Webhooks</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800">PUSH</span>
+            </button>
+
             <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 px-3 pt-4 pb-1.5">
               Infrastructure &amp; Billing
             </div>
@@ -456,8 +468,10 @@ $data = json_decode(curl_exec($ch), true);
 }`}</pre>
                   )}
                   {activeTab === "batch" && (
-                    <pre>{`{
+                    <pre>{`// 1. Immediate Dispatch (<= 10 recipients) -> HTTP 200 OK
+{
   "success": true,
+  "is_sandbox": false,
   "batch_reference": "BATCH-SEPT-01",
   "total_recipients": 2,
   "dispatched_successfully": 2,
@@ -467,6 +481,18 @@ $data = json_decode(curl_exec($ch), true);
     { "phone": "+254710584581", "status": "SENT", "message_id": "MSG_8F921" },
     { "phone": "+254722000000", "status": "SENT", "message_id": "MSG_8F922" }
   ]
+}
+
+// 2. Large Asynchronous Batch (> 10 recipients or async: true) -> HTTP 202 Accepted
+{
+  "success": true,
+  "batch_reference": "BATCH-SEPT-01",
+  "status": "QUEUED",
+  "is_sandbox": false,
+  "total_recipients": 250,
+  "estimated_credits": 500,
+  "message": "Batch accepted for background dispatch. Check progress via status endpoint.",
+  "status_url": "/api/v1/integrations/dispatch/status/BATCH-SEPT-01/"
 }`}</pre>
                   )}
                   {activeTab === "status" && (
@@ -629,6 +655,110 @@ $data = json_decode(curl_exec($ch), true);
                     In the developer dashboard, test calls will render dynamically on a visual iPhone simulator screen in real time, allowing frontend and backend teams to verify visual layouts before going live to real customer phones.
                   </p>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Section: Outbound Webhooks & Blue Ticks Push */}
+          {activeTab === "webhooks" && (
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+              <div className="space-y-2 pb-4 border-b border-zinc-800">
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+                  Real-Time Event Stream
+                </span>
+                <h2 className="text-2xl font-extrabold text-white">
+                  Outbound Webhook Delivery &amp; Blue Ticks Telemetry
+                </h2>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Instead of polling our status endpoints, configure a Webhook URL when creating your API Key to receive instantaneous HTTP POST callbacks when messages transition states (<code className="text-purple-300">sent</code> &rarr; <code className="text-purple-300">delivered</code> &rarr; <code className="text-purple-300">read / blue ticks</code> or <code className="text-purple-300">failed</code>).
+                </p>
+              </div>
+
+              {/* Event types */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1">
+                  <div className="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-purple-400" />
+                    <code>message.sent</code>
+                  </div>
+                  <p className="text-[11px] text-zinc-400">Carrier accepted the message for delivery.</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1">
+                  <div className="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <code>message.delivered</code>
+                  </div>
+                  <p className="text-[11px] text-zinc-400">Handset received and acknowledged the SMS/WhatsApp.</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1">
+                  <div className="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-400" />
+                    <code>message.read</code>
+                  </div>
+                  <p className="text-[11px] text-zinc-400">Recipient opened WhatsApp (Blue Ticks ✓✓ telemetry).</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1">
+                  <div className="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-400" />
+                    <code>message.failed</code>
+                  </div>
+                  <p className="text-[11px] text-zinc-400">Carrier/Meta rejection; credits auto-refunded.</p>
+                </div>
+              </div>
+
+              {/* Webhook Payload Example */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                  Webhook Payload Format (HTTP POST)
+                </div>
+                <pre className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed">
+{`{
+  "event": "message.read",
+  "timestamp": "2026-09-22T00:30:15.892Z",
+  "data": {
+    "message_id": "MSG_8F9210",
+    "external_reference": "ORD-9842",
+    "recipient": "+254710584581",
+    "channel": "WHATSAPP",
+    "status": "READ",
+    "carrier_message_id": "wamid.HBgMNDY...",
+    "delivery_timestamp": "2026-09-22T00:30:08.120Z",
+    "read_timestamp": "2026-09-22T00:30:15.890Z",
+    "is_read": true,
+    "failure_reason": null,
+    "cost_credits": 2,
+    "created_at": "2026-09-22T00:30:02.000Z"
+  }
+}`}</pre>
+              </div>
+
+              {/* Security & HMAC Verification */}
+              <div className="space-y-3">
+                <div className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
+                  Cryptographic Verification (<code className="font-mono text-purple-300">X-LJK-Signature</code>)
+                </div>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Every webhook request includes an <code className="font-mono text-white">X-LJK-Signature</code> header containing an HMAC-SHA256 hex digest computed over the raw JSON payload with your API key&apos;s signing secret.
+                </p>
+
+                <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2 text-xs font-mono text-purple-200">
+                  <div className="text-[11px] text-zinc-400 font-bold mb-1">// Python Verification Example</div>
+                  <pre className="overflow-x-auto leading-relaxed text-zinc-300">
+{`import hmac, hashlib
+
+def verify_webhook(request_body: bytes, signature_header: str, secret: str) -> bool:
+    expected = "sha256=" + hmac.new(secret.encode(), request_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, signature_header)`}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Rate Limiting Notice */}
+              <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2">
+                <div className="text-xs font-bold text-purple-300">API Rate Limiting &amp; HTTP 429</div>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  All API keys are governed by an active sliding-window rate limit (default 120 requests/minute). When exceeded, the gateway returns <code className="text-amber-400">HTTP 429 Too Many Requests</code> with a standard <code className="text-zinc-200">Retry-After: &lt;seconds&gt;</code> header.
+                </p>
               </div>
             </div>
           )}

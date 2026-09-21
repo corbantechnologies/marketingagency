@@ -22,6 +22,7 @@ export interface CreateApiKeyPayload {
   allowed_channels?: string[];
   rate_limit_per_minute?: number;
   webhook_url?: string;
+  webhook_secret?: string;
   is_test?: boolean;
 }
 
