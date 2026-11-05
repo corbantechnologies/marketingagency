@@ -10,7 +10,6 @@ import {
   useFetchWalletTransactions,
   useInitiateMpesaStkPush,
   usePollMpesaStatus,
-  useSimulateMpesaCallback,
 } from "@/hooks/transactions/actions";
 
 export default function BillingPage() {
@@ -33,7 +32,6 @@ export default function BillingPage() {
   });
 
   const initiateStkPushMutation = useInitiateMpesaStkPush();
-  const simulateCallbackMutation = useSimulateMpesaCallback();
 
   // Live polling for STK PIN prompt completion
   const { data: pollData, refetch: refetchPoll } = usePollMpesaStatus(
@@ -730,22 +728,8 @@ export default function BillingPage() {
                   </p>
                 </div>
 
-                {/* Developer simulation bypass & Cancel */}
-                <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-xs">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (activeCheckoutId) {
-                        simulateCallbackMutation.mutate(activeCheckoutId);
-                        toast.success("Triggered test confirmation simulation!");
-                      }
-                    }}
-                    className="text-[11px] text-zinc-400 hover:text-[#581c87] underline cursor-pointer"
-                    title="Simulate instant callback confirmation for local testing"
-                  >
-                    Simulate PIN (Dev)
-                  </button>
-
+                {/* Cancel */}
+                <div className="pt-2 border-t border-zinc-100 flex items-center justify-end text-xs">
                   <button
                     type="button"
                     onClick={handleCloseModal}

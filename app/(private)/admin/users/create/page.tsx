@@ -4,11 +4,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useCreateAdminUser } from "@/hooks/accounts/actions";
 
-export default function AdminAlphaSignupPage() {
+export default function AdminCreateUserPage() {
   const router = useRouter();
   const createAdminMutation = useCreateAdminUser();
 
@@ -41,7 +40,7 @@ export default function AdminAlphaSignupPage() {
     if (honeypot.trim().length > 0) {
       toast.success("Agency Administrator provisioned! Redirecting...");
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push("/admin/users");
       }, 1200);
       return;
     }
@@ -95,27 +94,10 @@ export default function AdminAlphaSignupPage() {
         password_confirmation: formData.password_confirmation,
       },
       {
-        onSuccess: async (data) => {
-          toast.success("Agency Administrator provisioned! Redirecting...");
-
-          try {
-            const res = await signIn("credentials", {
-              email: formData.email.trim(),
-              password: formData.password,
-              redirect: false,
-            });
-
-            if (res?.error) {
-              router.push("/auth/login");
-              return;
-            }
-
-            const redirectTarget = data.redirect_url || "/admin/dashboard";
-            router.push(redirectTarget);
-            router.refresh();
-          } catch {
-            router.push("/auth/login");
-          }
+        onSuccess: () => {
+          toast.success("Agency administrator account created.");
+          router.push("/admin/users");
+          router.refresh();
         },
         onError: (error: any) => {
           const resData = error?.response?.data;
@@ -140,10 +122,10 @@ export default function AdminAlphaSignupPage() {
     <div className="bg-white border border-zinc-200 rounded-lg p-6 sm:p-8 shadow-xs">
       <div className="mb-6">
         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-amber-50 border border-amber-200 text-[11px] font-semibold text-amber-800 mb-2">
-          Agency Staff &amp; Administrator Registration
+          Superuser only
         </div>
         <h1 className="text-xl font-semibold text-zinc-900 tracking-tight">
-          Create Agency Admin Account
+          Add Agency Administrator
         </h1>
         <p className="text-xs text-zinc-600 mt-1">
           Provision super-admin access for carrier routing, client management, and billing overrides.
@@ -362,12 +344,12 @@ export default function AdminAlphaSignupPage() {
 
       <div className="mt-6 pt-5 border-t border-zinc-200 text-center">
         <p className="text-xs text-zinc-600">
-          Already registered as staff?{" "}
+          Only superusers can create administrator accounts.{" "}
           <Link
-            href="/auth/login"
+            href="/admin/users"
             className="text-[#581c87] font-semibold hover:underline"
           >
-            Sign In to Console
+            Back to users
           </Link>
         </p>
       </div>

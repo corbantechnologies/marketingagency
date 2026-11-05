@@ -236,7 +236,8 @@ export const createBusiness = async (
 };
 
 /**
- * Register a new agency admin / staff user (AdminUserCreateView)
+ * Create a new agency admin user (AdminUserCreateView). Superusers only:
+ * the request must carry the logged-in superuser's token.
  * Endpoint: POST /api/v1/auth/register/admin/
  */
 export const createAdmin = async (

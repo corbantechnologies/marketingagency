@@ -2,28 +2,81 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
+// Escape user input before it goes into email HTML.
+function esc(value: unknown, maxLength = 500): string {
+  return String(value ?? "")
+    .slice(0, maxLength)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function oneLine(value: unknown, maxLength = 120): string {
+  return String(value ?? "").replace(/[\r\n]+/g, " ").slice(0, maxLength).trim();
+}
+
+const EMAIL_PATTERN = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
+
+// Best-effort per-instance rate limit: 5 submissions per IP per 10 minutes.
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX = 5;
+const submissions = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (submissions.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  submissions.set(ip, recent);
+  if (submissions.size > 5000) submissions.clear();
+  return recent.length > RATE_MAX;
+}
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const {
-      name,
-      email,
-      phone = "Not provided",
-      website = "Not provided",
-      inquiryType = "General Inquiry",
-      volume = "Not specified",
-      goals = [],
-      senderId = "None requested",
-      message = "",
-      notes = "",
-    } = body;
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please try again in a few minutes." },
+        { status: 429 }
+      );
+    }
 
-    if (!name || !email) {
+    const body = await request.json();
+
+    // Honeypot fields: real visitors never fill these.
+    if (body?.company_fax || body?.website_url) {
+      return NextResponse.json({ success: true, message: "Inquiry received." });
+    }
+
+    const rawEmail = oneLine(body?.email, 254);
+    const rawName = oneLine(body?.name, 80);
+    if (!rawName || !rawEmail) {
       return NextResponse.json(
         { error: "Name and email are required fields." },
         { status: 400 }
       );
     }
+    if (!EMAIL_PATTERN.test(rawEmail)) {
+      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
+    }
+
+    const name = esc(rawName, 80);
+    const email = esc(rawEmail, 254);
+    const phone = esc(oneLine(body?.phone || "Not provided", 30));
+    const website = esc(oneLine(body?.website || "Not provided", 200));
+    const inquiryType = esc(oneLine(body?.inquiryType || "General Inquiry", 60));
+    const volume = esc(oneLine(body?.volume || "Not specified", 60));
+    const senderId = esc(oneLine(body?.senderId || "None requested", 20));
+    const message = esc(body?.message || "", 3000);
+    const notes = esc(body?.notes || "", 3000);
+    const goals: string[] = Array.isArray(body?.goals)
+      ? body.goals.slice(0, 20).map((g: unknown) => esc(oneLine(g, 60)))
+      : [];
 
     const apiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM || "biashara@ljkmarketingagency.co.ke";
@@ -141,7 +194,7 @@ export async function POST(request: Request) {
               <div class="badge">Inquiry Acknowledged</div>
               <p style="font-size: 15px; margin: 0 0 16px 0; line-height: 1.5;">Hello <strong>${name}</strong>,</p>
               <p style="font-size: 14px; color: #3f3f46; line-height: 1.6; margin: 0 0 16px 0;">
-                Thank you for contacting <strong>LJK Marketing Agency</strong>. We have received your inquiry regarding <strong>${inquiryType}</strong> for <strong>${website !== "Not provided" ? website : "your brand"}</strong>.
+                Thank you for contacting <strong>LJK Marketing Agency</strong>. We have received your inquiry and our team will be in touch.
               </p>
               <div class="highlight">
                 <div style="font-size: 12px; font-weight: 600; color: #71717a; text-transform: uppercase; margin-bottom: 8px;">What Happens Next:</div>
@@ -154,7 +207,7 @@ export async function POST(request: Request) {
               <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin: 16px 0 0 0;">
                 Need urgent assistance or custom high-volume SMPP route setup? Reach out directly via our priority support channels below.
               </p>
-              <a href="https://wa.me/254768978865?text=Hello%20LJK%20Team,%20I%20just%20submitted%20an%20inquiry%20for%20${encodeURIComponent(name)}" class="btn">
+              <a href="https://wa.me/254768978865?text=Hello%20LJK%20Team,%20I%20just%20submitted%20an%20inquiry" class="btn">
                 Chat on WhatsApp Priority NOC
               </a>
             </div>
@@ -174,14 +227,14 @@ export async function POST(request: Request) {
         from: `LJK Growth Desk <${fromEmail}>`,
         to: adminRecipients,
         cc: adminCcRecipients.length > 0 ? adminCcRecipients : undefined,
-        replyTo: email,
-        subject: `🔔 New Inquiry: ${name} (${inquiryType})`,
+        replyTo: rawEmail,
+        subject: `New Inquiry: ${rawName} (${oneLine(body?.inquiryType || "General Inquiry", 60)})`,
         html: adminEmailHtml,
       }),
       resend.emails.send({
         from: `LJK Marketing Agency <${fromEmail}>`,
-        to: [email],
-        subject: `Inquiry Received: LJK Marketing Agency — ${inquiryType}`,
+        to: [rawEmail],
+        subject: "Inquiry Received: LJK Marketing Agency",
         html: clientEmailHtml,
       }),
     ]);
