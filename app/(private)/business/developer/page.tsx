@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
+import { useDismissible } from "@/hooks/common/useDismissible";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -26,26 +27,9 @@ export default function BusinessDeveloperPage() {
   const [allowSms, setAllowSms] = useState(true);
   const [allowWhatsApp, setAllowWhatsApp] = useState(true);
   const [isTestKey, setIsTestKey] = useState(false);
-  const [isGatewayBannerDismissed, setIsGatewayBannerDismissed] = useState(false);
+  const [isGatewayBannerDismissed, handleDismissGatewayBanner] = useDismissible("dismissed_dev_gateway_banner");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        if (localStorage.getItem("dismissed_dev_gateway_banner") === "true") {
-          setIsGatewayBannerDismissed(true);
-        }
-      } catch {}
-    }
-  }, []);
 
-  const handleDismissGatewayBanner = () => {
-    setIsGatewayBannerDismissed(true);
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("dismissed_dev_gateway_banner", "true");
-      } catch {}
-    }
-  };
 
   // Reveal Modal
   const [revealedKey, setRevealedKey] = useState<string | null>(null);

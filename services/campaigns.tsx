@@ -48,6 +48,8 @@ export interface CreateCampaignPayload {
   send_to_all_contacts?: boolean;
   manual_numbers?: string | null;
   business_reference?: string | null;
+  whatsapp_template_name?: string;
+  whatsapp_template_language?: string;
 }
 
 export interface CampaignFilterParams {

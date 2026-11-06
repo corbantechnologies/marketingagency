@@ -3,12 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 
-interface CodeSnippet {
-  language: string;
-  label: string;
-  code: string;
-}
-
 export function DeveloperDocsContent() {
   const [selectedLang, setSelectedLang] = useState<"curl" | "python" | "javascript" | "php">("curl");
   const [activeTab, setActiveTab] = useState<"single" | "batch" | "status" | "balance" | "sandbox" | "billing">("single");

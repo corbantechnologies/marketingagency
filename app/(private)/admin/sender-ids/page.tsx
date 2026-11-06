@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import type { ApiErrorLike } from "@/lib/errors";
+import { useDismissible } from "@/hooks/common/useDismissible";
 import toast from "react-hot-toast";
 import {
   useFetchAdminSenderIdQueue,
@@ -10,32 +12,15 @@ import { SenderIdQueueItem } from "@/services/business";
 
 export default function AdminSenderIdsPage() {
   const [activeTab, setActiveTab] = useState<"PENDING" | "APPROVED" | "REJECTED" | "ALL">("PENDING");
-  const { data, isLoading, isFetching, refetch } = useFetchAdminSenderIdQueue(activeTab);
+  const { data, isFetching, refetch } = useFetchAdminSenderIdQueue(activeTab);
   const reviewMutation = useReviewAdminSenderId();
 
   const [selectedItemForReject, setSelectedItemForReject] = useState<SenderIdQueueItem | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [isSopBannerDismissed, setIsSopBannerDismissed] = useState(false);
+  const [isSopBannerDismissed, handleDismissSopBanner] = useDismissible("dismissed_admin_senderid_sop");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        if (localStorage.getItem("dismissed_admin_senderid_sop") === "true") {
-          setIsSopBannerDismissed(true);
-        }
-      } catch {}
-    }
-  }, []);
 
-  const handleDismissSopBanner = () => {
-    setIsSopBannerDismissed(true);
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("dismissed_admin_senderid_sop", "true");
-      } catch {}
-    }
-  };
 
   // Document preview modal state
   const [previewDocUrl, setPreviewDocUrl] = useState<string | null>(null);
@@ -60,7 +45,8 @@ export default function AdminSenderIdsPage() {
       } else {
         toast.error("Could not approve Sender ID.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.response?.data?.detail || err?.message || "Failed to approve Sender ID.");
     } finally {
       setIsSubmittingReview(false);
@@ -90,7 +76,8 @@ export default function AdminSenderIdsPage() {
       } else {
         toast.error("Could not reject Sender ID.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.response?.data?.detail || err?.message || "Failed to reject Sender ID.");
     } finally {
       setIsSubmittingReview(false);

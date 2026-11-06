@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect, Suspense } from "react";
+import React, { useState, useMemo, useRef, Suspense } from "react";
+import { BaseSMSGateway } from "@/tools/sms";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -149,28 +150,29 @@ function BroadcastComposerForm({
     return "https://yourbrand.co.ke";
   }, [customWebsiteLink, activeBusiness]);
 
-  // Automatically preselect approved Meta template when on WhatsApp (unless user explicitly chose Free-form)
-  useEffect(() => {
-    if (channel === "WHATSAPP" && !message && waTemplates.length > 0 && selectedWaTemplateName !== "FREEFORM") {
-      const preferred =
-        waTemplates.find((t: any) => t.name === "universal_business_promo" && t.status === "APPROVED") ||
-        waTemplates.find((t: any) => t.name === "general_business_promo" && t.status === "APPROVED") ||
-        waTemplates.find((t: any) => t.status === "APPROVED") ||
-        waTemplates[0];
-      if (preferred) {
+  // Automatically preselect an approved Meta template on WhatsApp (unless the user chose Free-form).
+  // Done during render with guards instead of in an effect, so it cannot loop.
+  if (channel === "WHATSAPP" && !message && waTemplates.length > 0 && selectedWaTemplateName !== "FREEFORM") {
+    const preferred =
+      waTemplates.find((t: any) => t.name === "universal_business_promo" && t.status === "APPROVED") ||
+      waTemplates.find((t: any) => t.name === "general_business_promo" && t.status === "APPROVED") ||
+      waTemplates.find((t: any) => t.status === "APPROVED") ||
+      waTemplates[0];
+    if (preferred) {
+      const bodyComp = preferred.components?.find((c: any) => c.type === "BODY");
+      const rawText = bodyComp?.text || "";
+      const formatted = rawText ? formatTemplateForComposer(preferred.name, rawText) : "";
+      if (selectedWaTemplateName !== preferred.name) {
         setSelectedWaTemplateName(preferred.name);
-        const bodyComp = preferred.components?.find((c: any) => c.type === "BODY");
-        const rawText = bodyComp?.text || "";
-        if (rawText) {
-          const formatted = formatTemplateForComposer(preferred.name, rawText);
-          setMessage(formatted);
-          if (!campaignName) {
-            setCampaignName(`WhatsApp - ${preferred.name}`);
-          }
+      }
+      if (formatted) {
+        setMessage(formatted);
+        if (!campaignName) {
+          setCampaignName(`WhatsApp - ${preferred.name}`);
         }
       }
     }
-  }, [channel, waTemplates, message, campaignName, selectedWaTemplateName]);
+  }
 
   const isWhatsApp = channel === "WHATSAPP";
 
@@ -192,29 +194,11 @@ function BroadcastComposerForm({
     return nums.length;
   }, [audienceMode, selectedGroupRef, groups, allContacts, manualNumbers]);
 
-  // GSM 03.38 calculation
-  const charCount = message.length;
-  const isUnicode = useMemo(() => /[^\u0000-\u007F]/.test(message), [message]);
-
-  const { segments, charsRemaining, maxSingle } = useMemo(() => {
-    if (charCount === 0) return { segments: 1, charsRemaining: isUnicode ? 70 : 160, maxSingle: isUnicode ? 70 : 160 };
-
-    if (!isUnicode) {
-      if (charCount <= 160) {
-        return { segments: 1, charsRemaining: 160 - charCount, maxSingle: 160 };
-      }
-      const segs = Math.ceil(charCount / 153);
-      const rem = segs * 153 - charCount;
-      return { segments: segs, charsRemaining: rem, maxSingle: 160 };
-    } else {
-      if (charCount <= 70) {
-        return { segments: 1, charsRemaining: 70 - charCount, maxSingle: 70 };
-      }
-      const segs = Math.ceil(charCount / 67);
-      const rem = segs * 67 - charCount;
-      return { segments: segs, charsRemaining: rem, maxSingle: 70 };
-    }
-  }, [charCount, isUnicode]);
+  // GSM 03.38 calculation (same rules the API bills with)
+  const { charCount, isUnicode, segments, charsRemaining, maxSingle } = useMemo(
+    () => BaseSMSGateway.calculate_segments(message),
+    [message]
+  );
 
   // Lifetime VIP partner credit bypass check
   const isCreditBypass = Boolean(
@@ -309,11 +293,18 @@ function BroadcastComposerForm({
         target_group_reference: audienceMode === "group" ? selectedGroupRef : undefined,
         send_to_all_contacts: audienceMode === "all",
         manual_numbers: audienceMode === "manual" ? manualNumbers : undefined,
+        ...(isWhatsApp && selectedWaTemplateName && selectedWaTemplateName !== "FREEFORM"
+          ? {
+              whatsapp_template_name: selectedWaTemplateName,
+              whatsapp_template_language:
+                waTemplates.find((t: any) => t.name === selectedWaTemplateName)?.language || undefined,
+            }
+          : {}),
       },
       {
         onSuccess: (data) => {
           toast.success(
-            `${isWhatsApp ? "WhatsApp" : "SMS"} broadcast queued! Dispatched to ${data.recipient_count} recipients via Celery worker.`
+            `${isWhatsApp ? "WhatsApp" : "SMS"} broadcast queued for ${data.recipient_count} recipients.`
           );
           setCampaignName("");
           setMessage("");

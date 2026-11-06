@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useFetchAdminObservability } from "@/hooks/business/actions";
 
 export default function AdminGuidancePage() {
   const [activeTab, setActiveTab] = useState<
@@ -19,8 +17,6 @@ export default function AdminGuidancePage() {
     | "broadcast"
   >("carriers");
 
-  const { data: obsData } = useFetchAdminObservability();
-  const carrierBalances = obsData?.carrier_balances;
 
   return (
     <div className="space-y-6 w-full max-w-none">

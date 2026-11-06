@@ -72,7 +72,10 @@ export default function AdminDashboardPage() {
   const [criticalThreshold, setCriticalThreshold] = useState<number>(150);
   const [isSavingThresholds, setIsSavingThresholds] = useState(false);
 
-  useEffect(() => {
+  // Copy server data into the form when it arrives (render-time sync, no effect).
+  const [syncedRecipientsData, setSyncedRecipientsData] = useState<typeof recipientsData | undefined>(undefined);
+  if (recipientsData !== syncedRecipientsData) {
+    setSyncedRecipientsData(recipientsData);
     if (recipientsData) {
       if (typeof recipientsData.threshold_kes === "number") {
         setLowThreshold(recipientsData.threshold_kes);
@@ -81,7 +84,7 @@ export default function AdminDashboardPage() {
         setCriticalThreshold(recipientsData.critical_threshold_kes);
       }
     }
-  }, [recipientsData]);
+  }
 
   const handleSaveThresholds = async () => {
     setIsSavingThresholds(true);

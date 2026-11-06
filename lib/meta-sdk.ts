@@ -3,9 +3,21 @@
  * Supports official Login for Business Popup and WA_EMBEDDED_SIGNUP session message capture.
  */
 
+type FacebookLoginResponse = {
+  authResponse?: { code?: string; accessToken?: string; [key: string]: unknown } | null;
+  status?: string;
+  [key: string]: unknown;
+};
+
+type FacebookSdk = {
+  init: (options: Record<string, unknown>) => void;
+  login: (callback: (response: FacebookLoginResponse) => void, options?: Record<string, unknown>) => void;
+  [key: string]: unknown;
+};
+
 declare global {
   interface Window {
-    FB?: any;
+    FB?: FacebookSdk;
     fbAsyncInit?: () => void;
   }
 }
@@ -40,7 +52,7 @@ export function initMetaSDK(): Promise<void> {
   sdkLoadingPromise = new Promise((resolve, reject) => {
     window.fbAsyncInit = function () {
       try {
-        window.FB.init({
+        window.FB?.init({
           appId: META_APP_ID,
           autoLogAppEvents: true,
           xfbml: true,
@@ -119,7 +131,7 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
 
     window.addEventListener("message", handleMessage);
 
-    const loginOptions: Record<string, any> = {
+    const loginOptions: Record<string, unknown> = {
       response_type: "code",
       override_default_response_type: true,
       return_scopes: true,
@@ -140,7 +152,7 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
     }
 
     try {
-      window.FB.login((response: any) => {
+      window.FB?.login((response: FacebookLoginResponse) => {
         window.removeEventListener("message", handleMessage);
 
         if (response?.authResponse?.code) {
@@ -165,9 +177,9 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
           reject(new Error(errorMsg));
         }
       }, loginOptions);
-    } catch (err: any) {
+    } catch (err) {
       window.removeEventListener("message", handleMessage);
-      reject(new Error(err?.message || "Failed to trigger Meta Login popup."));
+      reject(new Error((err as Error)?.message || "Failed to trigger Meta Login popup."));
     }
   });
 }

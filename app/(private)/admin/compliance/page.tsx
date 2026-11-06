@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import type { ApiErrorLike } from "@/lib/errors";
 import toast from "react-hot-toast";
 import {
   useFetchAdminComplianceOverview,
@@ -9,7 +10,7 @@ import {
 } from "@/hooks/campaigns/actions";
 
 export default function AdminCompliancePage() {
-  const { data, isLoading, isFetching, refetch } = useFetchAdminComplianceOverview();
+  const { data, isFetching, refetch } = useFetchAdminComplianceOverview();
   const actionMutation = useAdminComplianceAction();
   const keywordMutation = useAdminManageComplianceKeywords();
 
@@ -41,7 +42,8 @@ export default function AdminCompliancePage() {
       } else {
         toast.error("Could not execute action.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.response?.data?.detail || err?.message || "Action failed.");
     } finally {
       setIsProcessingAction(false);
@@ -68,7 +70,8 @@ export default function AdminCompliancePage() {
       } else {
         toast.error(res?.detail || "Term is already in the blocklist.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.response?.data?.detail || err?.message || "Failed to add keyword.");
     } finally {
       setIsAddingKeyword(false);
@@ -86,7 +89,8 @@ export default function AdminCompliancePage() {
       } else {
         toast.error("Could not remove term.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.message || "Failed to remove keyword.");
     }
   };
@@ -100,7 +104,8 @@ export default function AdminCompliancePage() {
       if (res?.success) {
         toast.success("Restored standard CAK blocklist keywords.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.message || "Failed to reset keywords.");
     }
   };

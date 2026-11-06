@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
+import { useDismissible } from "@/hooks/common/useDismissible";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useFetchBusinesses } from "@/hooks/business/actions";
@@ -30,7 +31,6 @@ export default function BusinessDashboardPage() {
 
   const primaryWallet = wallets[0] || primaryBusiness?.wallet;
   const smsBalance: number = primaryWallet?.sms_credit_balance ?? 0;
-  const emailBalance: number = primaryWallet?.email_credit_balance ?? 0;
 
   const campaigns = useMemo(() => {
     if (Array.isArray(campaignsData)) return campaignsData;
@@ -71,64 +71,14 @@ export default function BusinessDashboardPage() {
   };
 
   const [isOnboardingCollapsed, setIsOnboardingCollapsed] = useState(false);
-  const [isLifetimeBannerDismissed, setIsLifetimeBannerDismissed] = useState(false);
-  const [isPrepaidBannerDismissed, setIsPrepaidBannerDismissed] = useState(false);
-  const [isOnboardingRoadmapDismissed, setIsOnboardingRoadmapDismissed] = useState(false);
-
   const bizKey = primaryBusiness?.reference || primaryBusiness?.id || "default";
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        if (localStorage.getItem(`dismissed_lifetime_banner_${bizKey}`) === "true") {
-          setIsLifetimeBannerDismissed(true);
-        }
-        if (localStorage.getItem(`dismissed_prepaid_banner_${bizKey}`) === "true") {
-          setIsPrepaidBannerDismissed(true);
-        }
-        if (localStorage.getItem(`dismissed_onboarding_roadmap_${bizKey}`) === "true") {
-          setIsOnboardingRoadmapDismissed(true);
-        }
-      } catch (e) {
-        console.error("Failed to read dismissal state", e);
-      }
-    }
-  }, [bizKey]);
-
-  const handleDismissLifetimeBanner = () => {
-    setIsLifetimeBannerDismissed(true);
-    try {
-      localStorage.setItem(`dismissed_lifetime_banner_${bizKey}`, "true");
-    } catch {}
-  };
-
-  const handleRestoreLifetimeBanner = () => {
-    setIsLifetimeBannerDismissed(false);
-    try {
-      localStorage.removeItem(`dismissed_lifetime_banner_${bizKey}`);
-    } catch {}
-  };
-
-  const handleDismissPrepaidBanner = () => {
-    setIsPrepaidBannerDismissed(true);
-    try {
-      localStorage.setItem(`dismissed_prepaid_banner_${bizKey}`, "true");
-    } catch {}
-  };
-
-  const handleDismissOnboardingRoadmap = () => {
-    setIsOnboardingRoadmapDismissed(true);
-    try {
-      localStorage.setItem(`dismissed_onboarding_roadmap_${bizKey}`, "true");
-    } catch {}
-  };
-
-  const handleRestoreOnboardingRoadmap = () => {
-    setIsOnboardingRoadmapDismissed(false);
-    try {
-      localStorage.removeItem(`dismissed_onboarding_roadmap_${bizKey}`);
-    } catch {}
-  };
+  const [isLifetimeBannerDismissed, handleDismissLifetimeBanner, handleRestoreLifetimeBanner] = useDismissible(
+    `dismissed_lifetime_banner_${bizKey}`
+  );
+  const [isPrepaidBannerDismissed, handleDismissPrepaidBanner] = useDismissible(`dismissed_prepaid_banner_${bizKey}`);
+  const [isOnboardingRoadmapDismissed, handleDismissOnboardingRoadmap, handleRestoreOnboardingRoadmap] =
+    useDismissible(`dismissed_onboarding_roadmap_${bizKey}`);
 
   const step1Done = Boolean(primaryBusiness?.name);
   const step2Done = Boolean(
