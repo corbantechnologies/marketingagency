@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 export function FeaturesContent() {
   const [activeIndustry, setActiveIndustry] = useState<number>(0);
@@ -244,7 +245,9 @@ export function FeaturesContent() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {coreFeatures.map((feat, idx) => (
+          {coreFeatures
+            .filter((feat) => EMAIL_CHANNEL_ENABLED || feat.title !== "High-Inbox Email Infrastructure")
+            .map((feat, idx) => (
             <div
               key={idx}
               className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-xs flex flex-col justify-between hover:border-purple-300 hover:shadow-md transition-all group"

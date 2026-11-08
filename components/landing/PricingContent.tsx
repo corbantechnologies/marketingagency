@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useFetchPlans } from "@/hooks/plans/actions";
 import { Plan } from "@/services/plans";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 interface PlanItem {
   id: string;
@@ -443,14 +444,16 @@ export function PricingContent() {
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-zinc-600 gap-2">
-                      <span className="flex items-center gap-1.5 whitespace-nowrap">
-                        <span>✉️ Email</span>
-                      </span>
-                      <span className="font-semibold text-zinc-900 whitespace-nowrap text-right">
-                        KSh {plan.emailRateKes.toFixed(2)} <span className="text-[10px] text-zinc-400 font-normal">/email</span>
-                      </span>
-                    </div>
+                    {EMAIL_CHANNEL_ENABLED && (
+                      <div className="flex justify-between items-center text-zinc-600 gap-2">
+                        <span className="flex items-center gap-1.5 whitespace-nowrap">
+                          <span>✉️ Email</span>
+                        </span>
+                        <span className="font-semibold text-zinc-900 whitespace-nowrap text-right">
+                          KSh {plan.emailRateKes.toFixed(2)} <span className="text-[10px] text-zinc-400 font-normal">/email</span>
+                        </span>
+                      </div>
+                    )}
 
                     <div className="flex justify-between items-center text-zinc-600 pt-1.5 border-t border-zinc-200/60 gap-2">
                       <span className="whitespace-nowrap">Monthly Credits</span>
@@ -583,14 +586,16 @@ export function PricingContent() {
                     </td>
                   ))}
                 </tr>
-                <tr>
-                  <td className="py-3 font-medium text-zinc-900">Monthly Included Emails</td>
-                  {plans.map((p) => (
-                    <td key={p.id} className="py-3">
-                      {p.includedEmail > 0 ? `${p.includedEmail.toLocaleString()} Emails` : "—"}
-                    </td>
-                  ))}
-                </tr>
+                {EMAIL_CHANNEL_ENABLED && (
+                  <tr>
+                    <td className="py-3 font-medium text-zinc-900">Monthly Included Emails</td>
+                    {plans.map((p) => (
+                      <td key={p.id} className="py-3">
+                        {p.includedEmail > 0 ? `${p.includedEmail.toLocaleString()} Emails` : "—"}
+                      </td>
+                    ))}
+                  </tr>
+                )}
                 <tr>
                   <td className="py-3 font-medium text-zinc-900">Max Contacts Storage</td>
                   {plans.map((p) => (

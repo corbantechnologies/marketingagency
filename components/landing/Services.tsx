@@ -91,7 +91,7 @@ export function Services() {
     {
       id: "api-integrations",
       category: "automation",
-      title: "Developer SMS & Email APIs / SMPP",
+      title: "Developer SMS & WhatsApp APIs / SMPP",
       tagline: "Seamless Integration With Your Backend & CRM",
       description:
         "Connect our high-speed messaging infrastructure directly into your custom apps, e-commerce stores, ERPs, and databases using robust REST APIs, SMPP 3.4 protocols, and bidirectional webhook callbacks.",

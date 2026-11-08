@@ -23,7 +23,7 @@ export function FAQ() {
         "LJK Marketing Agency is a technical software intermediary and Data Processor, not a communications carrier. Clients act as sole Data Controllers and are strictly responsible for maintaining verifiable opt-in consent from all recipients. If a client transmits unsolicited messages, spam, or misleading content resulting in carrier filtering, recipient complaints, or carrier blacklisting, LJK holds zero liability. In accordance with our Terms of Service, abusive accounts are subject to immediate suspension without refund.",
     },
     {
-      question: "Can we integrate your SMS & Email gateways into our own app via API?",
+      question: "Can we integrate your SMS & WhatsApp gateways into our own app via API?",
       answer:
         "Yes. We support standard HTTPS REST APIs with JSON payloads, as well as enterprise SMPP 3.4 protocols for high-throughput transactional OTPs and alerts. We provide SDKs and direct connectors for Shopify, WooCommerce, and CRM webhooks.",
     },

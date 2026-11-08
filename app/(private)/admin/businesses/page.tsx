@@ -13,6 +13,7 @@ import {
 } from "@/hooks/business/actions";
 import { useFetchPlans } from "@/hooks/plans/actions";
 import { Business } from "@/services/business";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 export default function AdminBusinessesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -725,7 +726,7 @@ export default function AdminBusinessesPage() {
                   className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 >
                   <option value="SMS">SMS / WhatsApp Shared Float (Universal Credits)</option>
-                  <option value="EMAIL">Email Units</option>
+                  {EMAIL_CHANNEL_ENABLED && <option value="EMAIL">Email Units</option>}
                 </select>
               </div>
 

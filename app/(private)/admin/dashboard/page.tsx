@@ -10,6 +10,7 @@ import {
   useFetchAlertRecipients,
   useManageAlertRecipients,
 } from "@/hooks/business/actions";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 export default function AdminDashboardPage() {
   const { data: session } = useSession();
@@ -657,9 +658,11 @@ export default function AdminDashboardPage() {
           </div>
           <div className="text-[11px] text-zinc-500 flex items-center justify-between border-t border-zinc-100 pt-2 mt-1">
             <span>Prepaid customer float</span>
-            <span className="text-zinc-600 font-mono text-[10px]">
-              {vitals?.floating_email_credits ?? 0} Email
-            </span>
+            {EMAIL_CHANNEL_ENABLED && (
+              <span className="text-zinc-600 font-mono text-[10px]">
+                {vitals?.floating_email_credits ?? 0} Email
+              </span>
+            )}
           </div>
         </div>
 
