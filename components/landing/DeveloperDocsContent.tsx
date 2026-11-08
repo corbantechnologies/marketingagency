@@ -342,7 +342,7 @@ $data = json_decode(curl_exec($ch), true);
                 : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
                 }`}
             >
-              <span>Developer Sandbox</span>
+              <span>Sandbox &amp; Webhooks</span>
               <span className="text-[10px] font-mono text-purple-400">Mock API</span>
             </button>
 
@@ -456,10 +456,12 @@ $data = json_decode(curl_exec($ch), true);
   "total_recipients": 2,
   "dispatched_successfully": 2,
   "failed": 0,
+  "skipped_opted_out": 0,
+  "credits_deducted": 4,
   "remaining_balance": 1494,
   "results": [
-    { "phone": "+254710584581", "status": "SENT", "message_id": "MSG_8F921" },
-    { "phone": "+254722000000", "status": "SENT", "message_id": "MSG_8F922" }
+    { "recipient": "+254710584581", "status": "SENT", "message_id": "MSG_8F921", "external_reference": "TXN-001" },
+    { "recipient": "+254722000000", "status": "SENT", "message_id": "MSG_8F922", "external_reference": "TXN-002" }
   ]
 }`}</pre>
                   )}
@@ -486,7 +488,8 @@ $data = json_decode(curl_exec($ch), true);
   "currency": "KES",
   "can_send_sms": true,
   "can_send_whatsapp": true,
-  "verified_meta_tech_provider": true
+  "sandbox": false,
+  "whatsapp_sender": "+254 711 000000"
 }`}</pre>
                   )}
                 </div>
@@ -569,60 +572,54 @@ $data = json_decode(curl_exec($ch), true);
             </div>
           )}
 
-          {/* Section: Sandbox Environment Blueprint */}
+          {/* Section: Sandbox keys, webhooks and safe retries */}
           {activeTab === "sandbox" && (
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
               <div className="space-y-2 pb-4 border-b border-zinc-800">
                 <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">
-                  Developer Sandbox &amp; Simulation Engine
+                  Testing &amp; Delivery Events
                 </span>
                 <h2 className="text-2xl font-extrabold text-white">
-                  Zero-Cost Testing Environment (Phase 2 Blueprint)
+                  Sandbox Keys, Delivery Webhooks and Safe Retries
                 </h2>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Develop, simulate edge cases, and test your webhooks and automated scripts without expending real M-PESA funds or live telco units.
+                  Build and test your integration without sending real messages, then get every status change pushed to your system.
                 </p>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <div className="text-xs font-bold text-purple-300">1. Test Key Differentiation</div>
+                  <div className="text-xs font-bold text-purple-300">1. Sandbox keys</div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
-                    Generate sandbox keys prefixed with <code className="text-purple-300">ljk_test_...</code>. The API gateway automatically routes test requests to our high-fidelity simulation engine.
+                    Create a key with &ldquo;Sandbox&rdquo; ticked to get a <code className="text-purple-300">ljk_test_...</code> key. It runs every check a live key does (channel, Sender ID, WhatsApp template and variables, opt-outs), records the message as <code className="text-zinc-300">DELIVERED</code> and sends your webhooks, but never sends a real message and never spends credits.
                   </p>
                 </div>
-
                 <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <div className="text-xs font-bold text-purple-300">2. Dedicated Virtual Wallet</div>
+                  <div className="text-xs font-bold text-purple-300">2. Delivery webhooks</div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
-                    Test keys receive a virtual allowance of 1,000 free sandbox credits. Reset your virtual balance anytime with one click in the Developer Portal.
+                    Set a webhook URL on a key in the Developer Portal. LJK POSTs <code className="text-zinc-300">message.sent</code>, <code className="text-zinc-300">message.delivered</code>, <code className="text-zinc-300">message.read</code> (WhatsApp) and <code className="text-zinc-300">message.failed</code> events. Any 2xx answer counts as received; anything else is retried with growing delays for about a day.
                   </p>
                 </div>
-
                 <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <div className="text-xs font-bold text-purple-300">3. High-Fidelity Status Simulator</div>
+                  <div className="text-xs font-bold text-purple-300">3. Verify every event</div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
-                    Simulate realistic delivery life-cycles. Special test numbers trigger deterministic outcomes (e.g. <code className="text-zinc-300">+254700000000</code> triggers simulated carrier reject to test your auto-refund handling).
+                    Each request carries <code className="text-zinc-300">X-LJK-Timestamp</code> and <code className="text-zinc-300">X-LJK-Signature: sha256=HMAC(&lt;timestamp&gt;.&lt;raw body&gt;, signing secret)</code>. Reject events whose signature does not match or whose timestamp is older than five minutes. <code className="text-zinc-300">X-LJK-Delivery</code> stays the same on retries, so you can drop duplicates.
                   </p>
                 </div>
-
                 <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-2">
-                  <div className="text-xs font-bold text-purple-300">4. WhatsApp Blue Ticks Emulation</div>
+                  <div className="text-xs font-bold text-purple-300">4. Safe retries</div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
-                    Simulates Meta webhook events: 5 seconds after an API dispatch, the message automatically transitions to <code className="text-blue-400">READ ✓✓</code> with populated read timestamps.
+                    Send an <code className="text-zinc-300">Idempotency-Key</code> header (for example your transaction ID). Repeating a request with the same key within 24 hours returns the first answer instead of sending again. Each key also has a per-minute request limit; over it you get <code className="text-zinc-300">429</code> with <code className="text-zinc-300">Retry-After</code>.
                   </p>
                 </div>
               </div>
-
-              {/* Live Virtual Handset Preview Notice */}
-              <div className="p-5 rounded-2xl bg-purple-950/40 border border-purple-800/60 flex items-start gap-3">
-                <span className="text-xl">📱</span>
-                <div className="space-y-1">
-                  <div className="text-xs font-bold text-white">Interactive In-Portal Handset Tester</div>
-                  <p className="text-xs text-purple-200 leading-relaxed">
-                    In the developer dashboard, test calls will render dynamically on a visual iPhone simulator screen in real time, allowing frontend and backend teams to verify visual layouts before going live to real customer phones.
-                  </p>
-                </div>
+              <div className="p-5 rounded-2xl bg-purple-950/40 border border-purple-800/60 space-y-2">
+                <div className="text-xs font-bold text-white">WhatsApp rules to know</div>
+                <ul className="text-xs text-purple-200 leading-relaxed list-disc pl-4 space-y-1">
+                  <li>Messages go out from your own WhatsApp number when you have connected one in LJK, otherwise from the LJK number.</li>
+                  <li>A message that starts a conversation must use a template Meta approved on that number&apos;s account. The API checks the template and the number of variables before charging; a wrong name returns your approved templates.</li>
+                  <li>Free text (<code>message</code> without <code>template_name</code>) only reaches people who messaged you in the last 24 hours.</li>
+                  <li>People who reply STOP are skipped. For receipts, balances and OTPs send <code>&quot;respect_opt_out&quot;: false</code>.</li>
+                </ul>
               </div>
             </div>
           )}

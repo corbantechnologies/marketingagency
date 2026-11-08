@@ -10,11 +10,165 @@ import {
   useFetchApiKeys,
   useCreateApiKey,
   useRevokeApiKey,
+  useFetchWebhookDeliveries,
+  useUpdateApiKeyWebhook,
+  useTestApiKeyWebhook,
 } from "@/hooks/integrations/actions";
 import { ApiKeyItem } from "@/services/integrations";
 
 type CodeLanguage = "curl" | "javascript" | "python";
-type EndpointTab = "whatsapp" | "sms" | "transactional" | "balance";
+type EndpointTab = "whatsapp" | "sms" | "transactional" | "batch" | "webhooks" | "balance";
+
+// ============================================================================
+// Delivery webhook settings for one API key
+// ============================================================================
+function WebhookSettingsModal({ apiKey, onClose }: { apiKey: ApiKeyItem; onClose: () => void }) {
+  const [url, setUrl] = useState(apiKey.webhook_url || "");
+  const [secret, setSecret] = useState<string | null>(null);
+  const update = useUpdateApiKeyWebhook();
+  const test = useTestApiKeyWebhook();
+  const { data, refetch } = useFetchWebhookDeliveries(apiKey.reference);
+
+  const save = (rotate: boolean) => {
+    update.mutate(
+      { reference: apiKey.reference, webhook_url: url.trim(), rotate_secret: rotate },
+      {
+        onSuccess: (res) => {
+          if (res.webhook_signing_secret) setSecret(res.webhook_signing_secret);
+          toast.success(url.trim() ? "Webhook saved." : "Webhook removed.");
+          refetch();
+        },
+        onError: (err: any) => {
+          const d = err?.response?.data;
+          toast.error((Array.isArray(d) ? d[0] : d?.webhook_url?.[0] || d?.error || d?.[0]) || "Could not save the webhook URL.");
+        },
+      }
+    );
+  };
+
+  const sendTest = () => {
+    test.mutate(apiKey.reference, {
+      onSuccess: (res) => toast.success(`Your endpoint answered ${res.status_code}.`),
+      onError: (err: any) => {
+        const d = err?.response?.data;
+        toast.error(d?.error || (d?.status_code ? `Your endpoint answered ${d.status_code}.` : "Test failed."));
+      },
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-start justify-between border-b border-zinc-100 pb-3 gap-3">
+          <div>
+            <h2 className="text-base font-bold text-zinc-900">Delivery webhook: {apiKey.name}</h2>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              LJK POSTs an event to this URL whenever a message sent with this key is sent, delivered, read or fails.
+            </p>
+          </div>
+          <button type="button" onClick={onClose} className="text-zinc-400 hover:text-zinc-600 text-lg font-bold cursor-pointer">
+            &times;
+          </button>
+        </div>
+
+        <div className="space-y-2 text-xs">
+          <label className="block font-bold text-zinc-700">Webhook URL (https only)</label>
+          <input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://your-system.example.com/ljk/webhook"
+            className="w-full px-3 py-2 rounded-lg border border-zinc-300 font-mono focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+          />
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              type="button"
+              disabled={update.isPending}
+              onClick={() => save(false)}
+              className="px-3 py-2 rounded-lg bg-[#581c87] hover:bg-[#4a1572] text-white font-semibold cursor-pointer disabled:opacity-50"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              disabled={update.isPending || !url.trim()}
+              onClick={() => save(true)}
+              className="px-3 py-2 rounded-lg border border-zinc-300 hover:bg-zinc-50 text-zinc-700 font-semibold cursor-pointer disabled:opacity-50"
+            >
+              Save and new signing secret
+            </button>
+            <button
+              type="button"
+              disabled={test.isPending || !apiKey.webhook_url}
+              onClick={sendTest}
+              className="px-3 py-2 rounded-lg border border-zinc-300 hover:bg-zinc-50 text-zinc-700 font-semibold cursor-pointer disabled:opacity-50"
+            >
+              {test.isPending ? "Sending..." : "Send test event"}
+            </button>
+          </div>
+        </div>
+
+        {secret && (
+          <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs space-y-1">
+            <div className="font-bold text-amber-950">Signing secret (shown once)</div>
+            <code className="block font-mono break-all text-amber-900">{secret}</code>
+            <p className="text-amber-900">Store it in your system. Use it to check the X-LJK-Signature header on every event.</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Recent deliveries</h3>
+            <button type="button" onClick={() => refetch()} className="text-xs text-[#581c87] font-semibold cursor-pointer">
+              Refresh
+            </button>
+          </div>
+          {!data?.deliveries?.length ? (
+            <p className="text-xs text-zinc-500">No events yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-[11px]">
+                <thead>
+                  <tr className="text-zinc-400 uppercase">
+                    <th className="py-1.5 pr-2">Event</th>
+                    <th className="py-1.5 pr-2">Message</th>
+                    <th className="py-1.5 pr-2">Result</th>
+                    <th className="py-1.5 pr-2">Attempts</th>
+                    <th className="py-1.5">Time</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {data.deliveries.map((d) => (
+                    <tr key={d.id}>
+                      <td className="py-1.5 pr-2 font-mono">{d.event}</td>
+                      <td className="py-1.5 pr-2 font-mono">{d.message_id || "-"}</td>
+                      <td className="py-1.5 pr-2">
+                        <span
+                          className={
+                            d.status === "delivered"
+                              ? "text-emerald-700 font-semibold"
+                              : d.status === "failed"
+                                ? "text-red-700 font-semibold"
+                                : "text-amber-700 font-semibold"
+                          }
+                        >
+                          {d.status}
+                        </span>
+                        {d.last_status_code ? ` (${d.last_status_code})` : ""}
+                        {d.last_error && d.status !== "delivered" ? ` ${d.last_error}` : ""}
+                      </td>
+                      <td className="py-1.5 pr-2">{d.attempts}</td>
+                      <td className="py-1.5 font-mono">{new Date(d.created_at).toLocaleString("en-KE")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BusinessDeveloperPage() {
   const { data: apiKeys, isLoading } = useFetchApiKeys();
@@ -36,6 +190,7 @@ export default function BusinessDeveloperPage() {
 
   // Revoke Modal
   const [revokingKey, setRevokingKey] = useState<ApiKeyItem | null>(null);
+  const [webhookKey, setWebhookKey] = useState<ApiKeyItem | null>(null);
 
   // Playground / Docs state
   const [activeLang, setActiveLang] = useState<CodeLanguage>("curl");
@@ -225,51 +380,217 @@ print(resp.json())`;
 
     if (tab === "transactional") {
       if (lang === "curl") {
-        return `# Automated Transaction & Order Alert
+        return `# Account / order notification on WhatsApp (approved UTILITY template).
+# Idempotency-Key makes retries safe: the same key never sends twice.
 curl -X POST ${baseUrl}/api/v1/integrations/dispatch/single/ \\
   -H "X-API-Key: ${sampleKey}" \\
+  -H "Idempotency-Key: balance-MEM-0042-20261108-1" \\
   -H "Content-Type: application/json" \\
   -d '{
     "channel": "WHATSAPP",
     "recipient": "+254712345678",
-    "message": "Dear Customer, your payment of KES 10,000 for Order #ORD-9842 has been confirmed. Your receipt has been generated. Ref: QX98124",
-    "reference_id": "TXN-ORD-9842"
+    "template_name": "balance_update",
+    "template_variables": ["Amina", "KES 12,500", "8 Nov 2026"],
+    "respect_opt_out": false,
+    "reference_id": "MEM-0042-BAL"
   }'`;
       }
       if (lang === "javascript") {
-        return `// Automated Transaction & Order Webhook Dispatcher
-async function sendTransactionalAlert(phone, amount, orderId, receipt) {
-  const res = await fetch("${baseUrl}/api/v1/integrations/dispatch/single/", {
-    method: "POST",
-    headers: {
-      "X-API-Key": "${sampleKey}",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      channel: "WHATSAPP", // Or "SMS"
-      recipient: phone,
-      message: \`Dear Customer, your payment of KES \${amount} for Order #\${orderId} has been confirmed. Ref: \${receipt}\`,
-      reference_id: \`TXN-\${orderId}\`
-    })
+        return `// Call this from your system whenever a balance, order or payment changes.
+async function notifyCustomer({ phone, name, amount, date, ref }) {
+  const send = (body) =>
+    fetch("${baseUrl}/api/v1/integrations/dispatch/single/", {
+      method: "POST",
+      headers: {
+        "X-API-Key": process.env.LJK_API_KEY,
+        "Idempotency-Key": \`\${ref}-\${body.channel}\`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((r) => r.json());
+
+  // WhatsApp first, using an approved template...
+  const wa = await send({
+    channel: "WHATSAPP",
+    recipient: phone,
+    template_name: "balance_update",
+    template_variables: [name, amount, date],
+    respect_opt_out: false, // transactional, so STOP on marketing does not block it
+    reference_id: ref,
   });
-  return await res.json();
+  if (wa.success) return wa;
+
+  // ...and SMS if WhatsApp could not deliver (no WhatsApp, Meta error).
+  return send({
+    channel: "SMS",
+    recipient: phone,
+    message: \`Hi \${name}, your balance is \${amount} as of \${date}.\`,
+    respect_opt_out: false,
+    reference_id: ref,
+  });
 }`;
       }
       if (lang === "python") {
-        return `def send_transactional_alert(phone: str, amount: str, order_id: str, receipt: str):
-    """Dispatches instant transaction notification via LJK Gateway."""
-    resp = requests.post(
-        "${baseUrl}/api/v1/integrations/dispatch/single/",
-        headers={"X-API-Key": "${sampleKey}"},
+        return `import os
+import requests
+
+URL = "${baseUrl}/api/v1/integrations/dispatch/single/"
+HEADERS = {"X-API-Key": os.environ["LJK_API_KEY"]}
+
+
+def notify_customer(phone, name, amount, date, ref):
+    """Send a WhatsApp template; fall back to SMS if WhatsApp fails."""
+    wa = requests.post(
+        URL,
+        headers={**HEADERS, "Idempotency-Key": f"{ref}-WHATSAPP"},
         json={
             "channel": "WHATSAPP",
             "recipient": phone,
-            "message": f"Dear Customer, your payment of KES {amount} for Order #{order_id} has been confirmed. Ref: {receipt}",
-            "reference_id": f"TXN-{order_id}"
-        }
-    )
-    return resp.json()`;
+            "template_name": "balance_update",
+            "template_variables": [name, amount, date],
+            "respect_opt_out": False,
+            "reference_id": ref,
+        },
+        timeout=20,
+    ).json()
+    if wa.get("success"):
+        return wa
+    return requests.post(
+        URL,
+        headers={**HEADERS, "Idempotency-Key": f"{ref}-SMS"},
+        json={
+            "channel": "SMS",
+            "recipient": phone,
+            "message": f"Hi {name}, your balance is {amount} as of {date}.",
+            "respect_opt_out": False,
+            "reference_id": ref,
+        },
+        timeout=20,
+    ).json()`;
       }
+    }
+
+    if (tab === "batch") {
+      if (lang === "curl") {
+        return `# Up to 1,000 recipients per call. One debit; failed messages are refunded.
+curl -X POST ${baseUrl}/api/v1/integrations/dispatch/batch/ \\
+  -H "X-API-Key: ${sampleKey}" \\
+  -H "Idempotency-Key: promo-2026-11-08" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "channel": "WHATSAPP",
+    "template_name": "weekend_offer",
+    "batch_reference": "PROMO-NOV-08",
+    "recipients": [
+      {"phone": "0712345678", "variables": ["Amina", "20%"], "reference_id": "C-1001"},
+      {"phone": "0722000111", "variables": ["Brian", "15%"], "reference_id": "C-1002"}
+    ]
+  }'
+
+# SMS batch: {name} is replaced per recipient
+# {"channel": "SMS", "message_template": "Hi {name}, 20% off this weekend!",
+#  "recipients": [{"phone": "0712345678", "name": "Amina"}]}`;
+      }
+      if (lang === "javascript") {
+        return `const res = await fetch("${baseUrl}/api/v1/integrations/dispatch/batch/", {
+  method: "POST",
+  headers: {
+    "X-API-Key": process.env.LJK_API_KEY,
+    "Idempotency-Key": "promo-2026-11-08",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    channel: "SMS",
+    message_template: "Hi {name}, 20% off this weekend!",
+    recipients: customers.map((c) => ({ phone: c.phone, name: c.firstName, reference_id: c.id })),
+  }),
+});
+const batch = await res.json();
+// batch.results[i].status is SENT, FAILED or SKIPPED (opted out)`;
+      }
+      return `resp = requests.post(
+    "${baseUrl}/api/v1/integrations/dispatch/batch/",
+    headers={"X-API-Key": API_KEY, "Idempotency-Key": "promo-2026-11-08"},
+    json={
+        "channel": "SMS",
+        "message_template": "Hi {name}, 20% off this weekend!",
+        "recipients": [{"phone": c.phone, "name": c.first_name, "reference_id": c.id} for c in customers],
+    },
+    timeout=300,
+)
+print(resp.json()["dispatched_successfully"], "sent")`;
+    }
+
+    if (tab === "webhooks") {
+      if (lang === "python") {
+        return `# Flask example: verify and handle LJK delivery events
+import hashlib, hmac, os, time
+from flask import Flask, request, abort
+
+SECRET = os.environ["LJK_WEBHOOK_SECRET"].encode()
+app = Flask(__name__)
+
+@app.post("/ljk/webhook")
+def ljk_webhook():
+    ts = request.headers.get("X-LJK-Timestamp", "")
+    sig = request.headers.get("X-LJK-Signature", "")
+    expected = "sha256=" + hmac.new(SECRET, ts.encode() + b"." + request.get_data(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(sig, expected) or abs(time.time() - int(ts or 0)) > 300:
+        abort(401)
+    event = request.get_json()
+    # event["event"]: message.sent | message.delivered | message.read | message.failed
+    # event["data"]["external_reference"] is the reference_id you sent
+    save_status(event["data"]["message_id"], event["data"]["status"], event["occurred_at"])
+    return "", 204   # any 2xx = received; otherwise LJK retries with backoff`;
+      }
+      if (lang === "javascript") {
+        return `// Express example: verify and handle LJK delivery events
+import crypto from "node:crypto";
+import express from "express";
+
+const app = express();
+app.post("/ljk/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  const ts = req.get("X-LJK-Timestamp") || "";
+  const expected = "sha256=" + crypto
+    .createHmac("sha256", process.env.LJK_WEBHOOK_SECRET)
+    .update(ts + "." + req.body)
+    .digest("hex");
+  const sig = req.get("X-LJK-Signature") || "";
+  const fresh = Math.abs(Date.now() / 1000 - Number(ts)) < 300;
+  if (!fresh || sig.length !== expected.length ||
+      !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    return res.sendStatus(401);
+  }
+  const event = JSON.parse(req.body);
+  // event.event: message.sent | message.delivered | message.read | message.failed
+  saveStatus(event.data.message_id, event.data.status, event.occurred_at);
+  res.sendStatus(204);
+});`;
+      }
+      return `# Every event is a POST with these headers:
+#   X-LJK-Event: message.delivered
+#   X-LJK-Delivery: 6f1c...        (same id on retries; use it to drop duplicates)
+#   X-LJK-Timestamp: 1762600000
+#   X-LJK-Signature: sha256=<HMAC-SHA256("<timestamp>.<raw body>", signing secret)>
+#
+# Body:
+{
+  "event": "message.delivered",
+  "occurred_at": "2026-11-08T10:15:02+00:00",
+  "sandbox": false,
+  "data": {
+    "message_id": "MSG_8F9210",
+    "external_reference": "MEM-0042-BAL",
+    "channel": "WHATSAPP",
+    "recipient": "+254712345678",
+    "status": "DELIVERED",
+    "cost_credits": 2,
+    "refunded": false,
+    "failure_reason": null,
+    "delivered_at": "2026-11-08T10:15:02+00:00",
+    "read_at": null
+  }
+}`;
     }
 
     // Balance check
@@ -405,6 +726,7 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                   <th className="py-2.5 px-3">Key Prefix</th>
                   <th className="py-2.5 px-3">Channels</th>
                   <th className="py-2.5 px-3">Status</th>
+                  <th className="py-2.5 px-3">Webhook</th>
                   <th className="py-2.5 px-3">Last Used</th>
                   <th className="py-2.5 px-3">Created</th>
                   <th className="py-2.5 px-3 text-right">Action</th>
@@ -452,6 +774,24 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                         />
                         {key.is_active ? "Active" : "Revoked"}
                       </span>
+                      {key.key_prefix?.startsWith("ljk_test_") && (
+                        <span className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200">
+                          Sandbox
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-3">
+                      {key.is_active ? (
+                        <button
+                          type="button"
+                          onClick={() => setWebhookKey(key)}
+                          className="text-[#581c87] hover:underline font-semibold cursor-pointer text-xs"
+                        >
+                          {key.webhook_url ? "Configured" : "Set up"}
+                        </button>
+                      ) : (
+                        <span className="text-zinc-400">-</span>
+                      )}
                     </td>
                     <td className="py-3 px-3 font-mono text-[11px] text-zinc-500">
                       {key.last_used_at
@@ -530,6 +870,28 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                 }`}
               >
                 Transactional &amp; Order Alerts
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("batch")}
+                className={`py-1 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeTab === "batch"
+                    ? "bg-rose-400 text-zinc-950 font-bold"
+                    : "bg-zinc-800/80 text-zinc-300 hover:bg-zinc-800"
+                }`}
+              >
+                Batch Sends
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("webhooks")}
+                className={`py-1 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeTab === "webhooks"
+                    ? "bg-lime-400 text-zinc-950 font-bold"
+                    : "bg-zinc-800/80 text-zinc-300 hover:bg-zinc-800"
+                }`}
+              >
+                Delivery Webhooks
               </button>
               <button
                 type="button"
@@ -620,15 +982,32 @@ print("Balance:", resp.json()["sms_credit_balance"])`;
                 <strong className="text-red-700 font-mono">401 Unauthorized</strong>: Missing or deactivated API key.
               </li>
               <li>
-                <strong className="text-purple-700 font-mono">403 Forbidden</strong>: API key unauthorized for requested channel.
+                <strong className="text-purple-700 font-mono">400 Bad Request</strong>: Invalid input. For WhatsApp, <code className="font-mono">template_not_approved</code> (the answer lists your approved templates) or <code className="font-mono">template_variables</code> (wrong number of values). Nothing is charged.
               </li>
               <li>
-                <strong className="text-zinc-800 font-mono">502 Bad Gateway</strong>: Carrier hard error (automatically refunds credits).
+                <strong className="text-purple-700 font-mono">403 Forbidden</strong>: Key not allowed on that channel, Sender ID not approved, or your plan has no API access.
+              </li>
+              <li>
+                <strong className="text-purple-700 font-mono">409 Conflict</strong>: Recipient replied STOP (<code className="font-mono">recipient_opted_out</code>). Send <code className="font-mono">respect_opt_out: false</code> only for transactional messages.
+              </li>
+              <li>
+                <strong className="text-purple-700 font-mono">429 Too Many Requests</strong>: Over the key&apos;s per-minute limit. Wait for the <code className="font-mono">Retry-After</code> seconds.
+              </li>
+              <li>
+                <strong className="text-zinc-800 font-mono">502 Bad Gateway</strong>: Carrier or Meta rejected the message. Credits are refunded at once.
+              </li>
+              <li>
+                <strong className="text-sky-700 font-mono">Sandbox keys</strong> (<code className="font-mono">ljk_test_...</code>) run every check and send webhooks, but never send a real message or spend credits.
+              </li>
+              <li>
+                WhatsApp goes out from your own number when you have connected one, otherwise from the LJK number. Free text only reaches people who messaged you in the last 24 hours; use a template otherwise.
               </li>
             </ul>
           </div>
         </div>
       </div>
+
+      {webhookKey && <WebhookSettingsModal apiKey={webhookKey} onClose={() => setWebhookKey(null)} />}
 
       {/* MODAL: Generate API Key */}
       {isCreateModalOpen && (

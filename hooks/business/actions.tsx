@@ -28,6 +28,7 @@ import {
   disconnectBusinessWhatsApp,
   toggleBusinessWhatsAppMode,
   refreshBusinessWhatsAppStatus,
+  registerBusinessWhatsApp,
   ConnectWhatsAppPayload,
 } from "@/services/business";
 import useAxiosAuth from "../authentication/useAxiosAuth";
@@ -343,6 +344,19 @@ export function useRefreshWhatsAppStatus() {
   });
 }
 
+/**
+ * Mutation hook to retry activating the linked WhatsApp number on Meta's Cloud API
+ */
+export function useRegisterWhatsApp() {
+  const queryClient = useQueryClient();
+  const authConfig = useAxiosAuth();
 
-
-
+  return useMutation({
+    mutationFn: ({ reference, pin }: { reference: string; pin?: string }) =>
+      registerBusinessWhatsApp(reference, pin, authConfig),
+    onSettled: (_res, _err, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["businesses"] });
+      queryClient.invalidateQueries({ queryKey: ["business", vars.reference] });
+    },
+  });
+}

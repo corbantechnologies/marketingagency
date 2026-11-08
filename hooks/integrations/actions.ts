@@ -8,6 +8,11 @@ import {
   CreateApiKeyPayload,
   ApiKeyItem,
   CreateApiKeyResponse,
+  updateApiKeyWebhook,
+  testApiKeyWebhook,
+  getApiKeyWebhookDeliveries,
+  WebhookSettingsResponse,
+  WebhookDeliveryItem,
 } from "@/services/integrations";
 import { getFreshAuthHeaders } from "@/hooks/authentication/useAxiosAuth";
 
@@ -54,6 +59,61 @@ export const useRevokeApiKey = () => {
       return revokeApiKey(reference, config);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: API_KEYS_QUERY_KEY });
+    },
+  });
+};
+
+/**
+ * Recent webhook deliveries for one API key
+ */
+export const useFetchWebhookDeliveries = (reference?: string) => {
+  return useQuery<{ webhook_url: string | null; deliveries: WebhookDeliveryItem[] }, Error>({
+    queryKey: [...API_KEYS_QUERY_KEY, "webhook", reference],
+    queryFn: async () => {
+      const config = await getFreshAuthHeaders();
+      return getApiKeyWebhookDeliveries(reference as string, config);
+    },
+    enabled: Boolean(reference),
+    staleTime: 1000 * 10,
+  });
+};
+
+/**
+ * Set or rotate an API key's delivery webhook
+ */
+export const useUpdateApiKeyWebhook = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    WebhookSettingsResponse,
+    Error,
+    { reference: string; webhook_url: string; rotate_secret?: boolean }
+  >({
+    mutationFn: async ({ reference, ...payload }) => {
+      const config = await getFreshAuthHeaders();
+      return updateApiKeyWebhook(reference, payload, config);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: API_KEYS_QUERY_KEY });
+    },
+  });
+};
+
+/**
+ * Send a signed test event to the webhook
+ */
+export const useTestApiKeyWebhook = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    { success: boolean; status_code: number | null; error: string | null },
+    Error,
+    string
+  >({
+    mutationFn: async (reference: string) => {
+      const config = await getFreshAuthHeaders();
+      return testApiKeyWebhook(reference, config);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: API_KEYS_QUERY_KEY });
     },
   });

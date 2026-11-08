@@ -10,7 +10,12 @@ import {
   useConnectWhatsApp,
   useDisconnectWhatsApp,
   useRefreshWhatsAppStatus,
+  useRegisterWhatsApp,
 } from "@/hooks/business/actions";
+import {
+  useCreateWhatsAppTemplate,
+  useFetchWhatsAppTemplates,
+} from "@/hooks/broadcastmessages/actions";
 import { Business } from "@/services/business";
 import { launchWhatsAppEmbeddedSignup } from "@/lib/meta-sdk";
 
@@ -142,6 +147,157 @@ function SenderIdRegistrationForm({ activeBusiness }: { activeBusiness?: Busines
 }
 
 // ============================================================================
+// Templates on the business's own WhatsApp account
+// ============================================================================
+function OwnWhatsAppTemplates() {
+  const { data, isLoading, refetch, isFetching } = useFetchWhatsAppTemplates("all");
+  const createTemplate = useCreateWhatsAppTemplate();
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState<"UTILITY" | "MARKETING">("UTILITY");
+  const [language, setLanguage] = useState("en");
+  const [body, setBody] = useState("");
+  const [examples, setExamples] = useState("");
+
+  const placeholderCount = new Set(body.match(/\{\{\s*\d+\s*\}\}/g) || []).size;
+  const templates = data?.templates || [];
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanName = name.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_");
+    if (!cleanName || !body.trim()) {
+      toast.error("Give the template a name and a message.");
+      return;
+    }
+    const exampleList = examples
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+    if (placeholderCount && exampleList.length < placeholderCount) {
+      toast.error(`Meta needs an example value for each of the ${placeholderCount} placeholders.`);
+      return;
+    }
+    createTemplate.mutate(
+      { name: cleanName, category, language, body_text: body.trim(), example_variables: exampleList },
+      {
+        onSuccess: (res) => {
+          toast.success(`Template "${res.name}" sent to Meta for review (${res.status}).`);
+          setName("");
+          setBody("");
+          setExamples("");
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.detail || "Meta rejected the template.");
+        },
+      }
+    );
+  };
+
+  const statusStyle = (status: string) =>
+    status === "APPROVED"
+      ? "bg-emerald-100 text-emerald-800"
+      : status === "REJECTED"
+        ? "bg-red-100 text-red-800"
+        : "bg-amber-100 text-amber-900";
+
+  return (
+    <div className="border-t border-zinc-100 pt-5 space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-bold text-zinc-900">Your WhatsApp templates</h3>
+          <p className="text-xs text-zinc-500">
+            Messages that start a conversation (offers, delivery updates, balances, reminders) must use a template Meta has approved.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => refetch()}
+          className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-zinc-200 hover:bg-zinc-50 text-zinc-700 cursor-pointer shrink-0"
+        >
+          {isFetching ? "Loading..." : "Refresh"}
+        </button>
+      </div>
+
+      {isLoading ? (
+        <p className="text-xs text-zinc-500">Loading templates from Meta...</p>
+      ) : templates.length === 0 ? (
+        <p className="text-xs text-zinc-500">No templates yet. Create your first one below.</p>
+      ) : (
+        <ul className="divide-y divide-zinc-100 border border-zinc-200 rounded-lg">
+          {templates.map((t: any) => (
+            <li key={`${t.name}-${t.language}`} className="px-3 py-2 flex items-center justify-between gap-2 text-xs">
+              <div className="min-w-0">
+                <div className="font-mono font-semibold text-zinc-900 truncate">{t.name}</div>
+                <div className="text-[11px] text-zinc-500">
+                  {t.category} · {t.language}
+                  {t.rejected_reason && t.rejected_reason !== "NONE" ? ` · ${t.rejected_reason}` : ""}
+                </div>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${statusStyle(t.status)}`}>
+                {t.status}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={submit} className="space-y-3 text-xs bg-zinc-50 border border-zinc-200 rounded-lg p-4">
+        <div className="font-bold text-zinc-800">New template</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="name e.g. balance_update"
+            className="px-3 py-2 rounded-lg border border-zinc-300 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as "UTILITY" | "MARKETING")}
+            className="px-3 py-2 rounded-lg border border-zinc-300 bg-white cursor-pointer"
+          >
+            <option value="UTILITY">Utility (updates, receipts, balances)</option>
+            <option value="MARKETING">Marketing (offers, promotions)</option>
+          </select>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="px-3 py-2 rounded-lg border border-zinc-300 bg-white cursor-pointer"
+          >
+            <option value="en">English</option>
+            <option value="en_US">English (US)</option>
+            <option value="sw">Swahili</option>
+          </select>
+        </div>
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={3}
+          placeholder="Hi {{1}}, your account balance is {{2}} as of {{3}}."
+          className="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+        />
+        {placeholderCount > 0 && (
+          <input
+            value={examples}
+            onChange={(e) => setExamples(e.target.value)}
+            placeholder={`Example values, comma separated (${placeholderCount} needed) e.g. Amina, KES 5,000, 1 Nov`}
+            className="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+        )}
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[11px] text-zinc-500">Meta usually reviews templates within minutes to a few hours.</p>
+          <button
+            type="submit"
+            disabled={createTemplate.isPending}
+            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer disabled:opacity-50 shrink-0"
+          >
+            {createTemplate.isPending ? "Submitting..." : "Submit to Meta"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// ============================================================================
 // Main Channels & Sender IDs Management Page
 // ============================================================================
 export default function ChannelsAndSenderIdsPage() {
@@ -161,11 +317,8 @@ export default function ChannelsAndSenderIdsPage() {
   const disconnectWhatsAppMutation = useDisconnectWhatsApp();
   const refreshWhatsAppMutation = useRefreshWhatsAppStatus();
 
-  // Modal state for direct Phone Number ID connection
-  const [isIdModalOpen, setIsIdModalOpen] = useState(false);
-  const [directPhoneId, setDirectPhoneId] = useState("");
-  const [directDisplayPhone, setDirectDisplayPhone] = useState("");
-  const [directVerifiedName, setDirectVerifiedName] = useState("");
+  const registerWhatsAppMutation = useRegisterWhatsApp();
+  const [existingPin, setExistingPin] = useState("");
 
   // Preview message text
   const [waPreviewText, setWaPreviewText] = useState(
@@ -176,11 +329,12 @@ export default function ChannelsAndSenderIdsPage() {
   );
 
   const isWaConnected = activeBusiness?.whatsapp_onboarding_status === "CONNECTED";
+  const needsActivation = activeBusiness?.whatsapp_onboarding_status === "REGISTRATION_FAILED";
   const senderIdStatus = activeBusiness?.sender_id_status || "PENDING";
   const currentSenderId = activeBusiness?.sender_id || "";
 
   // Trigger Meta Facebook Login popup
-  const handleLaunchMetaSignup = async () => {
+  const handleLaunchMetaSignup = async (coexistence = false) => {
     if (!activeBusiness) {
       toast.error("No active business workspace found.");
       return;
@@ -189,7 +343,7 @@ export default function ChannelsAndSenderIdsPage() {
     toast.loading("Connecting to Meta...", { id: "meta-signup" });
 
     try {
-      const result = await launchWhatsAppEmbeddedSignup();
+      const result = await launchWhatsAppEmbeddedSignup({ coexistence });
       toast.loading("Linking WhatsApp account to your workspace...", { id: "meta-signup" });
 
       connectWhatsAppMutation.mutate(
@@ -199,10 +353,16 @@ export default function ChannelsAndSenderIdsPage() {
             code: result.code,
             waba_id: result.waba_id,
             phone_number_id: result.phone_number_id,
+            event: result.event,
+            coexistence,
           },
         },
         {
           onSuccess: (res) => {
+            if (res.registered === false) {
+              toast.error(res.message, { id: "meta-signup", duration: 10000 });
+              return;
+            }
             toast.success(res.message || "WhatsApp Business connected successfully!", {
               id: "meta-signup",
             });
@@ -222,35 +382,20 @@ export default function ChannelsAndSenderIdsPage() {
     }
   };
 
-  // Submit direct phone ID connection
-  const handleDirectConnectSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Retry activating the number on Meta's Cloud API
+  const handleRetryActivation = () => {
     if (!activeBusiness) return;
-
-    if (!directPhoneId.trim()) {
-      toast.error("Please enter your Meta Phone Number ID");
-      return;
-    }
-
-    connectWhatsAppMutation.mutate(
-      {
-        reference: activeBusiness.reference,
-        payload: {
-          phone_number_id: directPhoneId.trim(),
-          display_phone_number: directDisplayPhone.trim() || undefined,
-          verified_name: directVerifiedName.trim() || activeBusiness.name,
-        },
-      },
+    registerWhatsAppMutation.mutate(
+      { reference: activeBusiness.reference, pin: existingPin.trim() || undefined },
       {
         onSuccess: () => {
-          toast.success("WhatsApp Business connected successfully!");
-          setIsIdModalOpen(false);
-          setDirectPhoneId("");
-          setDirectDisplayPhone("");
-          setDirectVerifiedName("");
+          toast.success("Your WhatsApp number is active. Messages now go out from your own number.");
+          setExistingPin("");
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.error || "Failed to connect WhatsApp number");
+          toast.error(err?.response?.data?.error || "Meta did not activate the number yet.", {
+            duration: 10000,
+          });
         },
       }
     );
@@ -416,7 +561,63 @@ export default function ChannelsAndSenderIdsPage() {
                 </div>
 
                 <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80 text-xs text-emerald-900 leading-relaxed">
-                  ✓ All WhatsApp campaigns dispatched from your workspace will originate from your verified business number (<strong>{activeBusiness?.whatsapp_display_phone_number}</strong>) with your official brand badge.
+                  ✓ All WhatsApp campaigns and API messages from your workspace go out from your business number (<strong>{activeBusiness?.whatsapp_display_phone_number}</strong>).
+                </div>
+
+                <OwnWhatsAppTemplates />
+              </div>
+            ) : needsActivation ? (
+              /* Linked but Meta has not activated the number for sending */
+              <div className="bg-white border border-amber-300 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 mb-1">
+                    Activation needed
+                  </div>
+                  <h2 className="text-base font-bold text-zinc-900">
+                    {activeBusiness?.whatsapp_display_phone_number || "Your number"} is linked but not active yet
+                  </h2>
+                  <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
+                    Meta did not activate the number for sending. Until it does, your messages keep going out from the LJK number, so nothing stops.
+                  </p>
+                </div>
+                {activeBusiness?.whatsapp_last_error && (
+                  <div className="p-3 rounded-lg bg-zinc-50 border border-zinc-200 text-[11px] text-zinc-700 font-mono break-words">
+                    {activeBusiness.whatsapp_last_error}
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-zinc-700">
+                    Existing two-step verification PIN (only if the number already has one)
+                  </label>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={existingPin}
+                    onChange={(e) => setExistingPin(e.target.value.replace(/\D/g, ""))}
+                    placeholder="6 digits"
+                    className="w-40 px-3 py-2 rounded-lg border border-zinc-300 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  />
+                  <p className="text-[11px] text-zinc-500">
+                    Don&apos;t know it? Turn off two-step verification for the number in Meta WhatsApp Manager, then retry with the box empty.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleRetryActivation}
+                    disabled={registerWhatsAppMutation.isPending}
+                    className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer disabled:opacity-50"
+                  >
+                    {registerWhatsAppMutation.isPending ? "Activating..." : "Retry activation"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDisconnect}
+                    className="px-4 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold cursor-pointer"
+                  >
+                    Disconnect
+                  </button>
                 </div>
               </div>
             ) : (
@@ -471,7 +672,7 @@ export default function ChannelsAndSenderIdsPage() {
                   <div className="flex flex-col sm:flex-row items-center gap-3 pt-3">
                     <button
                       type="button"
-                      onClick={handleLaunchMetaSignup}
+                      onClick={() => handleLaunchMetaSignup(false)}
                       className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                     >
                       <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
@@ -482,10 +683,10 @@ export default function ChannelsAndSenderIdsPage() {
 
                     <button
                       type="button"
-                      onClick={() => setIsIdModalOpen(true)}
+                      onClick={() => handleLaunchMetaSignup(true)}
                       className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-zinc-300 hover:bg-zinc-50 text-zinc-700 text-xs font-semibold transition-all cursor-pointer"
                     >
-                      Connect via Phone Number ID
+                      Use my WhatsApp Business app number
                     </button>
                   </div>
 
@@ -495,7 +696,10 @@ export default function ChannelsAndSenderIdsPage() {
                       <span>Requirement for connecting your own number:</span>
                     </div>
                     <p>
-                      Meta requires that any phone number connected to the official Cloud API cannot be active on the standard WhatsApp mobile phone app at the same time. We recommend using a dedicated secondary business SIM card.
+                      <strong>Connect with Facebook</strong> is for a number that is not on any WhatsApp app (a new SIM, or a number you have deleted from WhatsApp). Meta sends it a verification code, and LJK activates it for sending.
+                    </p>
+                    <p>
+                      <strong>Use my WhatsApp Business app number</strong> keeps your number on the WhatsApp Business app on your phone while LJK sends campaigns from it. Meta offers this only for numbers already on the WhatsApp Business app (not the regular WhatsApp app), and only in countries where it is available.
                     </p>
                     <p className="text-amber-900/90 pt-0.5">
                       <strong>Don&apos;t have a second SIM?</strong> You don&apos;t need one! You can broadcast immediately through LJK&apos;s verified sender &mdash; your business name is featured in the message header, and you can include a direct <em>&ldquo;Chat with us&rdquo;</em> link to receive customer replies on your regular WhatsApp.
@@ -718,92 +922,6 @@ export default function ChannelsAndSenderIdsPage() {
         </div>
       )}
 
-      {/* Modal: Connect via Meta Phone Number ID */}
-      {isIdModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-zinc-200 space-y-4 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-              <div>
-                <h3 className="text-base font-bold text-zinc-900">
-                  Connect via Phone Number ID
-                </h3>
-                <p className="text-xs text-zinc-500">
-                  Connect your WhatsApp Business number directly using your Meta ID.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsIdModalOpen(false)}
-                className="text-zinc-400 hover:text-zinc-600 text-sm font-bold cursor-pointer"
-              >
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleDirectConnectSubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-zinc-700 mb-1">
-                  Meta Phone Number ID *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. 104598273618492"
-                  value={directPhoneId}
-                  onChange={(e) => setDirectPhoneId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-zinc-300 font-mono focus:ring-2 focus:ring-emerald-600 focus:outline-none"
-                />
-                <p className="text-[10px] text-zinc-400 mt-0.5">
-                  Found in Meta Business Suite &gt; WhatsApp &gt; Phone Numbers.
-                </p>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-zinc-700 mb-1">
-                  Phone Number (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. +254 712 345 678"
-                  value={directDisplayPhone}
-                  onChange={(e) => setDirectDisplayPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-zinc-700 mb-1">
-                  Verified Brand Name (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder={activeBusiness?.name || "Your Company Brand"}
-                  value={directVerifiedName}
-                  onChange={(e) => setDirectVerifiedName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
-                <button
-                  type="button"
-                  onClick={() => setIsIdModalOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-zinc-300 text-zinc-700 font-semibold hover:bg-zinc-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={connectWhatsAppMutation.isPending}
-                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer disabled:opacity-50"
-                >
-                  {connectWhatsAppMutation.isPending ? "Connecting..." : "Connect Number"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
