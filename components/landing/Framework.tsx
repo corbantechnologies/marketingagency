@@ -6,22 +6,22 @@ export function Framework() {
       number: "01",
       title: "Deliverability & Gateway Architecture Audit",
       description:
-        "We inspect your historical database hygiene, carrier spam filters, domain authentication (SPF/DKIM/DMARC), IP health, and opt-in compliance to eliminate bounce rates and delivery drops.",
-      highlights: ["Database Scrubbing & Verification", "Sender ID / Domain Verification", "Opt-In Compliance Audit"],
+        "We inspect your historical database hygiene, carrier spam filters, Sender ID and WhatsApp number health, and opt-in compliance to eliminate bounce rates and delivery drops.",
+      highlights: ["Database Scrubbing & Verification", "Sender ID & WhatsApp Number Verification", "Opt-In Compliance Audit"],
     },
     {
       number: "02",
-      title: "Telecom Route & Dedicated IP Provisioning",
+      title: "Telecom Route & WhatsApp Number Provisioning",
       description:
-        "We establish Tier-1 direct carrier routes, register custom alphanumeric sender IDs, provision dedicated email sending IPs, and execute gradual warming schedules for primary inbox delivery.",
-      highlights: ["Tier-1 Carrier Direct Interconnect", "Dedicated IP Warming Protocol", "Branded Sender ID Registry"],
+        "We establish Tier-1 direct carrier routes, register custom alphanumeric sender IDs, and connect and verify your WhatsApp Business number with Meta.",
+      highlights: ["Tier-1 Carrier Direct Interconnect", "WhatsApp Business Number Onboarding", "Branded Sender ID Registry"],
     },
     {
       number: "03",
       title: "Automated Triggers & High-Converting Copy",
       description:
         "We configure real-time transactional hooks (OTPs, order tracking, payment alerts) alongside automated multi-channel marketing flows (cart abandonment, flash sales, customer VIP drips).",
-      highlights: ["High-Impact SMS Copy & Hooks", "Dynamic Email HTML Templates", "Webhook & Triggered API Flows"],
+      highlights: ["High-Impact SMS Copy & Hooks", "Approved WhatsApp Message Templates", "Webhook & Triggered API Flows"],
     },
     {
       number: "04",
@@ -45,7 +45,7 @@ export function Framework() {
             Our 4-Stage Protocol for 99.4% Message Deliverability & High ROI
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
-            Engineered to ensure your messages hit the primary inbox and handset SMS notifications
+            Engineered to ensure your messages reach WhatsApp chats and handset SMS notifications
             in seconds, without carrier blocks or spam filters.
           </p>
         </div>

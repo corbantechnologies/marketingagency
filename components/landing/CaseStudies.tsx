@@ -33,21 +33,6 @@ export function CaseStudies() {
         { label: "Monthly OTPs", val: "1.2M+" },
       ],
     },
-    {
-      client: "Aura Skincare & Wellness",
-      industry: "Omnichannel Lifecycle",
-      highlightMetric: "38.2% of Store Revenue",
-      subMetric: "+290% Increase in Repeat Buyer LTV",
-      challenge:
-        "Emails landing in Gmail Promotions tab with 12% open rates and no active SMS abandoned cart recovery.",
-      solution:
-        "Dedicated IP warmup, DMARC domain alignment, and 8-stage omnichannel SMS + Email automation flows.",
-      results: [
-        { label: "Inbox Open Rate", val: "44.6%" },
-        { label: "Cart Recovery", val: "28.4%" },
-        { label: "Repeat LTV", val: "+290%" },
-      ],
-    },
   ];
 
   return (
@@ -60,7 +45,7 @@ export function CaseStudies() {
             Proven Performance Data
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
-            Verified Bulk SMS & Email Campaign Case Studies
+            Verified Bulk SMS & Messaging Campaign Case Studies
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
             Real delivery telemetry and revenue data from enterprise SMS broadcasts, FinTech transactional
@@ -69,7 +54,7 @@ export function CaseStudies() {
         </div>
 
         {/* Case Studies Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           {cases.map((item, idx) => (
             <div
               key={idx}

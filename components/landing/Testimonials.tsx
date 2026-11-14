@@ -12,7 +12,7 @@ export function Testimonials() {
     },
     {
       quote:
-        "Before LJK, we struggled to rank organically for high-intent search terms and our transactional OTP SMS was suffering from carrier delays. Their technical routing and dedicated IP warming drove a 310% increase in inbound enterprise pipeline.",
+        "Before LJK, we struggled to rank organically for high-intent search terms and our transactional OTP SMS was suffering from carrier delays. Their technical routing and direct carrier routes drove a 310% increase in inbound enterprise pipeline.",
       name: "Elena Rostova",
       role: "Chief Marketing Officer",
       company: "CipherShield SaaS",

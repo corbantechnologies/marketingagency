@@ -19,17 +19,17 @@ export function AuditForm() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const volumeOptions = [
-    "Under 10,000 SMS / Emails /mo",
-    "10,000 - 50,000 SMS / Emails /mo",
-    "50,000 - 200,000 SMS / Emails /mo",
-    "200,000 - 1,000,000+ SMS / Emails /mo",
+    "Under 10,000 messages /mo",
+    "10,000 - 50,000 messages /mo",
+    "50,000 - 200,000 messages /mo",
+    "200,000 - 1,000,000+ messages /mo",
     "Enterprise 1M+ Monthly Volume",
   ];
 
   const goalOptions = [
     "Bulk Promotional SMS Broadcast",
     "Transactional OTP & Alert Gateway",
-    "Email Deliverability & IP Warming",
+    "WhatsApp Business Onboarding",
     "Ecommerce Lifecycle Automation",
     "REST API & SMPP 3.4 Integration",
     "Subscriber List Growth & Paid Ads",
@@ -87,7 +87,7 @@ export function AuditForm() {
               Free Messaging & Deliverability Audit
             </div>
             <h2 className="text-xl font-semibold text-zinc-900 tracking-tight mb-4">
-              Get Your SMS & Email Deliverability Audit
+              Get Your SMS & WhatsApp Deliverability Audit
             </h2>
             <p className="text-sm font-normal text-zinc-600 leading-relaxed mb-8">
               Experience direct Tier-1 carrier routing. Our messaging engineers will audit your current
@@ -114,10 +114,10 @@ export function AuditForm() {
                   <span className="w-4 h-4 rounded bg-[#581c87] text-white flex items-center justify-center text-[10px]">
                     ✓
                   </span>
-                  Email Domain Authentication & Spam Shield Inspection
+                  WhatsApp Number & Template Health Check
                 </div>
                 <div className="text-xs font-normal text-zinc-500 pl-6">
-                  Full SPF, DKIM, DMARC, and IP reputation check to guarantee primary inbox placement.
+                  Review of your WhatsApp number quality rating, template approvals and opt-in flow with Meta.
                 </div>
               </div>
 
@@ -257,7 +257,7 @@ export function AuditForm() {
                   {/* Monthly Messaging Volume */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1.5">
-                      Estimated Monthly SMS / Email Volume
+                      Estimated Monthly SMS / WhatsApp Volume
                     </label>
                     <select
                       value={formData.volume}

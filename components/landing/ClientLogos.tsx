@@ -4,8 +4,8 @@ export function ClientLogos() {
   const partners = [
     { name: "Direct Telecom Routes", label: "Tier-1 Carrier Gateway", type: "SMS Infrastructure" },
     { name: "SMPP 3.4 & REST API", label: "High Throughput", type: "Developer Gateway" },
-    { name: "Klaviyo & Mailchimp", label: "Certified Partner", type: "Lifecycle Email" },
-    { name: "AWS SES & SendGrid", label: "Enterprise Inboxing", type: "Email Infrastructure" },
+    { name: "Meta WhatsApp Cloud API", label: "Meta Tech Provider", type: "WhatsApp Business" },
+    { name: "M-PESA Daraja", label: "Instant Top-ups", type: "Wallet Payments" },
     { name: "Shopify & WooCommerce", label: "Automated Triggers", type: "E-Commerce Sync" },
     { name: "Meta & Google Ads", label: "Opt-In Growth Engine", type: "Subscriber Acquisition" },
   ];
