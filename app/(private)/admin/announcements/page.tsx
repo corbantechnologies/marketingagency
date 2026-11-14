@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import type { ApiErrorLike } from "@/lib/errors";
 import toast from "react-hot-toast";
 import {
   useFetchAdminAnnouncement,
@@ -10,7 +11,7 @@ import {
 import { AnnouncementType, AnnouncementPreset } from "@/services/accounts";
 
 export default function AdminAnnouncementsPage() {
-  const { data, isLoading, isFetching, refetch } = useFetchAdminAnnouncement();
+  const { data, isFetching, refetch } = useFetchAdminAnnouncement();
   const saveMutation = useSaveAdminAnnouncement();
   const clearMutation = useClearAdminAnnouncement();
 
@@ -22,8 +23,10 @@ export default function AdminAnnouncementsPage() {
   const [linkLabel, setLinkLabel] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  // Sync state when data loads
-  useEffect(() => {
+  // Copy server data into the form when it arrives (render-time sync, no effect).
+  const [syncedData, setSyncedData] = useState<typeof data | undefined>(undefined);
+  if (data !== syncedData) {
+    setSyncedData(data);
     if (data) {
       setTitle(data.title || "");
       setMessage(data.message || "");
@@ -32,7 +35,7 @@ export default function AdminAnnouncementsPage() {
       setLinkUrl(data.link_url || "");
       setLinkLabel(data.link_label || "");
     }
-  }, [data]);
+  }
 
   const handleApplyPreset = (preset: AnnouncementPreset) => {
     setTitle(preset.title);
@@ -71,7 +74,8 @@ export default function AdminAnnouncementsPage() {
       } else {
         toast.error("Could not save announcement.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.response?.data?.detail || err?.message || "Failed to save announcement.");
     } finally {
       setIsSaving(false);
@@ -89,7 +93,8 @@ export default function AdminAnnouncementsPage() {
         setIsActive(false);
         refetch();
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.message || "Failed to deactivate banner.");
     }
   };

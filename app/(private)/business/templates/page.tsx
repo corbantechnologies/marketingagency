@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
+import { useDismissible } from "@/hooks/common/useDismissible";
+import { BaseSMSGateway } from "@/tools/sms";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -34,26 +36,9 @@ export default function MessageTemplatesPage() {
   // WhatsApp Tab State
   const [waSearchTerm, setWaSearchTerm] = useState("");
   const [waStatusFilter, setWaStatusFilter] = useState<string>("all");
-  const [isMetaBannerDismissed, setIsMetaBannerDismissed] = useState(false);
+  const [isMetaBannerDismissed, handleDismissMetaBanner] = useDismissible("dismissed_meta_provider_templates_banner");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        if (localStorage.getItem("dismissed_meta_provider_templates_banner") === "true") {
-          setIsMetaBannerDismissed(true);
-        }
-      } catch {}
-    }
-  }, []);
 
-  const handleDismissMetaBanner = () => {
-    setIsMetaBannerDismissed(true);
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("dismissed_meta_provider_templates_banner", "true");
-      } catch {}
-    }
-  };
 
   // Queries & Mutations
   const { data: templatesData, isLoading: isSmsLoading } = useFetchMessageTemplates({
@@ -109,16 +94,10 @@ export default function MessageTemplatesPage() {
   }, [waData]);
 
   // Segment calculation for SMS composer
-  const charCount = body.length;
-  const isUnicode = useMemo(() => /[^\u0000-\u007F]/.test(body), [body]);
-  const estimatedSegments = useMemo(() => {
-    if (charCount === 0) return 1;
-    if (!isUnicode) {
-      return charCount <= 160 ? 1 : Math.ceil(charCount / 153);
-    } else {
-      return charCount <= 70 ? 1 : Math.ceil(charCount / 67);
-    }
-  }, [charCount, isUnicode]);
+  const { charCount, segments: estimatedSegments } = useMemo(
+    () => BaseSMSGateway.calculate_segments(body),
+    [body]
+  );
 
   const handleOpenCreateModal = () => {
     setEditingTemplate(null);

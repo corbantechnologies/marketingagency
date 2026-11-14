@@ -55,7 +55,6 @@ export const metadata: Metadata = {
     "Safaricom SMS integration",
     "Airtel SMS API",
     "M-Pesa SMS and WhatsApp notifications",
-    "Email marketing agency Kenya",
     "Ecommerce marketing automation",
     "LJK Marketing Agency",
     "Corban Technologies LTD",

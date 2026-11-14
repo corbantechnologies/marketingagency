@@ -10,6 +10,7 @@ import {
   useFetchAlertRecipients,
   useManageAlertRecipients,
 } from "@/hooks/business/actions";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 export default function AdminDashboardPage() {
   const { data: session } = useSession();
@@ -72,7 +73,10 @@ export default function AdminDashboardPage() {
   const [criticalThreshold, setCriticalThreshold] = useState<number>(150);
   const [isSavingThresholds, setIsSavingThresholds] = useState(false);
 
-  useEffect(() => {
+  // Copy server data into the form when it arrives (render-time sync, no effect).
+  const [syncedRecipientsData, setSyncedRecipientsData] = useState<typeof recipientsData | undefined>(undefined);
+  if (recipientsData !== syncedRecipientsData) {
+    setSyncedRecipientsData(recipientsData);
     if (recipientsData) {
       if (typeof recipientsData.threshold_kes === "number") {
         setLowThreshold(recipientsData.threshold_kes);
@@ -81,7 +85,7 @@ export default function AdminDashboardPage() {
         setCriticalThreshold(recipientsData.critical_threshold_kes);
       }
     }
-  }, [recipientsData]);
+  }
 
   const handleSaveThresholds = async () => {
     setIsSavingThresholds(true);
@@ -654,9 +658,11 @@ export default function AdminDashboardPage() {
           </div>
           <div className="text-[11px] text-zinc-500 flex items-center justify-between border-t border-zinc-100 pt-2 mt-1">
             <span>Prepaid customer float</span>
-            <span className="text-zinc-600 font-mono text-[10px]">
-              {vitals?.floating_email_credits ?? 0} Email
-            </span>
+            {EMAIL_CHANNEL_ENABLED && (
+              <span className="text-zinc-600 font-mono text-[10px]">
+                {vitals?.floating_email_credits ?? 0} Email
+              </span>
+            )}
           </div>
         </div>
 

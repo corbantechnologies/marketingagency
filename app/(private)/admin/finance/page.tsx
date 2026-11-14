@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import type { ApiErrorLike } from "@/lib/errors";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import {
@@ -30,7 +31,7 @@ export default function AdminFinancePage() {
 
   const vitals = data?.vitals;
   const vipList = data?.vip_leaderboard || [];
-  const transactions = data?.recent_transactions || [];
+  const transactions = useMemo(() => data?.recent_transactions || [], [data]);
 
   // Filter transactions
   const filteredTransactions = useMemo(() => {
@@ -80,7 +81,8 @@ export default function AdminFinancePage() {
       } else {
         toast.error("Could not credit wallet.");
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       const msg = err?.response?.data?.detail || err?.message || "Failed to process manual credit.";
       toast.error(msg);
     } finally {
@@ -297,7 +299,7 @@ export default function AdminFinancePage() {
                       <div className="text-right">
                         <div className="text-xs text-zinc-400">Top-Up Count</div>
                         <div className="text-xs font-semibold text-zinc-700">
-                          {client.topup_count ?? (client as any).transaction_count ?? 0} purchases
+                          {client.topup_count ?? (client as { transaction_count?: number }).transaction_count ?? 0} purchases
                         </div>
                       </div>
                       <div className="text-right">

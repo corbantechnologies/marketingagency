@@ -2,6 +2,22 @@ import { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 
+// Backend access tokens live JWT_ACCESS_MINUTES (default 60). Refresh a few minutes early.
+const ACCESS_TOKEN_TTL_MS =
+  Number(process.env.ACCESS_TOKEN_TTL_MINUTES || 55) * 60 * 1000;
+
+// Fields a client may change through useSession().update(). Everything else
+// (role, flags, tokens) only ever comes from the backend at sign-in.
+const CLIENT_UPDATABLE_FIELDS = [
+  "name",
+  "first_name",
+  "last_name",
+  "full_name",
+  "initials",
+  "phone",
+  "country",
+] as const;
+
 const BACKEND_BASE_URL = (
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -39,7 +55,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       ...token,
       accessToken: refreshedTokens.access || token.accessToken,
       refreshToken: refreshedTokens.refresh || token.refreshToken,
-      accessTokenExpires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+      accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
       error: undefined,
     };
   } catch {
@@ -188,17 +204,20 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.redirectUrl = user.redirectUrl;
-        token.accessTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        token.accessTokenExpires = Date.now() + ACCESS_TOKEN_TTL_MS;
         return token;
       }
 
       // Handle client-side session update triggers (e.g. useSession().update())
       if (trigger === "update" && session) {
-        return {
-          ...token,
-          ...session.user,
-          ...session,
-        };
+        const source = (session.user ?? session) as Record<string, unknown>;
+        const updated: Record<string, unknown> = { ...token };
+        for (const field of CLIENT_UPDATABLE_FIELDS) {
+          if (typeof source[field] === "string") {
+            updated[field] = source[field];
+          }
+        }
+        return updated as JWT;
       }
 
       // Return previous token if the access token has not expired yet
@@ -239,8 +258,8 @@ export const authOptions: NextAuthOptions = {
         session.user.redirectUrl = token.redirectUrl;
       }
 
+      // The refresh token stays inside the encrypted session cookie; it is never sent to the browser.
       session.accessToken = token.accessToken;
-      session.refreshToken = token.refreshToken;
       session.error = token.error;
 
       return session;
@@ -270,10 +289,30 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/login",
   },
 
-  secret:
-    process.env.NEXTAUTH_SECRET ||
-    process.env.AUTH_SECRET ||
-    "ljk-marketing-agency-secret-key-production-2026",
+  // No fallback: without NEXTAUTH_SECRET, next-auth refuses to run in production
+  // instead of signing sessions with a key that is published in this repository.
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+
+  events: {
+    async signOut({ token }) {
+      // Revoke the backend refresh token so a copied session cannot be reused.
+      const refresh = (token as JWT | null)?.refreshToken;
+      const access = (token as JWT | null)?.accessToken;
+      if (!refresh) return;
+      try {
+        await fetch(`${BACKEND_BASE_URL}/api/v1/auth/logout/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(access ? { Authorization: `Bearer ${access}` } : {}),
+          },
+          body: JSON.stringify({ refresh }),
+        });
+      } catch {
+        // Best effort: the refresh token still expires on its own.
+      }
+    },
+  },
 
   debug: process.env.NODE_ENV === "development",
 };

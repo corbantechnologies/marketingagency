@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import {
@@ -163,13 +163,13 @@ export default function AdminBroadcastPage() {
     return templatesData?.templates?.find((t) => t.name === selectedTemplateName) || null;
   }, [templatesData, selectedTemplateName]);
 
-  const handleSelectTemplate = (name: string) => {
+  const applyTemplate = (name: string, silent = false) => {
     if (!name) {
       setIsFreeformMode(true);
       setSelectedTemplateName("");
       setTemplateHeader("");
       setTemplateFooter("");
-      toast.success("Switched to custom freeform copy mode.");
+      if (!silent) toast.success("Switched to custom freeform copy mode.");
       return;
     }
 
@@ -199,8 +199,10 @@ export default function AdminBroadcastPage() {
     }
     setTemplateHeader(headerText);
     setTemplateFooter(footerText);
-    toast.success(`Selected approved Meta template '${tpl.name}'!`);
+    if (!silent) toast.success(`Selected approved Meta template '${tpl.name}'!`);
   };
+
+  const handleSelectTemplate = (name: string) => applyTemplate(name);
 
   const handleClearTemplate = () => {
     setIsFreeformMode(true);
@@ -210,18 +212,16 @@ export default function AdminBroadcastPage() {
     toast.success("Cleared template. You can now type custom freeform copy.");
   };
 
-  // Auto-select approved Meta template when in WhatsApp channel ONLY on initial load
-  useEffect(() => {
-    if (channel === "WHATSAPP" && !hasInitializedDefault && !isFreeformMode && approvedTemplates.length > 0) {
-      setHasInitializedDefault(true);
-      const defaultTpl =
-        approvedTemplates.find((t) => t.name === "general_business_promo") ||
-        approvedTemplates[0];
-      if (defaultTpl) {
-        handleSelectTemplate(defaultTpl.name);
-      }
+  // Auto-select an approved Meta template the first time the WhatsApp channel has templates
+  // (render-time state adjustment, guarded by hasInitializedDefault so it runs once).
+  if (channel === "WHATSAPP" && !hasInitializedDefault && !isFreeformMode && approvedTemplates.length > 0) {
+    setHasInitializedDefault(true);
+    const defaultTpl =
+      approvedTemplates.find((t) => t.name === "general_business_promo") || approvedTemplates[0];
+    if (defaultTpl) {
+      applyTemplate(defaultTpl.name, true);
     }
-  }, [channel, approvedTemplates, hasInitializedDefault, isFreeformMode]);
+  }
 
   // Detect {{1}}, {{2}} in template body
   const detectedVariables = useMemo(() => {
@@ -231,18 +231,17 @@ export default function AdminBroadcastPage() {
     return unique.map((m) => m.replace(/[{}]/g, ""));
   }, [tplBody]);
 
-  // Keep variable samples synchronized
-  useEffect(() => {
-    setTplVariables((prev) => {
-      const updated = { ...prev };
-      detectedVariables.forEach((num) => {
-        if (!updated[num]) {
-          updated[num] = num === "1" ? "John" : num === "2" ? "ORD-8921" : `Sample ${num}`;
-        }
-      });
-      return updated;
+  // Sample values for each {{n}}: what the admin typed, otherwise a default.
+  const effectiveTplVariables = useMemo(() => {
+    const merged: Record<string, string> = {};
+    detectedVariables.forEach((num) => {
+      merged[num] = num === "1" ? "John" : num === "2" ? "ORD-8921" : `Sample ${num}`;
     });
-  }, [detectedVariables]);
+    Object.entries(tplVariables).forEach(([num, value]) => {
+      merged[num] = value;
+    });
+    return merged;
+  }, [detectedVariables, tplVariables]);
 
   const handleInsertTplVariable = () => {
     const nextNum = detectedVariables.length + 1;
@@ -254,11 +253,11 @@ export default function AdminBroadcastPage() {
     if (!tplBody) return "Enter your template message body to preview...";
     let text = tplBody;
     detectedVariables.forEach((num) => {
-      const val = tplVariables[num] || `{{${num}}}`;
+      const val = effectiveTplVariables[num] || `{{${num}}}`;
       text = text.replace(new RegExp(`\\{\\{${num}\\}\\}`, "g"), val);
     });
     return text;
-  }, [tplBody, detectedVariables, tplVariables]);
+  }, [tplBody, detectedVariables, effectiveTplVariables]);
 
   const handleCreateTemplateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -275,7 +274,7 @@ export default function AdminBroadcastPage() {
 
     const orderedExamples: string[] = [];
     detectedVariables.forEach((num) => {
-      orderedExamples.push(tplVariables[num] || `Value ${num}`);
+      orderedExamples.push(effectiveTplVariables[num] || `Value ${num}`);
     });
 
     createTemplateMutation.mutate(
@@ -1338,7 +1337,7 @@ export default function AdminBroadcastPage() {
                             </span>
                             <input
                               type="text"
-                              value={tplVariables[num] || ""}
+                              value={effectiveTplVariables[num] ?? ""}
                               onChange={(e) =>
                                 setTplVariables((prev) => ({
                                   ...prev,

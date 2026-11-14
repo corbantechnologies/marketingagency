@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
         </div>
 
         <Link
-          href="/auth/alpha/signup"
+          href="/admin/users/create"
           className="py-2 px-3.5 bg-[#581c87] hover:bg-[#4a1572] text-white text-xs font-semibold rounded-lg transition-colors shadow-xs self-start sm:self-auto"
         >
           + Add Admin / Staff

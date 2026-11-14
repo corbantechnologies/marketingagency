@@ -23,14 +23,9 @@ export function FAQ() {
         "LJK Marketing Agency is a technical software intermediary and Data Processor, not a communications carrier. Clients act as sole Data Controllers and are strictly responsible for maintaining verifiable opt-in consent from all recipients. If a client transmits unsolicited messages, spam, or misleading content resulting in carrier filtering, recipient complaints, or carrier blacklisting, LJK holds zero liability. In accordance with our Terms of Service, abusive accounts are subject to immediate suspension without refund.",
     },
     {
-      question: "Can we integrate your SMS & Email gateways into our own app via API?",
+      question: "Can we integrate your SMS & WhatsApp gateways into our own app via API?",
       answer:
         "Yes. We support standard HTTPS REST APIs with JSON payloads, as well as enterprise SMPP 3.4 protocols for high-throughput transactional OTPs and alerts. We provide SDKs and direct connectors for Shopify, WooCommerce, and CRM webhooks.",
-    },
-    {
-      question: "How do you ensure high deliverability for Email Marketing?",
-      answer:
-        "We execute a comprehensive 4-stage deliverability protocol: 1) Full DNS alignment (SPF, DKIM, DMARC), 2) Automated list hygiene to eliminate invalid addresses, 3) Dedicated IP provisioning with progressive warming schedules, and 4) Behavioral segmentation to keep sender domain health in top standing.",
     },
     {
       question: "Do SMS credits expire, and what are the volume discount tiers?",
@@ -54,7 +49,7 @@ export function FAQ() {
             Messaging &amp; Gateway FAQs
           </div>
           <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
-            Frequently Asked Questions About Bulk SMS &amp; Email Marketing
+            Frequently Asked Questions About WhatsApp &amp; Bulk SMS Marketing
           </h2>
           <p className="text-base font-normal text-zinc-600 mt-2">
             Clear details on carrier routes, sender ID vetting, anti-spam policies, and technical intermediary terms.

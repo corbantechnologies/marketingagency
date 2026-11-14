@@ -78,7 +78,7 @@ export function GuideContent() {
       title: "Funding Your Wallet via Safaricom M-PESA & VIP Plans",
       badge: "Instant Top-Up & VIP",
       summary:
-        "Fund your dual-channel SMS and Email credit wallets anytime in KES using Safaricom Daraja M-PESA STK push, or access strategic Lifetime Partner VIP licensing arrangements. Credits activate immediately and never expire.",
+        "Fund your SMS and WhatsApp credit wallet anytime in KES using Safaricom Daraja M-PESA STK push, or access strategic Lifetime Partner VIP licensing arrangements. Credits activate immediately and never expire.",
       keyActionLink: { label: "Sign In to Top Up Credits", href: "/auth/login" },
       highlights: [
         "Enter your Safaricom phone number and amount in KES for an instant STK PIN prompt on your handset.",
@@ -390,7 +390,7 @@ export function GuideContent() {
             <div className="p-4 bg-zinc-800/80 rounded-xl border border-zinc-700/60 space-y-1.5">
               <div className="font-bold text-blue-300">Credit Expiry Guarantee</div>
               <p className="text-zinc-300 text-[11px] leading-relaxed">
-                SMS and Email credits purchased on LJK Marketing Agency <strong>never expire</strong>. Your balance remains safe in your business wallet until used.
+                SMS and WhatsApp credits purchased on LJK Marketing Agency <strong>never expire</strong>. Your balance remains safe in your business wallet until used.
               </p>
             </div>
           </div>

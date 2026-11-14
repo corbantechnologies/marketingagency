@@ -49,35 +49,15 @@ export function Services() {
       ),
     },
     {
-      id: "email-marketing",
-      category: "messaging",
-      title: "High-Inbox Email Marketing",
-      tagline: "Dedicated IP Warming & Primary Tab Inboxing",
-      description:
-        "We build high-converting email newsletters, automated drip series, and dynamic behavioral campaigns. We handle complete domain authentication (SPF, DKIM, DMARC) and list cleaning to bypass spam filters.",
-      metrics: "98.9% Primary Inbox Rate",
-      deliverables: [
-        "Dedicated IP setup, warmup & reputation monitoring",
-        "High-converting visual template design & copywriting",
-        "Dynamic personalization based on user purchasing habits",
-        "Automated list hygiene & bounce rate suppression",
-      ],
-      icon: (
-        <svg className="w-5 h-5 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-        </svg>
-      ),
-    },
-    {
       id: "lifecycle-automation",
       category: "automation",
       title: "Omnichannel Lifecycle & Retention Flows",
       tagline: "Triggered Workflows That Compound LTV",
       description:
-        "Turn one-time buyers into loyal repeat customers. We configure automated multi-channel sequences combining SMS urgency with detailed email storytelling for cart recovery, post-purchase, and win-backs.",
+        "Turn one-time buyers into loyal repeat customers. We configure automated multi-channel sequences combining SMS urgency with rich WhatsApp messages for cart recovery, post-purchase, and win-backs.",
       metrics: "+34% Automated Revenue",
       deliverables: [
-        "Abandoned cart & browse recovery SMS/Email sequences",
+        "Abandoned cart & browse recovery SMS/WhatsApp sequences",
         "Post-purchase onboarding & cross-sell triggers",
         "Predictive VIP customer churn prevention",
         "Automated anniversary, birthday & restock alerts",
@@ -91,7 +71,7 @@ export function Services() {
     {
       id: "api-integrations",
       category: "automation",
-      title: "Developer SMS & Email APIs / SMPP",
+      title: "Developer SMS & WhatsApp APIs / SMPP",
       tagline: "Seamless Integration With Your Backend & CRM",
       description:
         "Connect our high-speed messaging infrastructure directly into your custom apps, e-commerce stores, ERPs, and databases using robust REST APIs, SMPP 3.4 protocols, and bidirectional webhook callbacks.",
@@ -114,12 +94,12 @@ export function Services() {
       title: "Subscriber Acquisition & Paid Ads",
       tagline: "Scaling Your Owned Customer Database",
       description:
-        "Your messaging is only as profitable as your subscriber list. We run high-intent Meta and Google ad funnels engineered specifically to capture verified phone numbers and opt-in emails at the lowest cost per lead.",
+        "Your messaging is only as profitable as your subscriber list. We run high-intent Meta and Google ad funnels engineered specifically to capture verified, opted-in phone numbers at the lowest cost per lead.",
       metrics: "Avg. KSh 45 / Opt-In Lead",
       deliverables: [
         "Meta & Google lead generation campaign management",
         "High-converting direct response ad creative",
-        "Instant lead form sync to SMS and email databases",
+        "Instant lead form sync to your SMS and WhatsApp contact lists",
         "TCPA & GDPR compliant two-step opt-in verification",
       ],
       icon: (
@@ -134,7 +114,7 @@ export function Services() {
       title: "Conversion Optimization & Opt-In Funnels",
       tagline: "Maximizing On-Site Contact Capture Rates",
       description:
-        "We build gamified spin-to-win, two-tier discount popups, and friction-free checkout capture forms that turn anonymous website visitors into verified SMS and email subscribers.",
+        "We build gamified spin-to-win, two-tier discount popups, and friction-free checkout capture forms that turn anonymous website visitors into verified SMS and WhatsApp subscribers.",
       metrics: "+3.8x Contact Capture Rate",
       deliverables: [
         "Exit-intent and scroll-triggered smart popups",
@@ -170,7 +150,7 @@ export function Services() {
               Enterprise Messaging & Full-Funnel Growth Solutions
             </h2>
             <p className="text-base font-normal text-zinc-600 mt-2">
-              From direct carrier Bulk SMS routes and inbox-guaranteed email marketing to developer
+              From WhatsApp Business campaigns and direct carrier Bulk SMS routes to developer
               APIs and full-funnel customer acquisition.
             </p>
           </div>
@@ -179,7 +159,7 @@ export function Services() {
           <div className="mt-6 md:mt-0 flex flex-wrap items-center gap-1.5 p-1 bg-zinc-50 border border-zinc-200 rounded self-start md:self-auto">
             {[
               { id: "all", label: "All Solutions" },
-              { id: "messaging", label: "SMS & Email" },
+              { id: "messaging", label: "WhatsApp & SMS" },
               { id: "automation", label: "Automations & API" },
               { id: "growth", label: "Traffic & Opt-Ins" },
             ].map((tab) => (

@@ -23,7 +23,7 @@ export function ContactContent() {
   const inquiryTypes = [
     "Bulk SMS & Pricing",
     "Custom Sender ID",
-    "Email Marketing & Inboxing",
+    "WhatsApp Business Messaging",
     "Developer REST API / SMPP",
     "Agency Services & Growth",
     "Billing & Account Support",
@@ -78,7 +78,7 @@ export function ContactContent() {
           </h1>
           <p className="text-base font-normal text-zinc-600">
             Have questions about custom Sender ID registration, wholesale carrier routes, SMPP
-            connectivity, or email deliverability? We respond in under 15 minutes during business hours.
+            connectivity, or WhatsApp Business onboarding? We respond in under 15 minutes during business hours.
           </p>
         </div>
 

@@ -85,3 +85,68 @@ export const revokeApiKey = async (
     );
   return response.data;
 };
+
+export interface WebhookDeliveryItem {
+  id: string;
+  event: string;
+  message_id: string | null;
+  attempts: number;
+  status: "delivered" | "failed" | "pending";
+  last_status_code: number | null;
+  last_error: string | null;
+  created_at: string;
+  next_attempt_at: string | null;
+}
+
+export interface WebhookSettingsResponse extends ApiKeyItem {
+  webhook_signing_secret?: string;
+  warning?: string;
+}
+
+/**
+ * Set, change or remove an API key's delivery webhook URL
+ * Endpoint: PATCH /api/v1/integrations/keys/<reference>/webhook/
+ */
+export const updateApiKeyWebhook = async (
+  reference: string,
+  payload: { webhook_url: string; rotate_secret?: boolean },
+  config?: AxiosConfig
+): Promise<WebhookSettingsResponse> => {
+  const response = await apiActions.patch(
+    `/api/v1/integrations/keys/${reference}/webhook/`,
+    payload,
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Send a signed test event to the key's webhook URL
+ * Endpoint: POST /api/v1/integrations/keys/<reference>/webhook/
+ */
+export const testApiKeyWebhook = async (
+  reference: string,
+  config?: AxiosConfig
+): Promise<{ success: boolean; status_code: number | null; error: string | null }> => {
+  const response = await apiActions.post(
+    `/api/v1/integrations/keys/${reference}/webhook/`,
+    {},
+    config
+  );
+  return response.data;
+};
+
+/**
+ * Latest webhook delivery attempts for a key
+ * Endpoint: GET /api/v1/integrations/keys/<reference>/webhook/
+ */
+export const getApiKeyWebhookDeliveries = async (
+  reference: string,
+  config?: AxiosConfig
+): Promise<{ webhook_url: string | null; deliveries: WebhookDeliveryItem[] }> => {
+  const response = await apiActions.get(
+    `/api/v1/integrations/keys/${reference}/webhook/`,
+    config
+  );
+  return response.data;
+};

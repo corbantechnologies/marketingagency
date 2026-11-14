@@ -7,7 +7,6 @@ export function GrowthCalculator() {
   const [currency, setCurrency] = useState<"KES" | "USD">("KES");
   const [whatsappVolume, setWhatsappVolume] = useState<number>(10000);
   const [smsVolume, setSmsVolume] = useState<number>(25000);
-  const [emailSubscribers, setEmailSubscribers] = useState<number>(15000);
   const [avgOrderValue, setAvgOrderValue] = useState<number>(3500); // KES default
   const [campaignType, setCampaignType] = useState<"promotional" | "transactional" | "omnichannel">("omnichannel");
 
@@ -23,9 +22,6 @@ export function GrowthCalculator() {
       smsDelivery: 0.994,
       smsCtr: 0.118,
       smsCvr: 0.045,
-      emailOpen: 0.38,
-      emailCtr: 0.038,
-      emailCvr: 0.024,
     },
     transactional: {
       waOpen: 0.995,
@@ -34,9 +30,6 @@ export function GrowthCalculator() {
       smsDelivery: 0.998,
       smsCtr: 0.245,
       smsCvr: 0.095,
-      emailOpen: 0.52,
-      emailCtr: 0.082,
-      emailCvr: 0.048,
     },
     omnichannel: {
       waOpen: 0.985,
@@ -45,9 +38,6 @@ export function GrowthCalculator() {
       smsDelivery: 0.994,
       smsCtr: 0.148,
       smsCvr: 0.062,
-      emailOpen: 0.42,
-      emailCtr: 0.052,
-      emailCvr: 0.034,
     },
   };
 
@@ -63,20 +53,15 @@ export function GrowthCalculator() {
   const smsClicks = Math.round(deliveredSms * currentRate.smsCtr);
   const smsOrders = Math.round(smsClicks * currentRate.smsCvr);
 
-  // Email Funnel
-  const emailOpens = Math.round(emailSubscribers * 4 * currentRate.emailOpen); // 4 sends / mo
-  const emailClicks = Math.round(emailOpens * currentRate.emailCtr);
-  const emailOrders = Math.round(emailClicks * currentRate.emailCvr);
-
   // Combined Totals
-  const totalClicks = whatsappClicks + smsClicks + emailClicks;
-  const estimatedOrders = whatsappOrders + smsOrders + emailOrders;
+  const totalClicks = whatsappClicks + smsClicks;
+  const estimatedOrders = whatsappOrders + smsOrders;
   const projectedRevenue = estimatedOrders * avgOrderValue;
 
   // Estimated Unified Wallet Broadcast Spend (KES)
   // WhatsApp: 2 credits/msg @ KSh 0.50 = KSh 1.00/msg
   // SMS: 1 credit/msg @ KSh 0.45 = KSh 0.45/msg
-  const estimatedSpendKes = Math.round((whatsappVolume * 1.0) + (smsVolume * 0.45) + (emailSubscribers * 0.05));
+  const estimatedSpendKes = Math.round((whatsappVolume * 1.0) + (smsVolume * 0.45));
   const estimatedSpend = currency === "KES" ? estimatedSpendKes : Math.round(estimatedSpendKes / KES_TO_USD_RATE);
   
   // Real ROI Multiplier (Revenue / Spend)
@@ -240,33 +225,7 @@ export function GrowthCalculator() {
                 </div>
               </div>
 
-              {/* 3. Email List Size Slider */}
-              <div>
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Active Email Subscribers
-                  </label>
-                  <span className="text-xs sm:text-sm font-semibold text-[#581c87] bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
-                    {emailSubscribers.toLocaleString()} Contacts
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="2000"
-                  max="100000"
-                  step="2000"
-                  value={emailSubscribers}
-                  onChange={(e) => setEmailSubscribers(Number(e.target.value))}
-                  className="w-full h-2 bg-zinc-200 rounded appearance-none cursor-pointer accent-[#581c87]"
-                />
-                <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
-                  <span>2,000</span>
-                  <span>50,000</span>
-                  <span>100,000+</span>
-                </div>
-              </div>
-
-              {/* 4. Average Order Value Slider */}
+              {/* 3. Average Order Value Slider */}
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <label className="text-xs font-semibold uppercase tracking-wider text-zinc-700">
@@ -317,7 +276,7 @@ export function GrowthCalculator() {
                   </span>
                 </div>
                 <div className="text-xs text-purple-200/70 mb-5">
-                  Blended WhatsApp + SMS + Email forecast
+                  Blended WhatsApp + SMS forecast
                 </div>
 
                 <div className="space-y-3.5">
@@ -345,7 +304,6 @@ export function GrowthCalculator() {
                     <div className="text-[11px] text-zinc-400 mt-1 flex justify-between">
                       <span>WhatsApp: {whatsappOrders.toLocaleString()}</span>
                       <span>SMS: {smsOrders.toLocaleString()}</span>
-                      <span>Email: {emailOrders.toLocaleString()}</span>
                     </div>
                   </div>
 

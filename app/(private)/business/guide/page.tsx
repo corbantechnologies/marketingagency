@@ -128,7 +128,7 @@ export default function BusinessOnboardingGuidePage() {
       href: "/business/billing",
       badge: "Wallets & VIP Status",
       description:
-        "Manage your SMS and Email credit wallets, purchase packages via M-PESA, or view your Lifetime VIP status.",
+        "Manage your SMS and WhatsApp credit wallet, purchase packages via M-PESA, or view your Lifetime VIP status.",
       keyFeatures: [
         "👑 Lifetime Partner VIP: Perpetual commercial license with software subscription fees permanently waived.",
         "M-PESA STK Express: Enter your phone number and KES amount for an instant phone PIN prompt.",

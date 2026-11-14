@@ -52,11 +52,20 @@ export interface Business {
   whatsapp_phone_number_id?: string | null;
   whatsapp_display_phone_number?: string | null;
   whatsapp_verified_name?: string | null;
-  whatsapp_onboarding_status?: "NOT_CONNECTED" | "CONNECTED" | "PENDING" | "RESTRICTED";
+  whatsapp_onboarding_status?:
+    | "NOT_CONNECTED"
+    | "CONNECTED"
+    | "PENDING"
+    | "RESTRICTED"
+    | "REGISTRATION_FAILED";
   whatsapp_quality_rating?: "GREEN" | "YELLOW" | "RED" | "UNKNOWN";
   whatsapp_onboarding_mode?: "SHARED" | "DEDICATED";
   whatsapp_connected_at?: string | null;
+  whatsapp_registered_at?: string | null;
+  whatsapp_is_coexistence?: boolean;
+  whatsapp_last_error?: string;
   has_dedicated_whatsapp?: boolean;
+  uses_own_whatsapp_number?: boolean;
   active_whatsapp_phone_number_id?: string;
   wallet?: BusinessWallet | null;
   total_contacts?: number;
@@ -76,12 +85,21 @@ export interface ConnectWhatsAppPayload {
   phone_number_id?: string;
   display_phone_number?: string;
   verified_name?: string;
+  /** Meta's WA_EMBEDDED_SIGNUP finish event, e.g. FINISH or FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING */
+  event?: string;
+  coexistence?: boolean;
+  /** Existing two-step verification PIN, if the number already has one */
+  pin?: string;
 }
 
 export interface WhatsAppConnectResponse {
   success: boolean;
   message: string;
   business: Business;
+  /** False when the number is linked but Meta has not activated it for sending yet */
+  registered?: boolean;
+  webhooks_subscribed?: boolean;
+  error?: string | null;
 }
 
 
@@ -625,5 +643,19 @@ export const refreshBusinessWhatsAppStatus = async (
   return response.data;
 };
 
-
-
+/**
+ * Retry activating (registering) the linked number on the WhatsApp Cloud API
+ * Endpoint: POST /api/v1/businesses/{reference}/whatsapp-register/
+ */
+export const registerBusinessWhatsApp = async (
+  reference: string,
+  pin?: string,
+  config?: AxiosConfig
+): Promise<WhatsAppConnectResponse> => {
+  const response: AxiosResponse<WhatsAppConnectResponse> = await apiActions.post(
+    `/api/v1/businesses/${reference}/whatsapp-register/`,
+    pin ? { pin } : {},
+    config
+  );
+  return response.data;
+};

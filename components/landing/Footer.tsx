@@ -15,8 +15,8 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <LJKLogo size="md" variant="white" />
             <p className="text-xs font-normal text-zinc-400 max-w-sm leading-relaxed">
-              LJK Marketing Agency provides high-throughput Bulk SMS gateways, dedicated email marketing
-              infrastructure, and omnichannel retention automations engineered for high-growth businesses.
+              LJK Marketing Agency provides WhatsApp Business messaging, high-throughput Bulk SMS gateways,
+              and omnichannel retention automations engineered for high-growth businesses.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-zinc-400">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-purple-300">
@@ -41,16 +41,6 @@ export function Footer() {
               <li>
                 <a href="#services" className="hover:text-purple-300 transition-colors">
                   Transactional OTP & Alerts
-                </a>
-              </li>
-              <li>
-                <a href="#services" className="hover:text-purple-300 transition-colors">
-                  High-Inbox Email Marketing
-                </a>
-              </li>
-              <li>
-                <a href="#services" className="hover:text-purple-300 transition-colors">
-                  Dedicated IP Warming
                 </a>
               </li>
               <li>

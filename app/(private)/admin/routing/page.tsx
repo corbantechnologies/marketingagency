@@ -9,7 +9,7 @@ import {
 } from "@/hooks/business/actions";
 
 export default function AdminRoutingPage() {
-  const { data: obsData, isLoading, refetch } = useFetchAdminObservability();
+  const { data: obsData } = useFetchAdminObservability();
   const refreshMutation = useRefreshCarrierBalances();
 
   const carrierBalances = obsData?.carrier_balances;

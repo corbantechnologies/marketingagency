@@ -3,9 +3,21 @@
  * Supports official Login for Business Popup and WA_EMBEDDED_SIGNUP session message capture.
  */
 
+type FacebookLoginResponse = {
+  authResponse?: { code?: string; accessToken?: string; [key: string]: unknown } | null;
+  status?: string;
+  [key: string]: unknown;
+};
+
+type FacebookSdk = {
+  init: (options: Record<string, unknown>) => void;
+  login: (callback: (response: FacebookLoginResponse) => void, options?: Record<string, unknown>) => void;
+  [key: string]: unknown;
+};
+
 declare global {
   interface Window {
-    FB?: any;
+    FB?: FacebookSdk;
     fbAsyncInit?: () => void;
   }
 }
@@ -14,10 +26,33 @@ export interface MetaSignupResult {
   code?: string;
   waba_id?: string;
   phone_number_id?: string;
+  /** FINISH, FINISH_ONLY_WABA or FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING (coexistence) */
+  event?: string;
+}
+
+export interface MetaSignupOptions {
+  /** Keep the number on the WhatsApp Business app as well (Meta "coexistence"). */
+  coexistence?: boolean;
 }
 
 const META_APP_ID = process.env.NEXT_PUBLIC_META_APP_ID || "28124165710618776";
 const META_CONFIG_ID = process.env.NEXT_PUBLIC_META_CONFIG_ID || "";
+const META_GRAPH_VERSION = process.env.NEXT_PUBLIC_META_GRAPH_VERSION || "v23.0";
+
+/** Only accept Embedded Signup messages from Meta's own domains. */
+function isMetaOrigin(origin: string): boolean {
+  try {
+    const host = new URL(origin).hostname;
+    return (
+      host === "facebook.com" ||
+      host.endsWith(".facebook.com") ||
+      host === "meta.com" ||
+      host.endsWith(".meta.com")
+    );
+  } catch {
+    return false;
+  }
+}
 
 let sdkLoadingPromise: Promise<void> | null = null;
 
@@ -40,11 +75,11 @@ export function initMetaSDK(): Promise<void> {
   sdkLoadingPromise = new Promise((resolve, reject) => {
     window.fbAsyncInit = function () {
       try {
-        window.FB.init({
+        window.FB?.init({
           appId: META_APP_ID,
           autoLogAppEvents: true,
           xfbml: true,
-          version: "v19.0",
+          version: META_GRAPH_VERSION,
         });
         resolve();
       } catch (err) {
@@ -78,7 +113,9 @@ export function initMetaSDK(): Promise<void> {
  * Launches the Meta WhatsApp Embedded Signup modal dialog.
  * Listens for window postMessage for WABA IDs and captures the OAuth authorization code.
  */
-export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> {
+export async function launchWhatsAppEmbeddedSignup(
+  options: MetaSignupOptions = {}
+): Promise<MetaSignupResult> {
   await initMetaSDK();
 
   if (!window.FB) {
@@ -88,19 +125,16 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
   return new Promise((resolve, reject) => {
     let capturedWabaId: string | undefined;
     let capturedPhoneId: string | undefined;
+    let capturedEvent: string | undefined;
 
     // Listen for Meta Embedded Signup postMessage event
     const handleMessage = (event: MessageEvent) => {
-      // Only process messages from facebook domain or valid origins
-      if (
-        event.origin.includes("facebook.com") ||
-        event.origin.includes("meta.com") ||
-        event.origin.includes("localhost")
-      ) {
+      if (isMetaOrigin(event.origin)) {
         try {
           const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
           if (data && data.type === "WA_EMBEDDED_SIGNUP") {
-            if (data.event === "FINISH") {
+            if (typeof data.event === "string" && data.event.startsWith("FINISH")) {
+              capturedEvent = data.event;
               capturedWabaId = data.data?.waba_id;
               capturedPhoneId = data.data?.phone_number_id;
             } else if (data.event === "CANCEL") {
@@ -119,44 +153,53 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
 
     window.addEventListener("message", handleMessage);
 
-    const loginOptions: Record<string, any> = {
+    const loginOptions: Record<string, unknown> = {
       response_type: "code",
       override_default_response_type: true,
       return_scopes: true,
     };
 
+    const extras: Record<string, unknown> = {
+      feature: "whatsapp_embedded_signup",
+      version: 2,
+      sessionInfoVersion: "3",
+    };
+    if (options.coexistence) {
+      extras.featureType = "whatsapp_business_app_onboarding";
+    }
+    loginOptions.extras = extras;
     if (META_CONFIG_ID) {
       loginOptions.config_id = META_CONFIG_ID;
-      loginOptions.extras = {
-        feature: "whatsapp_embedded_signup",
-        version: 2,
-      };
     } else {
       loginOptions.scope = "whatsapp_business_management,whatsapp_business_messaging";
-      loginOptions.extras = {
-        feature: "whatsapp_embedded_signup",
-        version: 2,
-      };
     }
 
-    try {
-      window.FB.login((response: any) => {
-        window.removeEventListener("message", handleMessage);
-
-        if (response?.authResponse?.code) {
+    // Meta can call the login callback just before the FINISH message arrives,
+    // so wait briefly for the account IDs before resolving.
+    const finish = (code: string) => {
+      const started = Date.now();
+      const check = () => {
+        if (capturedWabaId || Date.now() - started > 2500) {
+          window.removeEventListener("message", handleMessage);
           resolve({
-            code: response.authResponse.code,
+            code,
             waba_id: capturedWabaId,
             phone_number_id: capturedPhoneId,
-          });
-        } else if (response?.status === "connected" && response?.authResponse?.accessToken) {
-          // In case of access token return
-          resolve({
-            code: response.authResponse.accessToken,
-            waba_id: capturedWabaId,
-            phone_number_id: capturedPhoneId,
+            event: capturedEvent || (options.coexistence ? "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" : undefined),
           });
         } else {
+          setTimeout(check, 150);
+        }
+      };
+      check();
+    };
+
+    try {
+      window.FB?.login((response: FacebookLoginResponse) => {
+        if (response?.authResponse?.code) {
+          finish(response.authResponse.code);
+        } else {
+          window.removeEventListener("message", handleMessage);
           // User closed the popup or didn't authorize
           const errorMsg =
             response?.status === "unknown"
@@ -165,9 +208,9 @@ export async function launchWhatsAppEmbeddedSignup(): Promise<MetaSignupResult> 
           reject(new Error(errorMsg));
         }
       }, loginOptions);
-    } catch (err: any) {
+    } catch (err) {
       window.removeEventListener("message", handleMessage);
-      reject(new Error(err?.message || "Failed to trigger Meta Login popup."));
+      reject(new Error((err as Error)?.message || "Failed to trigger Meta Login popup."));
     }
   });
 }

@@ -223,7 +223,7 @@ export interface WhatsAppTemplateListResponse {
 
 export interface CreateWhatsAppTemplatePayload {
   name: string;
-  category: "MARKETING" | "UTILITY";
+  category: "MARKETING" | "UTILITY" | "AUTHENTICATION";
   language: string;
   body_text: string;
   example_variables?: string[];

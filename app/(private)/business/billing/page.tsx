@@ -10,8 +10,8 @@ import {
   useFetchWalletTransactions,
   useInitiateMpesaStkPush,
   usePollMpesaStatus,
-  useSimulateMpesaCallback,
 } from "@/hooks/transactions/actions";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 export default function BillingPage() {
   const [mpesaPhone, setMpesaPhone] = useState("");
@@ -33,7 +33,6 @@ export default function BillingPage() {
   });
 
   const initiateStkPushMutation = useInitiateMpesaStkPush();
-  const simulateCallbackMutation = useSimulateMpesaCallback();
 
   // Live polling for STK PIN prompt completion
   const { data: pollData, refetch: refetchPoll } = usePollMpesaStatus(
@@ -205,7 +204,7 @@ export default function BillingPage() {
       </div>
 
       {/* 2. Top Section: Prominent Real-time Wallet & Account Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${EMAIL_CHANNEL_ENABLED ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4`}>
         {/* SMS Credit Balance */}
         <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs flex flex-col justify-between hover:border-purple-300 transition-colors">
           <div>
@@ -233,23 +232,25 @@ export default function BillingPage() {
           </div>
         </div>
 
-        {/* Email Credit Balance */}
-        <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs flex flex-col justify-between hover:border-purple-300 transition-colors">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Email Balance</span>
-              <span className="w-2 h-2 rounded-full bg-purple-500" title="Resend Engine" />
+        {/* Email Credit Balance (hidden until email sending ships) */}
+        {EMAIL_CHANNEL_ENABLED && (
+          <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-xs flex flex-col justify-between hover:border-purple-300 transition-colors">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Email Balance</span>
+                <span className="w-2 h-2 rounded-full bg-purple-500" title="Resend Engine" />
+              </div>
+              <div className="text-3xl font-extrabold text-zinc-900 mt-3 font-mono">
+                {isLoadingWallet ? "..." : (wallet?.email_credit_balance ?? 0).toLocaleString()}
+              </div>
+              <div className="text-xs text-zinc-500 mt-1">Available Email Units</div>
             </div>
-            <div className="text-3xl font-extrabold text-zinc-900 mt-3 font-mono">
-              {isLoadingWallet ? "..." : (wallet?.email_credit_balance ?? 0).toLocaleString()}
+            <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 mt-3">
+              <span>High-Inbox Placement</span>
+              <span className="text-purple-700 font-semibold">99.8%</span>
             </div>
-            <div className="text-xs text-zinc-500 mt-1">Available Email Units</div>
           </div>
-          <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 mt-3">
-            <span>High-Inbox Placement</span>
-            <span className="text-purple-700 font-semibold">99.8%</span>
-          </div>
-        </div>
+        )}
 
         {/* Commercial Active Plan */}
         <div className={`bg-white border rounded-xl p-5 shadow-xs flex flex-col justify-between transition-colors ${
@@ -730,22 +731,8 @@ export default function BillingPage() {
                   </p>
                 </div>
 
-                {/* Developer simulation bypass & Cancel */}
-                <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-xs">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (activeCheckoutId) {
-                        simulateCallbackMutation.mutate(activeCheckoutId);
-                        toast.success("Triggered test confirmation simulation!");
-                      }
-                    }}
-                    className="text-[11px] text-zinc-400 hover:text-[#581c87] underline cursor-pointer"
-                    title="Simulate instant callback confirmation for local testing"
-                  >
-                    Simulate PIN (Dev)
-                  </button>
-
+                {/* Cancel */}
+                <div className="pt-2 border-t border-zinc-100 flex items-center justify-end text-xs">
                   <button
                     type="button"
                     onClick={handleCloseModal}

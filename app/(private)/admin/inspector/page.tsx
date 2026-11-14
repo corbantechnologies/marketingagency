@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import type { ApiErrorLike } from "@/lib/errors";
 import toast from "react-hot-toast";
 import {
   useFetchAdminMessageInspector,
@@ -16,7 +17,7 @@ export default function AdminInspectorPage() {
   const [selectedMessageForTrace, setSelectedMessageForTrace] = useState<MessageInspectorItem | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data, isLoading, isFetching, refetch } = useFetchAdminMessageInspector({
+  const { data, isFetching, refetch } = useFetchAdminMessageInspector({
     search: search.trim(),
     operator: operator !== "ALL" ? operator : undefined,
     status: status !== "ALL" ? status : undefined,
@@ -39,7 +40,8 @@ export default function AdminInspectorPage() {
         status: status !== "ALL" ? status : undefined,
       });
       toast.success("CSV export downloaded successfully.");
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.message || "Failed to export messages.");
     } finally {
       setIsExporting(false);

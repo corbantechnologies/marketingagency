@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useDismissible } from "@/hooks/common/useDismissible";
 import Link from "next/link";
 import { useFetchActivePublicAnnouncement } from "@/hooks/accounts/actions";
 
@@ -8,35 +9,15 @@ export function GlobalAnnouncementBanner() {
   const { data } = useFetchActivePublicAnnouncement();
   const announcement = data?.announcement;
 
-  const [isDismissed, setIsDismissed] = useState(false);
-
-  useEffect(() => {
-    if (announcement?.id && typeof window !== "undefined") {
-      const dismissedKey = `dismissed_ann_${announcement.id}`;
-      const wasDismissed =
-        localStorage.getItem(dismissedKey) === "true" ||
-        sessionStorage.getItem(dismissedKey) === "true";
-      if (wasDismissed) {
-        setIsDismissed(true);
-      } else {
-        setIsDismissed(false);
-      }
-    }
-  }, [announcement?.id]);
+  const [isDismissed, dismiss] = useDismissible(announcement?.id ? `dismissed_ann_${announcement.id}` : "", {
+    alsoSession: true,
+  });
 
   if (!announcement || isDismissed) {
     return null;
   }
 
-  const handleDismiss = () => {
-    setIsDismissed(true);
-    if (announcement?.id && typeof window !== "undefined") {
-      try {
-        localStorage.setItem(`dismissed_ann_${announcement.id}`, "true");
-        sessionStorage.setItem(`dismissed_ann_${announcement.id}`, "true");
-      } catch {}
-    }
-  };
+  const handleDismiss = dismiss;
 
   const type = announcement.type || "INFO";
 

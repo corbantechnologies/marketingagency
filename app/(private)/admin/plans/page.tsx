@@ -12,6 +12,7 @@ import {
 } from "@/hooks/plans/actions";
 import { Plan } from "@/services/plans";
 import toast from "react-hot-toast";
+import { EMAIL_CHANNEL_ENABLED } from "@/lib/features";
 
 export default function AdminPlansPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -260,7 +261,7 @@ export default function AdminPlansPage() {
                     {/* Credits */}
                     <td className="py-3.5 px-2">
                       <div className="font-semibold text-purple-900">{plan.included_sms_credits.toLocaleString()} SMS</div>
-                      {plan.included_email_credits > 0 && (
+                      {EMAIL_CHANNEL_ENABLED && plan.included_email_credits > 0 && (
                         <div className="text-[10px] text-zinc-500">{plan.included_email_credits.toLocaleString()} Emails</div>
                       )}
                     </td>

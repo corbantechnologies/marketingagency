@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import type { ApiErrorLike } from "@/lib/errors";
 import toast from "react-hot-toast";
 import {
   useFetchAdminRateCards,
@@ -32,8 +33,10 @@ export default function AdminRateCardPage() {
   const [simAirPct, setSimAirPct] = useState<number>(25);
   const [simTelPct, setSimTelPct] = useState<number>(5);
 
-  // Sync data from API into local form state
-  useEffect(() => {
+  // Copy server data into the form when it arrives (render-time sync, no effect).
+  const [syncedData, setSyncedData] = useState<typeof data | undefined>(undefined);
+  if (data !== syncedData) {
+    setSyncedData(data);
     if (data) {
       if (data.wholesale_benchmarks) {
         setSafCost(data.wholesale_benchmarks.safaricom_base_kes);
@@ -52,7 +55,7 @@ export default function AdminRateCardPage() {
         }
       }
     }
-  }, [data]);
+  }
 
   // Compute live blended wholesale cost based on current inputs
   const blendedWholesale = Number(
@@ -106,21 +109,10 @@ export default function AdminRateCardPage() {
       });
       toast.success("Carrier & WhatsApp benchmarks updated successfully!");
       refetch();
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as ApiErrorLike;
       toast.error(err?.message || "Failed to update benchmarks.");
     }
-  };
-
-  const handleSimulate = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    simulateMutation.mutate({
-      channel: simChannel,
-      volume: simVolume,
-      retail_rate_kes: simRetailRate,
-      safaricom_pct: simSafPct,
-      airtel_pct: simAirPct,
-      telkom_pct: simTelPct,
-    });
   };
 
   const simResult = simulateMutation.data?.simulation;
